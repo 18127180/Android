@@ -12,7 +12,10 @@ public class ImageAdapter extends BaseAdapter {
 
     public int[] imageArray={
             R.drawable._1gdgmgrrnl_sl1465_,R.drawable._41261279_2867390260165722_4511917266191176847_o,
-            R.drawable.an07,R.drawable.cuongdh01
+            R.drawable.an07,R.drawable.cuongdh01,R.drawable._589863275695_367121_udemy_750x422,
+            R.drawable.__xesjmqb59kkkdscargw_ra,R.drawable.download,R.drawable.download__1_,
+            R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03,
+            R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03
     };
 
     public ImageAdapter(Context mContext) {

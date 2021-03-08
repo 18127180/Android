@@ -20,6 +20,9 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSIONS = 100;
@@ -35,8 +38,13 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavController navController = Navigation.findNavController(this,  R.id.fragment3);
-
+        Set<Integer> topLevelDestinations = new HashSet<>();
+        topLevelDestinations.add(R.id.firstFragment);
+        topLevelDestinations.add(R.id.secondFragment);
+        topLevelDestinations.add(R.id.thirdFragment);
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         if ((ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
