@@ -1,5 +1,6 @@
 package com.example.gallery_noob;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +26,7 @@ public class FirstFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    GridView gridView;
 
     public FirstFragment() {
         // Required empty public constructor
@@ -53,12 +57,24 @@ public class FirstFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_first, container, false);
+        gridView=(GridView) rootView.findViewById(R.id.grid_view);
+        gridView.setAdapter(new ImageAdapter(getActivity()));
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
+                intent.putExtra("id", position);
+                startActivity(intent);
+            }
+        });
+        return rootView;
     }
 }

@@ -4,17 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstFragment">
+    tools:context=".FullScreenImage">
 
-    <GridView
-        android:id="@+id/grid_view"
-        android:layout_height="match_parent"
+    <ImageView
         android:layout_width="match_parent"
-        android:numColumns="3"
-        android:columnWidth="90dp"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp"
-        android:gravity="center"
-        android:stretchMode="columnWidth"
-        />
+        android:layout_height="match_parent"
+        android:id="@+id/image_view"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
