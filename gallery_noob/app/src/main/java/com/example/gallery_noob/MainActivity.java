@@ -8,9 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.GridView;
 
 import android.widget.Toast;
 
@@ -23,7 +20,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -105,10 +101,11 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_PERMISSIONS: {
                 for (int i = 0; i < grantResults.length; i++) {
                     if (grantResults.length > 0 && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                        Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                        Intent intent = new Intent(this,MainActivity.class);
                         startActivity(intent);
+                        break;
                     } else {
-                        Toast.makeText(MainActivity.this, "The app was not allowed to read or write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "The app was not allowed to read or write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -178,11 +175,6 @@ public class MainActivity extends AppCompatActivity {
         obj_adapter = new Adapter_PhotosFolder(getApplicationContext(),al_images);
         //gv_folder.setAdapter(obj_adapter);
         return al_images;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
 

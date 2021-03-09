@@ -18,9 +18,9 @@
         <activity android:name=".PhotosActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".FullScreenImage" />
         <activity android:name=".MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"/>
+        <activity android:name=".FullScreenImage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

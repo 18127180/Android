@@ -39,7 +39,7 @@ public class PhotosActivity extends AppCompatActivity {
     public void onBackPressed() {
         //Intent intent = new Intent(PhotosActivity.this,ThirdFragment.class);
         //startActivity(intent);
-        setResult(RESULT_OK, new Intent());
+        setResult(RESULT_OK, new Intent().setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
         finish();
     }
 }
