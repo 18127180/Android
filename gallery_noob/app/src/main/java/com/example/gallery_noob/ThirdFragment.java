@@ -1,12 +1,23 @@
 package com.example.gallery_noob;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
+
+import java.util.ArrayList;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +25,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class ThirdFragment extends Fragment {
+
+    private ArrayList<Model_images> al_images;
+    Adapter_PhotosFolder obj_adapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -23,6 +37,7 @@ public class ThirdFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    GridView gv_folder;
 
     public ThirdFragment() {
         // Required empty public constructor
@@ -58,7 +73,32 @@ public class ThirdFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        MainActivity activity = (MainActivity) getActivity();
+        al_images = activity.getAl_images();
+        obj_adapter = activity.getObj_adapter();
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_third, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_third, container, false);
+        gv_folder=(GridView) rootView.findViewById(R.id.gv_folder);
+        //gv_folder.setAdapter(new ImageAdapter(getActivity()));
+        gv_folder.setAdapter(obj_adapter);
+        gv_folder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(activity.getApplicationContext(), PhotosActivity.class);
+                intent.putExtra("value",position);
+                intent.putParcelableArrayListExtra("al_images", al_images);
+                startActivityForResult(intent,1);
+            }
+        });
+        return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 1) {
+            Log.e("CB","SUCCESS");
+            //just need the callback from PhotosActivity
+        }
     }
 }

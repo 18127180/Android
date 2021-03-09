@@ -1,11 +1,20 @@
 package com.example.gallery_noob;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
@@ -46,3 +55,4 @@ public class ImageAdapter extends BaseAdapter {
         return imageView;
     }
 }
+
