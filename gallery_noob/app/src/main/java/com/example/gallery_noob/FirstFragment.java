@@ -15,7 +15,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,7 +96,36 @@ public class FirstFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_first, container, false);
+        //View mainView=inflater.inflate(R.layout.activity_main, container, false);
+
         Button btn_select=rootView.findViewById(R.id.button_select);
+        Button btn_remove=rootView.findViewById(R.id.button_remove);
+        RoundKornerLinearLayout layout_date=(RoundKornerLinearLayout) rootView.findViewById(R.id.ign_layout);
+        LinearLayout layout_select=(LinearLayout) rootView.findViewById(R.id.layout_select);
+        layout_select.setVisibility(View.GONE);
+        //BottomNavigationView bottomNavigationView =( BottomNavigationView) mainView.findViewById(R.id.bottomNavigationView);
+
+        btn_select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_select.setVisibility(View.GONE);
+                layout_date.setVisibility(View.GONE);
+                layout_select.setVisibility(View.VISIBLE);
+                //Intent intent=new Intent(getActivity(),MainActivity.class);
+                //intent.putExtra("key","allow_select");
+                //startActivity(intent);
+                //bottomNavigationView.setVisibility(View.GONE);
+            }
+        });
+
+        btn_remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_select.setVisibility(View.VISIBLE);
+                layout_date.setVisibility(View.VISIBLE);
+                layout_select.setVisibility(View.GONE);
+            }
+        });
 
         gridView=(GridView) rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(new ImageAdapter(getActivity()));

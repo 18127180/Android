@@ -20,6 +20,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/button_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hủy"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/round_btn"
+        style="?android:attr/borderlessButtonStyle"
+        app:backgroundTint="@color/grey_all_btn"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:textSize="10dp"
+        />
+
+    <Button
         android:id="@+id/button_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,5 +111,41 @@
             app:backgroundTint="@color/grey_all_btn"
             style="?android:attr/borderlessButtonStyle"/>
     </com.jcminarro.roundkornerlayout.RoundKornerLinearLayout>
+
+    <LinearLayout
+        android:layout_height="50dp"
+        android:id="@+id/layout_select"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="55dp"
+        android:background="@color/grey_date_layout"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_baseline_share_24"
+            android:background="@color/grey_date_layout"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Chọn Mục" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_baseline_restore_from_trash_24"
+            android:background="@color/grey_date_layout"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

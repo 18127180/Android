@@ -8,12 +8,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-<<<<<<< Updated upstream
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
-=======
->>>>>>> Stashed changes
+
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -61,7 +60,16 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        //bottomNavigationView.setVisibility(View.GONE);
+        /*Intent intent=getIntent();
+        String s=intent.getStringExtra("key");
+        if (s!=null)
+        {
+            Log.d("dc1", s.toString());
+        }
+        if (s=="allow_select") {
+            Log.e("dc", "ok");
+            bottomNavigationView.setVisibility(View.GONE);
+        }*/
 
         if ((ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
