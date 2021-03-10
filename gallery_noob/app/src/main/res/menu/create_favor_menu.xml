@@ -7,9 +7,9 @@
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/action_setting_big"
+                android:id="@+id/action_setting_create_favorite"
                 android:title="Tạo mục yêu thích"
-                android:icon="@drawable/ic_baseline_zoom_in_24"
+                android:icon="@drawable/ic_baseline_add_24"
                 app:showAsAction="ifRoom"
                 />
         </menu>
