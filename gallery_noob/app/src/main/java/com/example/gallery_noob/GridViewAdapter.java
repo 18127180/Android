@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
-/*
+
 public class GridViewAdapter extends ArrayAdapter<Model_images> {
 
     Context context;
@@ -61,7 +61,7 @@ public class GridViewAdapter extends ArrayAdapter<Model_images> {
 
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.none, parent, false);
-            viewHolder.iv_image = (ImageView) convertView.findViewById(R.id.image_view);
+            viewHolder.iv_image = (ImageView) convertView.findViewById(R.id.iv_image);
 
             convertView.setTag(viewHolder);
         } else {
@@ -80,8 +80,8 @@ public class GridViewAdapter extends ArrayAdapter<Model_images> {
         ImageView iv_image;
     }
 }
-*/
 
+/*
 public class GridViewAdapter extends ArrayAdapter<Model_images> {
 
     Context context;
@@ -155,4 +155,4 @@ public class GridViewAdapter extends ArrayAdapter<Model_images> {
         ImageView iv_image;
     }
 }
-
+*/

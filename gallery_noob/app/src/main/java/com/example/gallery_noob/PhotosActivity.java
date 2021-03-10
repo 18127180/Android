@@ -33,6 +33,8 @@ public class PhotosActivity extends AppCompatActivity {
         adapter = new GridViewAdapter(getApplicationContext(),MainActivity.al_images,int_position);
         //Adapter_PhotosFolder adapter = new Adapter_PhotosFolder(this,MainActivity.al_images);
         gridView.setAdapter(adapter);
+        gridView.setVerticalSpacing(5);
+        gridView.setHorizontalSpacing(2);
     }
 
     @Override
