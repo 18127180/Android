@@ -18,6 +18,12 @@
                 android:icon="@drawable/ic_baseline_zoom_out_24"
                 app:showAsAction="ifRoom"
                 />
+            <item
+                android:id="@+id/action_setting_camera"
+                android:title="Chụp ảnh/Quay video"
+                android:icon="@drawable/ic_baseline_camera_alt_24"
+                app:showAsAction="ifRoom"
+                />
         </menu>
     </item>
 </menu>

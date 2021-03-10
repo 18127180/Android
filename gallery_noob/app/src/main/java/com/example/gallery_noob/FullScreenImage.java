@@ -8,10 +8,14 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class FullScreenImage extends AppCompatActivity {
@@ -19,12 +23,51 @@ public class FullScreenImage extends AppCompatActivity {
     private static final int REQUEST_PERMISSIONS = 100;
     static boolean req = false;
     Button button;
+    boolean gone = false;
+    ImageButton back_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
+
+        RelativeLayout ln2=(RelativeLayout) findViewById(R.id.full_scr_layout);
+        LinearLayout ln= (LinearLayout)findViewById(R.id.full_scr);
+        LinearLayout ln1= (LinearLayout)findViewById(R.id.text_func);
+        LinearLayout ln3= (LinearLayout)findViewById(R.id.header_detail);
+        ln.setVisibility(View.GONE);
+        ln1.setVisibility(View.GONE);
+        ln3.setVisibility(View.GONE);
+        ln2.setOnTouchListener(new View.OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    if(!gone){
+                        ln.setVisibility(View.GONE);
+                        ln1.setVisibility(View.GONE);
+                        ln3.setVisibility(View.GONE);
+                        gone=true;
+                    }else{
+                        ln.setVisibility(View.VISIBLE);
+                        ln1.setVisibility(View.VISIBLE);
+                        ln3.setVisibility(View.VISIBLE);
+                        gone=false;
+                    }
+                }
+                return false;
+            }
+        });
+
+        back_btn=(ImageButton) findViewById(R.id.back_btn);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(FullScreenImage.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         imageView=(ImageView) findViewById(R.id.image_view);
         button = (Button)findViewById(R.id.button);
