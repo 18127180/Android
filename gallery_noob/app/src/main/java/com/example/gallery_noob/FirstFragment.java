@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +38,7 @@ public class FirstFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     GridView gridView;
+    int REQUEST_CODE_CAMERA=123;
 
     public FirstFragment() {
         // Required empty public constructor
@@ -87,6 +89,11 @@ public class FirstFragment extends Fragment {
         if (id==R.id.action_setting_small)
         {
             Toast.makeText(getActivity(),"Thu nhỏ",Toast.LENGTH_SHORT).show();
+        }
+        if (id==R.id.action_setting_camera)
+        {
+            Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent, REQUEST_CODE_CAMERA);
         }
         return super.onOptionsItemSelected(item);
     }
