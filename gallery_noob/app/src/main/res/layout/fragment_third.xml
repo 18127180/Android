@@ -12,5 +12,22 @@
         android:id="@+id/gv_folder"
         android:numColumns="2"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"></GridView>
+        android:layout_marginRight="10dp"/>
+
+    <ImageButton
+        android:id="@+id/buttonAdd"
+        android:layout_width="70dp"
+        android:layout_height="69dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/blue"
+        android:layout_marginBottom="13dp"
+        android:layout_marginRight="13dp"
+        android:background="@drawable/rounded_button"
+        android:tint="@color/white"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:padding="7dp"
+        android:src="@drawable/ic_baseline_add_24"/>
+
 </RelativeLayout>
