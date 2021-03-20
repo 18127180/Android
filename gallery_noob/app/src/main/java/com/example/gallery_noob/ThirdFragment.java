@@ -1,19 +1,27 @@
 package com.example.gallery_noob;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
 import android.os.Parcelable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -38,6 +46,8 @@ public class ThirdFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     GridView gv_folder;
+    ImageButton add_btn;
+    private String name = "";
 
     public ThirdFragment() {
         // Required empty public constructor
@@ -89,6 +99,44 @@ public class ThirdFragment extends Fragment {
                 intent.putExtra("value",position);
                 intent.putParcelableArrayListExtra("al_images", al_images);
                 startActivityForResult(intent,1);
+            }
+        });
+
+        add_btn=(ImageButton) rootView.findViewById(R.id.buttonAdd);
+        add_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Name your album:");
+
+                // Set up the input
+                final EditText input = new EditText(getActivity());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        name = input.getText().toString();
+                        File imageRoot = new File(Environment.getExternalStoragePublicDirectory(    //tao album moi
+                                Environment.DIRECTORY_PICTURES), name);
+                        if(imageRoot.mkdirs()) {
+                            startActivity(new Intent(getActivity().getApplicationContext(),ThirdFragment.class));
+                        }
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
             }
         });
         return rootView;
