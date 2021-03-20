@@ -7,6 +7,10 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +21,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class FullScreenImage extends AppCompatActivity {
     ImageView imageView;
@@ -74,14 +82,38 @@ public class FullScreenImage extends AppCompatActivity {
         getSupportActionBar().hide();
         getSupportActionBar().setTitle("Tuấn ngu");
         Intent i=getIntent();
-        int position;
+        String position=null;
         if(!req){
-            position=0;
+            position=null;
         }else{
-            position=i.getExtras().getInt("id");
+            position=i.getExtras().getString("path");
         }
-        ImageAdapter imageAdapter= new ImageAdapter(this);
-        imageView.setImageResource(imageAdapter.imageArray[position]);
+        //ImageAdapter imageAdapter= new ImageAdapter(this);
+        if(position!=null)
+        {
+            Picasso.get().load(new File(position)).into(imageView);
+            /*Bitmap bitmap = BitmapFactory.decodeFile(position);
+            try {
+                File imgFile=new File(position);
+                ExifInterface exif = new ExifInterface(imgFile.getAbsolutePath());
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                Matrix matrix = new Matrix();
+                if (orientation == 6) {
+                    matrix.postRotate(90);
+                }
+                else if (orientation == 3) {
+                    matrix.postRotate(180);
+                }
+                else if (orientation == 8) {
+                    matrix.postRotate(270);
+                }
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true); // rotating bitmap
+            }
+            catch (Exception e) {
+
+            }
+            imageView.setImageBitmap(bitmap);*/
+        }
 
         if ((ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),

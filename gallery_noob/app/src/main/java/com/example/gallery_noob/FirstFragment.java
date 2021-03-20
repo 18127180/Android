@@ -1,10 +1,16 @@
 package com.example.gallery_noob;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -22,6 +28,8 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FirstFragment#newInstance} factory method to
@@ -37,7 +45,11 @@ public class FirstFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    GridView gridView;
+    RecyclerView recyclerView;
+    ImageAdapter imageAdapter;
+    List<String> images;
+    private static final int MY_READ_PERMISION_CODE=101;
+
     int REQUEST_CODE_CAMERA=123;
 
     public FirstFragment() {
@@ -103,7 +115,16 @@ public class FirstFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_first, container, false);
-        //View mainView=inflater.inflate(R.layout.activity_main, container, false);
+        recyclerView=(RecyclerView)rootView.findViewById(R.id.recyclerview_gallery_images);
+        //Permission
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_READ_PERMISION_CODE);
+        }
+        else
+        {
+            loadImages();
+        }
 
         Button btn_select=rootView.findViewById(R.id.button_select);
         Button btn_remove=rootView.findViewById(R.id.button_remove);
@@ -134,7 +155,7 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        gridView=(GridView) rootView.findViewById(R.id.grid_view);
+        /*gridView=(GridView) rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(new ImageAdapter(getActivity()));
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -143,7 +164,30 @@ public class FirstFragment extends Fragment {
                 intent.putExtra("id", position);
                 startActivity(intent);
             }
-        });
+        });*/
         return rootView;
+    }
+    public void loadImages(){
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+        images=imagesGallery.listOfImages(getContext());
+        imageAdapter=new ImageAdapter(getContext(),images,new ImageAdapter.PhotoListiner(){
+            @Override
+            public void onPhotoClick(String path) {
+                Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
+                intent.putExtra("path", path);
+                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(imageAdapter);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode==MY_READ_PERMISION_CODE){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                loadImages();
+            }
+        }
     }
 }

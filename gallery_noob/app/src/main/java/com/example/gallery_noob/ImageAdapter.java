@@ -11,48 +11,63 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ImageAdapter extends BaseAdapter {
-    private Context mContext;
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
+    private Context context;
+    private List<String> images;
+    protected PhotoListiner photoListiner;
 
-    public int[] imageArray={R.drawable.welcome,
-            R.drawable._1gdgmgrrnl_sl1465_,R.drawable._41261279_2867390260165722_4511917266191176847_o,
-            R.drawable.an07,R.drawable.cuongdh01,R.drawable._589863275695_367121_udemy_750x422,
-            R.drawable.__xesjmqb59kkkdscargw_ra,R.drawable.download,R.drawable.download__1_,
-            R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03,
-            R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03,R.drawable.duonglt03
-    };
+    public ImageAdapter(Context context, List<String> images, PhotoListiner photoListiner) {
+        this.context=context;
+        this.images=images;
+        this.photoListiner=photoListiner;
+    }
 
-    public ImageAdapter(Context mContext) {
-        this.mContext = mContext;
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(
+                LayoutInflater.from(context).inflate(R.layout.gallery_item,parent,false)
+        );
     }
 
     @Override
-    public int getCount() {
-        return imageArray.length;
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String image=images.get(position);
+        Glide.with(context).load(image).into(holder.image);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                photoListiner.onPhotoClick(image);
+            }
+        });
     }
 
     @Override
-    public Object getItem(int position) {
-        return imageArray[position];
+    public int getItemCount() {
+        return images.size();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return 0;
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        ImageView image;
+
+        public ViewHolder(@NonNull View itemView)
+        {
+            super(itemView);
+            image=itemView.findViewById(R.id.image);
+        }
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView = new ImageView(mContext);
-        imageView.setImageResource(imageArray[position]);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(new GridView.LayoutParams(340,350));
-        return imageView;
+    public interface PhotoListiner{
+        void onPhotoClick(String path);
     }
 }
 
