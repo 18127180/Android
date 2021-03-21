@@ -40,6 +40,7 @@ public class PhotosActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent= new Intent(PhotosActivity.this,FullScreenImage.class);
                 intent.putExtra("path", SharedData.al_images.get(int_position).getAl_imagepath().get(position));
+                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)SharedData.al_images.get(int_position).getAl_imagepath());
                 startActivity(intent);
             }
         });
