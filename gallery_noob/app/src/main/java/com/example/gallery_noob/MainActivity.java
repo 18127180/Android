@@ -1,6 +1,7 @@
 package com.example.gallery_noob;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -81,7 +82,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }else {
             Log.e("Else","Loading Gallery");
-            fn_imagespath();
+            //fn_imagespath();
+            SharedData i = new SharedData(this);
+            i.fn_imagespath();
+            al_images = SharedData.getAl_images();
+            obj_adapter = new Adapter_PhotosFolder(getApplicationContext(),SharedData.al_images);
             /*
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("al_images", (ArrayList<? extends Parcelable>) al_images);
@@ -127,42 +132,50 @@ public class MainActivity extends AppCompatActivity {
         String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
 
         final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
-        cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+        try{
+            cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
 
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data);
-            Log.e("Column", absolutePathOfImage);
-            Log.e("Folder", cursor.getString(column_index_folder_name));
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(column_index_data);
+                Log.e("Column", absolutePathOfImage);
+                Log.e("Folder", cursor.getString(column_index_folder_name));
 
-            for (int i = 0; i < al_images.size(); i++) {
-                if (al_images.get(i).getStr_folder().equals(cursor.getString(column_index_folder_name))) {
-                    boolean_folder = true;
-                    int_position = i;
-                    break;
+                for (int i = 0; i < al_images.size(); i++) {
+                    if (al_images.get(i).getStr_folder().equals(cursor.getString(column_index_folder_name))) {
+                        boolean_folder = true;
+                        int_position = i;
+                        break;
+                    } else {
+                        boolean_folder = false;
+                    }
+                }
+
+                if (boolean_folder) {
+
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.addAll(al_images.get(int_position).getAl_imagepath());
+                    al_path.add(absolutePathOfImage);
+                    al_images.get(int_position).setAl_imagepath(al_path);
+
                 } else {
-                    boolean_folder = false;
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.add(absolutePathOfImage);
+                    Model_images obj_model = new Model_images();
+                    obj_model.setStr_folder(cursor.getString(column_index_folder_name));
+                    obj_model.setAl_imagepath(al_path);
+
+                    al_images.add(obj_model);
                 }
             }
-
-            if (boolean_folder) {
-
-                ArrayList<String> al_path = new ArrayList<>();
-                al_path.addAll(al_images.get(int_position).getAl_imagepath());
-                al_path.add(absolutePathOfImage);
-                al_images.get(int_position).setAl_imagepath(al_path);
-
-            } else {
-                ArrayList<String> al_path = new ArrayList<>();
-                al_path.add(absolutePathOfImage);
-                Model_images obj_model = new Model_images();
-                obj_model.setStr_folder(cursor.getString(column_index_folder_name));
-                obj_model.setAl_imagepath(al_path);
-
-                al_images.add(obj_model);
-            }
+        }catch(Exception exc){
+            Log.e("Error",exc.toString());
         }
+
+
+
+
 
         /*
         for (int i = 0; i < al_images.size(); i++) {        //De in ra xem trong mang al_images co nhung thu muc gi, file gi ???

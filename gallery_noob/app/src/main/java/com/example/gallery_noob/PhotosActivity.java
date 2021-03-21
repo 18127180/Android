@@ -2,6 +2,8 @@ package com.example.gallery_noob;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +35,14 @@ public class PhotosActivity extends AppCompatActivity {
         adapter = new GridViewAdapter(getApplicationContext(),MainActivity.al_images,int_position);
         //Adapter_PhotosFolder adapter = new Adapter_PhotosFolder(this,MainActivity.al_images);
         gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent= new Intent(PhotosActivity.this,FullScreenImage.class);
+                intent.putExtra("path", SharedData.al_images.get(int_position).getAl_imagepath().get(position));
+                startActivity(intent);
+            }
+        });
         gridView.setVerticalSpacing(5);
         gridView.setHorizontalSpacing(2);
     }

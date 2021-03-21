@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class ThirdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         MainActivity activity = (MainActivity) getActivity();
-        al_images = activity.getAl_images();
+        al_images = SharedData.getAl_images();
         obj_adapter = activity.getObj_adapter();
 
         // Inflate the layout for this fragment
@@ -106,27 +107,32 @@ public class ThirdFragment extends Fragment {
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setTitle("Name your album:");
 
                 // Set up the input
-                final EditText input = new EditText(getActivity());
+                final EditText input = new EditText(activity);
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
 
-// Set up the buttons
+                // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         name = input.getText().toString();
                         File imageRoot = new File(Environment.getExternalStoragePublicDirectory(    //tao album moi
                                 Environment.DIRECTORY_PICTURES), name);
-                        if(imageRoot.mkdirs()) {
-                            startActivity(new Intent(getActivity().getApplicationContext(),ThirdFragment.class));
+                        try{
+                            if(imageRoot.mkdirs()) {
+                                Model_images i = new Model_images(name);
+                                SharedData.al_images.add(i);
+                                gv_folder.setAdapter(obj_adapter);
+                            }
                         }
-
+                        catch(Exception exc){
+                            Toast.makeText(activity,exc.toString(),Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -135,7 +141,6 @@ public class ThirdFragment extends Fragment {
                         dialog.cancel();
                     }
                 });
-
                 builder.show();
             }
         });

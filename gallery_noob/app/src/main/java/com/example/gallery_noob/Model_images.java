@@ -18,6 +18,11 @@ public class Model_images implements Parcelable {
         al_imagepath=new ArrayList<>();
     }
 
+    public Model_images(String name){
+        str_folder = name;
+        al_imagepath=new ArrayList<>();
+    }
+
     protected Model_images(Parcel in) {
         str_folder = in.readString();
         al_imagepath = in.createStringArrayList();

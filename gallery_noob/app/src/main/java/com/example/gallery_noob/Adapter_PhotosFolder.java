@@ -78,11 +78,14 @@ public class Adapter_PhotosFolder extends ArrayAdapter<Model_images> {
         viewHolder.tv_foldersize.setText(al_menu.get(position).getAl_imagepath().size()+"");
 
 
+        if(al_menu.get(position).getAl_imagepath().size()>0) {
+            Glide.with(context).load("file://" + al_menu.get(position).getAl_imagepath().get(0))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(viewHolder.iv_image);
+        }else{
 
-        Glide.with(context).load("file://"+ al_menu.get(position).getAl_imagepath().get(0))
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(viewHolder.iv_image);
+        }
 
 
         return convertView;
@@ -96,5 +99,9 @@ public class Adapter_PhotosFolder extends ArrayAdapter<Model_images> {
 
     }
 
-
+    public void refillItems(ArrayList<Model_images>al_images){
+        al_menu.clear();
+        al_menu.addAll(al_images);
+        notifyDataSetChanged();
+    }
 }
