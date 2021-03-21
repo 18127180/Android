@@ -3,6 +3,7 @@ package com.example.gallery_noob;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -25,6 +28,8 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FullScreenImage extends AppCompatActivity {
     ImageView imageView;
@@ -33,21 +38,23 @@ public class FullScreenImage extends AppCompatActivity {
     Button button;
     boolean gone = false;
     ImageButton back_btn;
-
+    private List<String> listOfPathImages;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
 
-        RelativeLayout ln2=(RelativeLayout) findViewById(R.id.full_scr_layout);
+        ViewPager viewPager=findViewById(R.id.view_pager);
         LinearLayout ln= (LinearLayout)findViewById(R.id.full_scr);
         LinearLayout ln1= (LinearLayout)findViewById(R.id.text_func);
         LinearLayout ln3= (LinearLayout)findViewById(R.id.header_detail);
-        ln.setVisibility(View.GONE);
-        ln1.setVisibility(View.GONE);
-        ln3.setVisibility(View.GONE);
-        ln2.setOnTouchListener(new View.OnTouchListener(){
+        //ln.setVisibility(View.GONE);
+        //ln1.setVisibility(View.GONE);
+        //ln3.setVisibility(View.GONE);
+
+
+        viewPager.setOnTouchListener(new View.OnTouchListener(){
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -56,12 +63,14 @@ public class FullScreenImage extends AppCompatActivity {
                         ln.setVisibility(View.GONE);
                         ln1.setVisibility(View.GONE);
                         ln3.setVisibility(View.GONE);
+                        Log.e("Co","true");
                         gone=true;
                     }else{
                         ln.setVisibility(View.VISIBLE);
                         ln1.setVisibility(View.VISIBLE);
                         ln3.setVisibility(View.VISIBLE);
                         gone=false;
+                        Log.e("Co","false");
                     }
                 }
                 return false;
@@ -77,43 +86,34 @@ public class FullScreenImage extends AppCompatActivity {
             }
         });
 
-        imageView=(ImageView) findViewById(R.id.image_view);
+        //imageView=(ImageView) findViewById(R.id.image_view);
         button = (Button)findViewById(R.id.button);
         getSupportActionBar().hide();
         getSupportActionBar().setTitle("Tuấn ngu");
         Intent i=getIntent();
         String position=null;
+
         if(!req){
             position=null;
+            listOfPathImages=null;
         }else{
+            listOfPathImages=new ArrayList<String>();
+            listOfPathImages = getIntent().getStringArrayListExtra("listOfImages");
             position=i.getExtras().getString("path");
+            //Log.e("Size cua mang ",""+listOfPathImages.size());
+            ViewPagerAdapter adapter=new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
+            viewPager.setAdapter(adapter);
+            viewPager.setCurrentItem(listOfPathImages.indexOf(position));
+            viewPager.setOffscreenPageLimit(3);
         }
         //ImageAdapter imageAdapter= new ImageAdapter(this);
-        if(position!=null)
-        {
-            Picasso.get().load(new File(position)).into(imageView);
-            /*Bitmap bitmap = BitmapFactory.decodeFile(position);
-            try {
-                File imgFile=new File(position);
-                ExifInterface exif = new ExifInterface(imgFile.getAbsolutePath());
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                Matrix matrix = new Matrix();
-                if (orientation == 6) {
-                    matrix.postRotate(90);
-                }
-                else if (orientation == 3) {
-                    matrix.postRotate(180);
-                }
-                else if (orientation == 8) {
-                    matrix.postRotate(270);
-                }
-                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true); // rotating bitmap
-            }
-            catch (Exception e) {
-
-            }
-            imageView.setImageBitmap(bitmap);*/
-        }
+//        if(position!=null)
+//        {
+//            ViewPagerAdapter adapter=new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
+//            viewPager.setCurrentItem(listOfPathImages.indexOf(position));
+//            viewPager.setAdapter(adapter);
+//            Picasso.get().load(new File(position)).into(imageView);
+//        }
 
         if ((ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
@@ -143,6 +143,7 @@ public class FullScreenImage extends AppCompatActivity {
             req=true;
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
