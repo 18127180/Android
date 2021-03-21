@@ -7,10 +7,11 @@
     tools:context=".FullScreenImage"
     android:id="@+id/full_scr_layout">
 
-    <ImageView
+    <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/image_view"/>
+        android:id="@+id/view_pager">
+    </androidx.viewpager.widget.ViewPager>
 
     <Button
         android:id="@+id/button"

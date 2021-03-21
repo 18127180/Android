@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -176,6 +177,7 @@ public class FirstFragment extends Fragment {
             public void onPhotoClick(String path) {
                 Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
                 intent.putExtra("path", path);
+                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)images);
                 startActivity(intent);
             }
         });
