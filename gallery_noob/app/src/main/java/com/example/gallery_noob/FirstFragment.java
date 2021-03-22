@@ -4,6 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -12,20 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
 import java.util.ArrayList;
@@ -52,6 +47,7 @@ public class FirstFragment extends Fragment {
     private static final int MY_READ_PERMISION_CODE=101;
 
     int REQUEST_CODE_CAMERA=123;
+    static int gridSize = 3;
 
     public FirstFragment() {
         // Required empty public constructor
@@ -97,11 +93,19 @@ public class FirstFragment extends Fragment {
 
         if (id==R.id.action_setting_big)
         {
-            Toast.makeText(getActivity(),"Phóng to",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(),"Phóng to",Toast.LENGTH_SHORT).show();
+            if(gridSize<5) {
+                gridSize++;
+                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
+            }
         }
         if (id==R.id.action_setting_small)
         {
-            Toast.makeText(getActivity(),"Thu nhỏ",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(),"Thu nhỏ",Toast.LENGTH_SHORT).show();
+            if(gridSize>3){
+                gridSize--;
+                recyclerView.setLayoutManager(new GridLayoutManager(getContext(),gridSize));
+            }
         }
         if (id==R.id.action_setting_camera)
         {
@@ -170,7 +174,7 @@ public class FirstFragment extends Fragment {
     }
     public void loadImages(){
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
         images=imagesGallery.listOfImages(getContext());
         imageAdapter=new ImageAdapter(getContext(),images,new ImageAdapter.PhotoListiner(){
             @Override

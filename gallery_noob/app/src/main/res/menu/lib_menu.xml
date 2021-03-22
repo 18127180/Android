@@ -8,7 +8,7 @@
         <menu>
             <item
                 android:id="@+id/action_setting_big"
-                android:title="Phong to"
+                android:title="Phóng to"
                 android:icon="@drawable/ic_baseline_zoom_in_24"
                 app:showAsAction="ifRoom"
                 />
