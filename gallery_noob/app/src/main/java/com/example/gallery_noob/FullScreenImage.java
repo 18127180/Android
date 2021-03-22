@@ -39,6 +39,8 @@ public class FullScreenImage extends AppCompatActivity {
     boolean gone = false;
     ImageButton back_btn;
     private List<String> listOfPathImages;
+    private float x1,x2,y1,y2;
+    private float MIN_DISTANCE=150;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -58,20 +60,31 @@ public class FullScreenImage extends AppCompatActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN){
-                    if(!gone){
-                        ln.setVisibility(View.GONE);
-                        ln1.setVisibility(View.GONE);
-                        ln3.setVisibility(View.GONE);
-                        Log.e("Co","true");
-                        gone=true;
-                    }else{
-                        ln.setVisibility(View.VISIBLE);
-                        ln1.setVisibility(View.VISIBLE);
-                        ln3.setVisibility(View.VISIBLE);
-                        gone=false;
-                        Log.e("Co","false");
-                    }
+                switch (event.getAction())
+                {
+                    case MotionEvent.ACTION_DOWN:
+                        x1=event.getX();
+                        y1=event.getY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        x2=event.getX();
+                        y2=event.getY();
+                        if (Math.abs(x1-x2)>MIN_DISTANCE)
+                        {
+                            //Luot qua phai
+                            if (x2>x1)
+                            {
+                                ln.setVisibility(View.GONE);
+                                ln1.setVisibility(View.GONE);
+                                ln3.setVisibility(View.GONE);
+                            }
+                            else
+                            {
+                                ln.setVisibility(View.VISIBLE);
+                                ln1.setVisibility(View.VISIBLE);
+                                ln3.setVisibility(View.VISIBLE);
+                            }
+                        }
                 }
                 return false;
             }
