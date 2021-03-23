@@ -18,6 +18,7 @@ public class SharedData extends Activity {
         }
         this.context =  context;
     }
+    public SharedData(){}
 
     public static ArrayList<Model_images> getAl_images() {
         return al_images;
@@ -30,6 +31,14 @@ public class SharedData extends Activity {
 
     public static void addModel(Model_images i){
         SharedData.al_images.add(i);
+    }
+    public static void addCamera(String path){
+        for (int i = 0; i < al_images.size(); i++) {        //De in ra xem trong mang al_images co nhung thu muc gi, file gi ?.
+            if(al_images.get(i).getStr_folder().equals("Camera")){
+                al_images.get(i).al_imagepath.add(0,path);
+                break;
+            }
+        }
     }
 
     //Getter & Setter
