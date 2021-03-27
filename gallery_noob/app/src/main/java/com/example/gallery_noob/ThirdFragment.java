@@ -3,8 +3,11 @@ package com.example.gallery_noob;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
  */
 public class ThirdFragment extends Fragment {
 
-    private ArrayList<Model_images> al_images;
+    private ArrayList<Model_images> al_images = new ArrayList<>();
     Adapter_PhotosFolder obj_adapter;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -78,20 +81,17 @@ public class ThirdFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        MainActivity activity = (MainActivity) getActivity();
-        al_images = SharedData.getAl_images();
-        obj_adapter = activity.getObj_adapter();
-
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_third, container, false);
+        fn_imagespath();
         gv_folder=(GridView) rootView.findViewById(R.id.gv_folder);
         //gv_folder.setAdapter(new ImageAdapter(getActivity()));
         gv_folder.setAdapter(obj_adapter);
         gv_folder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(activity.getApplicationContext(), PhotosActivity.class);
-                intent.putExtra("value",position);
+                Intent intent = new Intent(getContext(), PhotosActivity.class);
+                intent.putExtra("value", position);
                 intent.putParcelableArrayListExtra("al_images", al_images);
                 startActivityForResult(intent,1);
             }
@@ -101,11 +101,11 @@ public class ThirdFragment extends Fragment {
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Name your album:");
 
                 // Set up the input
-                final EditText input = new EditText(activity);
+                final EditText input = new EditText(getContext());
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
@@ -125,7 +125,7 @@ public class ThirdFragment extends Fragment {
                             }
                         }
                         catch(Exception exc){
-                            Toast.makeText(activity,exc.toString(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(),exc.toString(),Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -147,5 +147,66 @@ public class ThirdFragment extends Fragment {
             Log.e("CB","SUCCESS");
             //just need the callback from PhotosActivity
         }
+    }
+
+    boolean boolean_folder;
+    public ArrayList<Model_images> fn_imagespath() {
+        al_images.clear();
+
+        int int_position = 0;
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+
+        String absolutePathOfImage = null;
+        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Log.e("DB","OK you can do it now");
+
+        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+
+        final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+        try{
+            cursor = getContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(column_index_data);
+                Log.e("Column", absolutePathOfImage);
+                Log.e("Folder", cursor.getString(column_index_folder_name));
+
+                for (int i = 0; i < al_images.size(); i++) {
+                    if (al_images.get(i).getStr_folder().equals(cursor.getString(column_index_folder_name))) {
+                        boolean_folder = true;
+                        int_position = i;
+                        break;
+                    } else {
+                        boolean_folder = false;
+                    }
+                }
+
+                if (boolean_folder) {
+
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.addAll(al_images.get(int_position).getAl_imagepath());
+                    al_path.add(absolutePathOfImage);
+                    al_images.get(int_position).setAl_imagepath(al_path);
+
+                } else {
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.add(absolutePathOfImage);
+                    Model_images obj_model = new Model_images();
+                    obj_model.setStr_folder(cursor.getString(column_index_folder_name));
+                    obj_model.setAl_imagepath(al_path);
+
+                    al_images.add(obj_model);
+                }
+            }
+        }catch(Exception exc){
+            Log.e("Error",exc.toString());
+        }
+        obj_adapter = new Adapter_PhotosFolder(getContext(),al_images);
+        //gv_folder.setAdapter(obj_adapter);
+        return al_images;
     }
 }

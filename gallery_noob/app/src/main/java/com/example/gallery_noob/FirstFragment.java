@@ -140,6 +140,11 @@ public class FirstFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //lay currentPhotoPath
+        if(savedInstanceState != null & currentPhotoPath != null){
+            currentPhotoPath = savedInstanceState.getString("current");
+        }
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_first, container, false);
         recyclerView=(RecyclerView)rootView.findViewById(R.id.recyclerview_gallery_images);
@@ -150,7 +155,9 @@ public class FirstFragment extends Fragment {
         }
         else
         {
-            loadImages();
+            if(images==null){
+                loadImages();
+            }
         }
 
         Button btn_select=rootView.findViewById(R.id.button_select);
@@ -235,9 +242,9 @@ public class FirstFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             if(requestCode == REQUEST_CODE_CAMERA){
-                //do nothing
-                Toast.makeText(getActivity(),currentPhotoPath,Toast.LENGTH_LONG).show();
-                SharedData.addCamera(currentPhotoPath);
+                if(data != null) {
+                    galleryAddPic();
+                }else   Log.e("Error","Intent get from camera intent 'data' is null");
             }
         }
     }
@@ -251,7 +258,7 @@ public class FirstFragment extends Fragment {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "JPG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM+"/Camera/");
         if (!storageDir.exists()) {
             storageDir.mkdir();
@@ -259,7 +266,7 @@ public class FirstFragment extends Fragment {
         //        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
-                ".jpeg",         /* suffix */
+                ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
         // Save a file: path for use with ACTION_VIEW intents
@@ -288,5 +295,32 @@ public class FirstFragment extends Fragment {
                 startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA);
             }
         }
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(currentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        getContext().sendBroadcast(mediaScanIntent);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(currentPhotoPath!=null) {
+            Toast.makeText(getContext(), currentPhotoPath, Toast.LENGTH_LONG).show();
+            //addImageToGallery(getActivity().getContentResolver(),new File(currentPhotoPath));
+            galleryAddPic();
+        }
+    }
+
+    // invoked when the activity may be temporarily destroyed, save the instance state here
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("current",currentPhotoPath);
+
+        // call superclass to save any view hierarchy
+        super.onSaveInstanceState(outState);
     }
 }

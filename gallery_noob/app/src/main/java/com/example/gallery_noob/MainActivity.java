@@ -1,7 +1,6 @@
 package com.example.gallery_noob;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -9,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,10 +20,9 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -83,10 +80,7 @@ public class MainActivity extends AppCompatActivity {
         }else {
             Log.e("Else","Loading Gallery");
             //fn_imagespath();
-            SharedData i = new SharedData(this);
-            i.fn_imagespath();
-            al_images = SharedData.getAl_images();
-            obj_adapter = new Adapter_PhotosFolder(getApplicationContext(),SharedData.al_images);
+            //reloadAlbum();
             /*
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("al_images", (ArrayList<? extends Parcelable>) al_images);
@@ -97,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
              */
         }
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {

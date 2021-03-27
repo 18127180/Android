@@ -18,6 +18,7 @@ public class PhotosActivity extends AppCompatActivity {
     int int_position;
     private GridView gridView;
     GridViewAdapter adapter;
+    ArrayList<Model_images> al_images = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,20 +28,21 @@ public class PhotosActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         int_position = i.getIntExtra("value", 0);
+        al_images = i.getParcelableArrayListExtra("al_images");
         //ArrayList<Model_images>al_images = i.getParcelableArrayListExtra("al_images");
-        getSupportActionBar().setTitle(MainActivity.al_images.get(int_position).str_folder);
+        getSupportActionBar().setTitle(al_images.get(int_position).str_folder);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        adapter = new GridViewAdapter(getApplicationContext(),MainActivity.al_images,int_position);
+        adapter = new GridViewAdapter(getApplicationContext(),al_images,int_position);
         //Adapter_PhotosFolder adapter = new Adapter_PhotosFolder(this,MainActivity.al_images);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent= new Intent(PhotosActivity.this,FullScreenImage.class);
-                intent.putExtra("path", SharedData.al_images.get(int_position).getAl_imagepath().get(position));
-                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)SharedData.al_images.get(int_position).getAl_imagepath());
+                intent.putExtra("path", al_images.get(int_position).getAl_imagepath().get(position));
+                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)al_images.get(int_position).getAl_imagepath());
                 startActivity(intent);
             }
         });

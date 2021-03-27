@@ -12,13 +12,12 @@ import java.util.ArrayList;
 
 public class SharedData extends Activity {
     public SharedData(Context context) {
-        if(count==0){
-            al_images = new ArrayList<>();
-            count++;
-        }
+        al_images = new ArrayList<>();
         this.context =  context;
     }
-    public SharedData(){}
+    public SharedData(){
+        al_images = new ArrayList<>();
+    }
 
     public static ArrayList<Model_images> getAl_images() {
         return al_images;
@@ -43,7 +42,7 @@ public class SharedData extends Activity {
 
     //Getter & Setter
     public static void setAl_images(ArrayList<Model_images> al_images) {
-        al_images = new ArrayList<>();
+        SharedData.al_images = new ArrayList<>();
         SharedData.al_images = al_images;
     }
 
@@ -54,7 +53,7 @@ public class SharedData extends Activity {
     }
 
     //Initiate Gallery
-    public ArrayList<Model_images> fn_imagespath() {
+    public static ArrayList<Model_images> fn_imagespath() {
         al_images.clear();
 
         int int_position = 0;
@@ -106,16 +105,6 @@ public class SharedData extends Activity {
                 al_images.add(obj_model);
             }
         }
-
-        /*
-        for (int i = 0; i < al_images.size(); i++) {        //De in ra xem trong mang al_images co nhung thu muc gi, file gi ???
-            Log.e("FOLDER", al_images.get(i).getStr_folder());
-            for (int j = 0; j < al_images.get(i).getAl_imagepath().size(); j++) {
-                Log.e("FILE", al_images.get(i).getAl_imagepath().get(j));
-            }
-        }
-        */
-        //gv_folder.setAdapter(obj_adapter);
         return al_images;
     }
 }
