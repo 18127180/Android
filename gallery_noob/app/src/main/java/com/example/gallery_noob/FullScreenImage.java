@@ -1,38 +1,32 @@
 package com.example.gallery_noob;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FullScreenImage extends AppCompatActivity {
     ImageView imageView;
+    static String position;
     private static final int REQUEST_PERMISSIONS = 100;
     static boolean req = false;
     Button button;
@@ -41,6 +35,8 @@ public class FullScreenImage extends AppCompatActivity {
     private List<String> listOfPathImages;
     private float x1,x2,y1,y2;
     private float MIN_DISTANCE=150;
+
+    TextView send;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -49,12 +45,21 @@ public class FullScreenImage extends AppCompatActivity {
 
         ViewPager viewPager=findViewById(R.id.view_pager);
         LinearLayout ln= (LinearLayout)findViewById(R.id.full_scr);
-        LinearLayout ln1= (LinearLayout)findViewById(R.id.text_func);
         LinearLayout ln3= (LinearLayout)findViewById(R.id.header_detail);
         //ln.setVisibility(View.GONE);
         //ln1.setVisibility(View.GONE);
         //ln3.setVisibility(View.GONE);
-
+        send = (TextView)findViewById(R.id.send);
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    onSend();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         viewPager.setOnTouchListener(new View.OnTouchListener(){
 
@@ -72,18 +77,16 @@ public class FullScreenImage extends AppCompatActivity {
                         if (Math.abs(x1-x2)>MIN_DISTANCE)
                         {
                             //Luot qua phai
-                            if (x2>x1)
-                            {
-                                ln.setVisibility(View.GONE);
-                                ln1.setVisibility(View.GONE);
-                                ln3.setVisibility(View.GONE);
-                            }
-                            else
-                            {
-                                ln.setVisibility(View.VISIBLE);
-                                ln1.setVisibility(View.VISIBLE);
-                                ln3.setVisibility(View.VISIBLE);
-                            }
+//                            if (x2>x1)
+//                            {
+//                                ln.setVisibility(View.GONE);
+//                                ln3.setVisibility(View.GONE);
+//                            }
+//                            else
+//                            {
+//                                ln.setVisibility(View.VISIBLE);
+//                                ln3.setVisibility(View.VISIBLE);
+//                            }
                         }
                 }
                 return false;
@@ -102,9 +105,8 @@ public class FullScreenImage extends AppCompatActivity {
         //imageView=(ImageView) findViewById(R.id.image_view);
         button = (Button)findViewById(R.id.button);
         getSupportActionBar().hide();
-        getSupportActionBar().setTitle("Tuấn ngu");
         Intent i=getIntent();
-        String position=null;
+        position=null;
 
         if(!req){
             position=null;
@@ -176,5 +178,14 @@ public class FullScreenImage extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void onSend() throws FileNotFoundException {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/*");
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(),position,"Temp",null);
+        Uri uri = Uri.parse(path);
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(share, "Share Image"));
     }
 }
