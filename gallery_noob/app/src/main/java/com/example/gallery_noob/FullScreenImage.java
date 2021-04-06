@@ -1,6 +1,8 @@
 package com.example.gallery_noob;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -20,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +36,23 @@ public class FullScreenImage extends AppCompatActivity {
     boolean gone = false;
     ImageButton back_btn;
     private List<String> listOfPathImages;
+    ViewPager viewPager;
+    ViewPagerAdapter adapter;
     private float x1,x2,y1,y2;
     private float MIN_DISTANCE=150;
+    static int req_from = 1;
+    ArrayList<String> delList;
 
     TextView send;
+    TextView del;
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
 
-        ViewPager viewPager=findViewById(R.id.view_pager);
+        viewPager= (ViewPager) findViewById(R.id.view_pager);
         LinearLayout ln= (LinearLayout)findViewById(R.id.full_scr);
         LinearLayout ln3= (LinearLayout)findViewById(R.id.header_detail);
         //ln.setVisibility(View.GONE);
@@ -57,6 +66,19 @@ public class FullScreenImage extends AppCompatActivity {
                     onSend();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+        del = (TextView)findViewById(R.id.delete);
+        del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    onDel();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(),"Cannot delete this picture",Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -97,8 +119,7 @@ public class FullScreenImage extends AppCompatActivity {
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent= new Intent(FullScreenImage.this,MainActivity.class);
-                startActivity(intent);
+                onBackPressed();
             }
         });
 
@@ -115,8 +136,11 @@ public class FullScreenImage extends AppCompatActivity {
             listOfPathImages=new ArrayList<String>();
             listOfPathImages = getIntent().getStringArrayListExtra("listOfImages");
             position=i.getExtras().getString("path");
+            req_from = i.getExtras().getInt("req_from");
+            delList = new ArrayList<>();
+
             //Log.e("Size cua mang ",""+listOfPathImages.size());
-            ViewPagerAdapter adapter=new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
+            adapter = new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
             viewPager.setAdapter(adapter);
             viewPager.setCurrentItem(listOfPathImages.indexOf(position));
             viewPager.setOffscreenPageLimit(3);
@@ -187,5 +211,44 @@ public class FullScreenImage extends AppCompatActivity {
         Uri uri = Uri.parse(path);
         share.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(share, "Share Image"));
+        File f = new File(path);
+        f.delete();
+    }
+
+    public void onDel() throws FileNotFoundException {
+        File f = new File(position);
+        if(f.exists()){
+            f.delete();
+            ContentResolver contentResolver = getContentResolver();
+            contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    MediaStore.Images.ImageColumns.DATA + "=?", new String[]{position});
+            delList.add(position);
+        }
+        if(position != null){
+//                        int idx = listOfPathImages.indexOf(position);
+//                        if(idx==listOfPathImages.size()-1){
+//                            idx--;
+//                        }
+//                        adapter = new ViewPagerAdapter(getApplicationContext(),listOfPathImages.toArray(new String[listOfPathImages.size()]));
+//                        viewPager.setAdapter(adapter);
+//                        viewPager.setCurrentItem(idx);
+            adapter.deletePath(position);
+            adapter.notifyDataSetChanged();
+            Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        if (req_from == 1) {  //Neu tu first fragment sang day, ve First fragment
+            Intent intent = new Intent(FullScreenImage.this, MainActivity.class);
+            startActivity(intent);
+        }else if(req_from == 3){    //Neu tu trang album qua thi quay lai trang album
+            Intent intent = new Intent();
+            intent.putStringArrayListExtra("delList",delList);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 }

@@ -25,6 +25,8 @@ import androidx.fragment.app.Fragment;
 import java.io.File;
 import java.util.ArrayList;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ThirdFragment#newInstance} factory method to
@@ -83,19 +85,8 @@ public class ThirdFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_third, container, false);
-        fn_imagespath();
         gv_folder=(GridView) rootView.findViewById(R.id.gv_folder);
-        //gv_folder.setAdapter(new ImageAdapter(getActivity()));
-        gv_folder.setAdapter(obj_adapter);
-        gv_folder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(), PhotosActivity.class);
-                intent.putExtra("value", position);
-                intent.putParcelableArrayListExtra("al_images", al_images);
-                startActivityForResult(intent,1);
-            }
-        });
+        fn_imagespath();
 
         add_btn=(ImageButton) rootView.findViewById(R.id.buttonAdd);
         add_btn.setOnClickListener(new View.OnClickListener() {
@@ -144,8 +135,13 @@ public class ThirdFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 1) {
-            Log.e("CB","SUCCESS");
-            //just need the callback from PhotosActivity
+            if(resultCode == RESULT_OK){
+                Log.e("CB","SUCCESS");
+                //just need the callback from PhotosActivity
+
+                al_images.addAll(data.getExtras().getParcelableArrayList("al_images"));
+                obj_adapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -206,7 +202,18 @@ public class ThirdFragment extends Fragment {
             Log.e("Error",exc.toString());
         }
         obj_adapter = new Adapter_PhotosFolder(getContext(),al_images);
-        //gv_folder.setAdapter(obj_adapter);
+
+        //gv_folder.setAdapter(new ImageAdapter(getActivity()));
+        gv_folder.setAdapter(obj_adapter);
+        gv_folder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), PhotosActivity.class);
+                intent.putExtra("value", position);
+                intent.putParcelableArrayListExtra("al_images", al_images);
+                startActivityForResult(intent,1);
+            }
+        });
         return al_images;
     }
 }

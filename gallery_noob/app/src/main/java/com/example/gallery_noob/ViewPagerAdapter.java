@@ -12,6 +12,8 @@ import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ViewPagerAdapter extends PagerAdapter {
     Context context;
@@ -31,6 +33,11 @@ public class ViewPagerAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view==object;
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
     }
 
     @NonNull
@@ -57,4 +64,21 @@ public class ViewPagerAdapter extends PagerAdapter {
         String mimeType = URLConnection.guessContentTypeFromName(path);
         return mimeType != null && mimeType.startsWith("video");
     }
+
+    public int deletePath(String path){
+        ArrayList<String> temp = new ArrayList<String>(Arrays.asList(images));
+        int index = 0;
+        if (temp.contains(path)) {
+            index = temp.indexOf(path);
+            if(index == temp.size()-1){
+                index--;
+            }
+            temp.remove(path);
+        }
+        images = temp.toArray(new String[temp.size()]);
+        notifyDataSetChanged();
+        return index;
+    }
+
+
 }

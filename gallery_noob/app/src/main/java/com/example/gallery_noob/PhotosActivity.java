@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class PhotosActivity extends AppCompatActivity {
     private GridView gridView;
     GridViewAdapter adapter;
     ArrayList<Model_images> al_images = new ArrayList<>();
+    private static int REQUEST_CODE_ALBUM = 12;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,8 @@ public class PhotosActivity extends AppCompatActivity {
                 Intent intent= new Intent(PhotosActivity.this,FullScreenImage.class);
                 intent.putExtra("path", al_images.get(int_position).getAl_imagepath().get(position));
                 intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)al_images.get(int_position).getAl_imagepath());
-                startActivity(intent);
+                intent.putExtra("req_from",3);
+                startActivityForResult(intent,REQUEST_CODE_ALBUM);
             }
         });
         gridView.setVerticalSpacing(5);
@@ -54,7 +57,23 @@ public class PhotosActivity extends AppCompatActivity {
     public void onBackPressed() {
         //Intent intent = new Intent(PhotosActivity.this,ThirdFragment.class);
         //startActivity(intent);
-        setResult(RESULT_OK, new Intent().setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putParcelableArrayListExtra("al_images", al_images);
+        setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            if(requestCode == REQUEST_CODE_ALBUM){
+                ArrayList<String> del = data.getExtras().getStringArrayList("delList");
+                if(del.isEmpty()) return;
+                al_images.get(int_position).al_imagepath.removeAll(del);
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }

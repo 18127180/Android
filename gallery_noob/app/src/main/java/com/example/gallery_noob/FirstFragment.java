@@ -211,6 +211,7 @@ public class FirstFragment extends Fragment {
                 Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
                 intent.putExtra("path", path);
                 intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)images);
+                intent.putExtra("req_from",1);
                 startActivity(intent);
             }
         });
@@ -313,6 +314,7 @@ public class FirstFragment extends Fragment {
             //addImageToGallery(getActivity().getContentResolver(),new File(currentPhotoPath));
             galleryAddPic();
         }
+        loadImages();
     }
 
     // invoked when the activity may be temporarily destroyed, save the instance state here

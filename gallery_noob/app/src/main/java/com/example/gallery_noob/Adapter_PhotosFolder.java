@@ -21,13 +21,10 @@ public class Adapter_PhotosFolder extends ArrayAdapter<Model_images> {
     ViewHolder viewHolder;
     ArrayList<Model_images> al_menu = new ArrayList<>();
 
-
     public Adapter_PhotosFolder(Context context, ArrayList<Model_images> al_menu) {
         super(context, R.layout.adapter_photosfolder, al_menu);
         this.al_menu = al_menu;
         this.context = context;
-
-
     }
 
     @Override
@@ -95,13 +92,17 @@ public class Adapter_PhotosFolder extends ArrayAdapter<Model_images> {
     private static class ViewHolder {
         TextView tv_foldern, tv_foldersize;
         ImageView iv_image;
-
-
     }
 
     public void refillItems(ArrayList<Model_images>al_images){
         al_menu.clear();
         al_menu.addAll(al_images);
+    }
+
+    public void refresh(ArrayList<Model_images> items){
+        this.al_menu = items;
         notifyDataSetChanged();
     }
+
+
 }
