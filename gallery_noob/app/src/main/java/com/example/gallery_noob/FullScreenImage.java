@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -20,10 +21,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +38,9 @@ public class FullScreenImage extends AppCompatActivity {
     Button button;
     boolean gone = false;
     ImageButton back_btn;
-    private List<String> listOfPathImages;
+    private ArrayList<String> listOfPathImages;
     ViewPager viewPager;
-    ViewPagerAdapter adapter;
+    MyFragmentAdapter adapter;
     private float x1,x2,y1,y2;
     private float MIN_DISTANCE=150;
     static int req_from = 1;
@@ -45,6 +48,16 @@ public class FullScreenImage extends AppCompatActivity {
 
     TextView send;
     TextView del;
+
+    public static boolean isImageFile(String path) {
+        String mimeType = URLConnection.guessContentTypeFromName(path);
+        return mimeType != null && mimeType.startsWith("image");
+    }
+    public static boolean isVideoFile(String path) {
+        String mimeType = URLConnection.guessContentTypeFromName(path);
+        return mimeType != null && mimeType.startsWith("video");
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,10 +153,46 @@ public class FullScreenImage extends AppCompatActivity {
             delList = new ArrayList<>();
 
             //Log.e("Size cua mang ",""+listOfPathImages.size());
-            adapter = new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
+//            adapter = new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
+            ArrayList <Fragment> frag_array=new ArrayList<>();
+            for (int j=0;j<listOfPathImages.size();j++)
+            {
+                if (isImageFile(listOfPathImages.get(j)))
+                {
+                    imageFragment item=new imageFragment(listOfPathImages.get(j));
+                    frag_array.add(item);
+                }
+                if (isVideoFile(listOfPathImages.get(j)))
+                {
+                    videoFragment item=new videoFragment(listOfPathImages.get(j));
+                    frag_array.add(item);
+                }
+            }
+            adapter=new MyFragmentAdapter(getSupportFragmentManager(),frag_array);
+//            viewPager.setOffscreenPageLimit(0);
             viewPager.setAdapter(adapter);
-            viewPager.setCurrentItem(listOfPathImages.indexOf(position));
-            viewPager.setOffscreenPageLimit(3);
+//            viewPager.setCurrentItem(listOfPathImages.indexOf(position));
+            ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    FragmentLifecycle fragmentToShow = (FragmentLifecycle)adapter.getItem(position);
+                    Log.e("pause","onPause");
+                    fragmentToShow.onResumeFragment();
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            };
+            viewPager.setOnPageChangeListener(pageChangeListener);
+//            pageChangeListener.onPageSelected(listOfPathImages.indexOf(position));
+            viewPager.post(() -> viewPager.setCurrentItem(listOfPathImages.indexOf(position)));
         }
         //ImageAdapter imageAdapter= new ImageAdapter(this);
 //        if(position!=null)
@@ -232,7 +281,7 @@ public class FullScreenImage extends AppCompatActivity {
 //                        adapter = new ViewPagerAdapter(getApplicationContext(),listOfPathImages.toArray(new String[listOfPathImages.size()]));
 //                        viewPager.setAdapter(adapter);
 //                        viewPager.setCurrentItem(idx);
-            adapter.deletePath(position);
+            //adapter.deletePath(position);(Dang comment)
             adapter.notifyDataSetChanged();
             Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
         }
