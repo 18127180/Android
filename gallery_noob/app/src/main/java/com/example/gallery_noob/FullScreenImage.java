@@ -193,6 +193,14 @@ public class FullScreenImage extends AppCompatActivity {
             viewPager.setOnPageChangeListener(pageChangeListener);
 //            pageChangeListener.onPageSelected(listOfPathImages.indexOf(position));
             viewPager.post(() -> viewPager.setCurrentItem(listOfPathImages.indexOf(position)));
+            viewPager.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    pageChangeListener.onPageSelected(viewPager.getCurrentItem());
+                }
+            });
         }
         //ImageAdapter imageAdapter= new ImageAdapter(this);
 //        if(position!=null)

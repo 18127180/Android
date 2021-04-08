@@ -22,6 +22,7 @@ import java.io.File;
 public class videoFragment extends Fragment implements FragmentLifecycle {
     private VideoView videoView;
     private String url;
+    private View view;
     MediaController mediaController;
 
     public videoFragment(String url){
@@ -31,14 +32,13 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.full_screen_video, container,false);
+        view=inflater.inflate(R.layout.full_screen_video, container,false);
         videoView = (VideoView) view.findViewById(R.id.videoView);
         videoView.setVideoURI(Uri.parse(url));
         videoView.requestFocus();
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-//                videoView.start();
                 mp.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
                     @Override
                     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
@@ -73,6 +73,9 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
             if (!isVisibleToUser)
             {
                 videoView.pause();
+                videoView.seekTo(0);
+                mediaController=null;
+                videoView.setMediaController(mediaController);
             }
         }
     }
@@ -85,5 +88,10 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
     @Override
     public void onResumeFragment() {
         videoView.start();
+        if (mediaController == null) {
+            mediaController = new MediaController(view.getContext());
+            videoView.setMediaController(mediaController);
+            mediaController.setAnchorView(videoView);
+        }
     }
 }
