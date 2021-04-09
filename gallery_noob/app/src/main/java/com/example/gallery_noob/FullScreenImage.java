@@ -2,19 +2,28 @@ package com.example.gallery_noob;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.WallpaperManager;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,11 +35,13 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class FullScreenImage extends AppCompatActivity {
     ImageView imageView;
+
     static String position;
     private static final int REQUEST_PERMISSIONS = 100;
     static boolean req = false;
@@ -44,8 +55,9 @@ public class FullScreenImage extends AppCompatActivity {
     private float MIN_DISTANCE=150;
     static int req_from = 1;
     ArrayList<String> delList;
+    int cur_select;
 
-    TextView send;
+    TextView send,imageMore;
     TextView del;
 
     public static boolean isImageFile(String path) {
@@ -57,12 +69,92 @@ public class FullScreenImage extends AppCompatActivity {
         return mimeType != null && mimeType.startsWith("video");
     }
 
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
+
+        imageMore=findViewById(R.id.more);
+        Drawable background = ContextCompat.getDrawable(this, R.drawable
+                .popup_menu_background);
+
+        imageMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu=new PopupMenu(getApplicationContext(), imageMore);
+                popupMenu.getMenuInflater().inflate(R.menu.more_image_menu,popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.item1:
+                                break;
+                            case R.id.item2:
+                                DisplayMetrics displayMetrics = new DisplayMetrics();
+                                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                                int height = displayMetrics.heightPixels;
+                                int width = displayMetrics.widthPixels << 1; // best wallpaper width is twice screen width
+
+                                // First decode with inJustDecodeBounds=true to check dimensions
+                                final BitmapFactory.Options options = new BitmapFactory.Options();
+                                options.inJustDecodeBounds = true;
+                                BitmapFactory.decodeFile(listOfPathImages.get(cur_select), options);
+
+                                // Calculate inSampleSize
+                                options.inSampleSize = calculateInSampleSize(options, width, height);
+
+                                // Decode bitmap with inSampleSize set
+                                options.inJustDecodeBounds = false;
+                                Bitmap decodedSampleBitmap = BitmapFactory.decodeFile(listOfPathImages.get(cur_select), options);
+
+                                WallpaperManager wm = WallpaperManager.getInstance(getApplicationContext());
+                                try {
+                                    wm.setBitmap(decodedSampleBitmap);
+                                } catch (IOException e) {
+                                    Log.e("TAG", "Cannot set image as wallpaper", e);
+                                }
+
+//                                WallpaperManager myWallpaperManager
+//                                        = WallpaperManager.getInstance(getApplicationContext());
+//                                try {
+//                                    myWallpaperManager.setBitmap(BitmapFactory.decodeFile(listOfPathImages.get(cur_select)));
+//                                } catch (IOException e) {
+//                                    // TODO Auto-generated catch block
+//                                    e.printStackTrace();
+//                                }
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
 
         viewPager= (ViewPager) findViewById(R.id.view_pager);
         LinearLayout ln= (LinearLayout)findViewById(R.id.full_scr);
@@ -180,8 +272,8 @@ public class FullScreenImage extends AppCompatActivity {
                 @Override
                 public void onPageSelected(int position) {
                     FragmentLifecycle fragmentToShow = (FragmentLifecycle)adapter.getItem(position);
-                    Log.e("pause","onPause");
                     fragmentToShow.onResumeFragment();
+                    cur_select=position;
                 }
 
                 @Override
