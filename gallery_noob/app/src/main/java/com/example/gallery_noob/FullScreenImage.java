@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.List;
 
 public class FullScreenImage extends AppCompatActivity {
     ImageView imageView;
@@ -301,6 +300,14 @@ public class FullScreenImage extends AppCompatActivity {
         if (req_from == 1) {  //Neu tu first fragment sang day, ve First fragment
             Intent intent = new Intent(FullScreenImage.this, MainActivity.class);
             startActivity(intent);
+        }else if(req_from == 2){    //Neu tu trang yeu thich qua thi quay lai trang yeu thich
+//            Intent intent = new Intent();
+            Intent intent = new Intent();
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putStringArrayListExtra("delList",delList);
+            intent.putStringArrayListExtra("al_images", listOfPathImages);
+            setResult(RESULT_OK, intent);
+            finish();
         }else if(req_from == 3){    //Neu tu trang album qua thi quay lai trang album
             Intent intent = new Intent();
             intent.putStringArrayListExtra("delList",delList);

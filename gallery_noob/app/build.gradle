@@ -43,6 +43,10 @@ dependencies {
     implementation 'com.jcminarro:RoundKornerLayouts:0.2.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+<<<<<<< Updated upstream
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
+=======
+    implementation 'com.etsy.android.grid:library:1.0.5' // see changelog
+>>>>>>> Stashed changes
 }
