@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".detail_media_activity">
+
+    <ImageView
+        android:id="@+id/back_btn_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_arrow_back_ios_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        />
+    <TextView
+        android:id="@+id/detail_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:text="@string/chi_ti_t"
+        android:layout_marginTop="15dp"
+        app:layout_constraintLeft_toRightOf="@id/back_btn_detail"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/fix_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:text="@string/s_a"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"/>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintTop_toBottomOf="@id/back_btn_detail"
+    android:layout_marginRight="15dp"
+    android:layout_marginLeft="15dp">
+
+    <LinearLayout
+        android:weightSum="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_baseline_calendar_today_24"
+            />
+        <TextView
+            android:id="@+id/date_modified"
+            android:layout_marginLeft="20dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="10 tháng 4, 2021 14:39"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:layout_weight="9"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="10"
+        android:layout_marginTop="20dp">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_baseline_image_detail"
+            />
+        <LinearLayout
+            android:layout_weight="9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp">
+            <TextView
+                android:id="@+id/name_media"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="120210410_143945.jpg"
+                android:gravity="center"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/path_media"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="/Bộ nhớ trong/DCIM/Camera"
+                android:gravity="center" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:id="@+id/size_media"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="2,02 MB"
+                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/window_media"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="3264x2448"
+                    android:gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:weightSum="10">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_location_on_24"
+            android:layout_weight="1"
+            />
+        <TextView
+            android:id="@+id/location_media"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:layout_marginLeft="20dp"
+            android:text="344 Võ văn tần, phường 5, Quận 3, Thành phố hồ chí minh, Việt nam"/>
+
+        <ImageView
+            android:id="@+id/imageAddNoteMain"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_change_location"
+            android:src="@drawable/ic_baseline_remove_24"
+            android:layout_gravity="center"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:weightSum="10">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_camera_alt_24"
+            android:layout_weight="1"
+            />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="9">
+            <TextView
+                android:id="@+id/camera_media"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Samsung SM-M315F"
+                android:gravity="center"
+                android:textColor="@color/black" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:id="@+id/sub1_camera_media"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="F2,0"
+                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/sub2_camera_media"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="1/25s"
+                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/sub3_camera_media"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="3,72mm"
+                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/sub4_camera_media"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="ISO 800"
+                    android:gravity="center" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:id="@+id/mode1_camera_media"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Cân bằng trắng Tự động"
+                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/mode2_camera_media"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Không có flash"
+                    android:gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_background"
+            android:text="@string/tho_t"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/white"
+            android:textColor="@color/black"
+            style="?android:attr/borderlessButtonStyle"
+            android:textSize="18dp"
+            />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_background"
+            android:text="@string/l_u"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/white"
+            android:textColor="@color/black"
+            style="?android:attr/borderlessButtonStyle"
+            android:textSize="18dp"
+            />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

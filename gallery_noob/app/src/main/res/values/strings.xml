@@ -2,4 +2,8 @@
     <string name="app_name">gallery_noob</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="l_u">Lưu</string>
+    <string name="tho_t">Thoát</string>
+    <string name="chi_ti_t">Chi tiết</string>
+    <string name="s_a">Sửa</string>
 </resources>

@@ -100,6 +100,37 @@ public class FullScreenImage extends AppCompatActivity {
         return inSampleSize;
     }
 
+    public String readExif(String path)
+    {
+        String exif="Exif: " + path;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            exif += "\nIMAGE_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
+            exif += "\nIMAGE_WIDTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
+            exif += "\n DATETIME: " + exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+            exif += "\n TAG_MAKE: " + exifInterface.getAttribute(ExifInterface.TAG_MAKE);
+            exif += "\n TAG_MODEL: " + exifInterface.getAttribute(ExifInterface.TAG_MODEL);
+            exif += "\n TAG_ORIENTATION: " + exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
+            exif += "\n TAG_WHITE_BALANCE: " + exifInterface.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
+            exif += "\n TAG_FOCAL_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+            exif += "\n TAG_FLASH: " + exifInterface.getAttribute(ExifInterface.TAG_FLASH);
+            exif += "\n TAG_ISO: " + exifInterface.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);//TAG_F_NUMBER
+            exif += "\n F: " + exifInterface.getAttribute(ExifInterface.TAG_F_NUMBER);//TAG_SHUTTER_SPEED_VALUE
+            exif += "\n Exposure: " + exifInterface.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME,0);//TAG_SHUTTER_SPEED_VALUE
+            exif += "\nGPS related:";
+            exif += "\n TAG_GPS_DATESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
+            exif += "\n TAG_GPS_TIMESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
+            exif += "\n TAG_GPS_LATITUDE: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+            exif += "\n TAG_GPS_LATITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            exif += "\n TAG_GPS_LONGITUDE: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+            exif += "\n TAG_GPS_LONGITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+            exif += "\n TAG_GPS_PROCESSING_METHOD: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD);
+        }catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } return exif;
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +152,8 @@ public class FullScreenImage extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.item1:
+                                Intent goToNextActivity = new Intent(getApplicationContext(), detail_media_activity.class);
+                                startActivity(goToNextActivity);
                                 break;
                             case R.id.item2:
                                 DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -275,16 +308,16 @@ public class FullScreenImage extends AppCompatActivity {
             {
                 if (isImageFile(listOfPathImages.get(j)))
                 {
+                    Log.e("Information",readExif(listOfPathImages.get(j)));
                     ExifInterface exif = null;
                     try {
                         exif = new ExifInterface(listOfPathImages.get(j));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    float[] latLong = new float[2];
-                    boolean hasLatLong = exif.getLatLong(latLong);
-                    if (hasLatLong) {
-                        System.out.println(isImageFile(listOfPathImages.get(j)));
+                    double[] latLong = exif.getLatLong();
+                    if (latLong!=null) {
+                        System.out.println(listOfPathImages.get(j));
                         System.out.println("Latitude: " + latLong[0]);
                         System.out.println("Longitude: " + latLong[1]);
                     }
