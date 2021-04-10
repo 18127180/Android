@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -404,8 +402,12 @@ public class FullScreenImage extends AppCompatActivity {
     public void onBackPressed() {
         //super.onBackPressed();
         if (req_from == 1) {  //Neu tu first fragment sang day, ve First fragment
-            Intent intent = new Intent(FullScreenImage.this, MainActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent();
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putStringArrayListExtra("delList",delList);
+            intent.putStringArrayListExtra("al_images", listOfPathImages);
+            setResult(RESULT_OK, intent);
+            finish();
         }else if(req_from == 2){    //Neu tu trang yeu thich qua thi quay lai trang yeu thich
 //            Intent intent = new Intent();
             Intent intent = new Intent();
