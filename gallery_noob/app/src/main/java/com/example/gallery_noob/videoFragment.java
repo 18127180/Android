@@ -2,22 +2,18 @@ package com.example.gallery_noob;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.bumptech.glide.Glide;
-
-import java.io.File;
 
 public class videoFragment extends Fragment implements FragmentLifecycle {
     private VideoView videoView;
@@ -92,6 +88,19 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
             mediaController = new MediaController(view.getContext());
             videoView.setMediaController(mediaController);
             mediaController.setAnchorView(videoView);
+        }
+        if(FullScreenImage.favList != null){
+            if(FullScreenImage.favList.contains(url)){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    FullScreenImage.fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite_24,0,0);
+                    FullScreenImage.favStatus = true;
+                }
+            }else{
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    FullScreenImage.fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite,0,0);
+                    FullScreenImage.favStatus = false;
+                }
+            }
         }
     }
 }

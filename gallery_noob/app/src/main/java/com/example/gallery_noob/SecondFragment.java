@@ -1,15 +1,15 @@
 package com.example.gallery_noob;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
@@ -17,8 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.etsy.android.grid.StaggeredGridView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -109,8 +112,7 @@ public class SecondFragment extends Fragment {
 //        recyclerView.setAdapter(imageAdapter);
 
         mGridView = (StaggeredGridView) rootView.findViewById(R.id.grid_view);
-        all_medias = imagesGallery.listOfImages(getContext());
-        mAdapter = new SampleAdapter(getContext(),android.R.layout.simple_list_item_1, all_medias);
+//        all_medias = imagesGallery.listOfImages(getContext());
         // do we have saved data?
         if (savedInstanceState != null) {
             mData = savedInstanceState.getStringArrayList(SAVED_DATA_KEY);
@@ -120,43 +122,44 @@ public class SecondFragment extends Fragment {
             mData = generateData();
         }
 
-        for (String data : mData) {
-            mAdapter.add(data);
-        }
-
-        mGridView.setAdapter(mAdapter);
-        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                Log.d(TAG, "onScrollStateChanged:" + scrollState);
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                Log.d(TAG, "onScroll firstVisibleItem:" + firstVisibleItem +
-                        " visibleItemCount:" + visibleItemCount +
-                        " totalItemCount:" + totalItemCount);
-                // our handling
-                if (!mHasRequestedMore) {
-                    int lastInScreen = firstVisibleItem + visibleItemCount;
-                    if (lastInScreen >= totalItemCount) {
-                        Log.d(TAG, "onScroll lastInScreen - so load more");
-                        mHasRequestedMore = true;
-                        onLoadMoreItems();
-                    }
+        if(mData != null) {
+            mAdapter = new SampleAdapter(getContext(), android.R.layout.simple_list_item_1, mData);
+            mGridView.setAdapter(mAdapter);
+            //        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            //            @Override
+            //            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            //                Log.d(TAG, "onScrollStateChanged:" + scrollState);
+            //            }
+            //
+            //            @Override
+            //            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            //                Log.d(TAG, "onScroll firstVisibleItem:" + firstVisibleItem +
+            //                        " visibleItemCount:" + visibleItemCount +
+            //                        " totalItemCount:" + totalItemCount);
+            //                // our handling
+            //                if (!mHasRequestedMore) {
+            //                    int lastInScreen = firstVisibleItem + visibleItemCount;
+            //                    if (lastInScreen >= totalItemCount) {
+            //                        Log.d(TAG, "onScroll lastInScreen - so load more");
+            //                        mHasRequestedMore = true;
+            //                        onLoadMoreItems();
+            //                    }
+            //                }
+            //            }
+            //        });
+            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(getActivity(), FullScreenImage.class);
+                    intent.putExtra("path", mData.get(position));
+                    intent.putStringArrayListExtra("listOfImages", mData);
+                    intent.putExtra("req_from", 2);
+                    startActivityForResult(intent, REQUEST_FROM_FAV);
                 }
-            }
-        });
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(),FullScreenImage.class);
-                intent.putExtra("path", all_medias.get(position));
-                intent.putStringArrayListExtra("listOfImages",all_medias);
-                intent.putExtra("req_from",2);
-                startActivityForResult(intent,REQUEST_FROM_FAV);
-            }
-        });
+            });
+        }else{
+            Toast.makeText(getActivity(),"No favourites found",Toast.LENGTH_LONG).show();
+        }
 
         return rootView;
     }
@@ -174,16 +177,12 @@ public class SecondFragment extends Fragment {
     }
 
     private ArrayList<String> generateData() {
-        ArrayList<String> listData = new ArrayList<String>();
-        listData.add("http://i62.tinypic.com/2iitkhx.jpg");
-        listData.add("http://i61.tinypic.com/w0omeb.jpg");
-        listData.add("http://i60.tinypic.com/w9iu1d.jpg");
-        listData.add("http://i60.tinypic.com/iw6kh2.jpg");
-        listData.add("http://i57.tinypic.com/ru08c8.jpg");
-        listData.add("http://i60.tinypic.com/k12r10.jpg");
-        listData.add("http://i58.tinypic.com/2e3daug.jpg");
-        listData.add("http://i59.tinypic.com/2igznfr.jpg");
-        return listData;
+        ArrayList<String> temp = new ArrayList<>();
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("app", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("favourite", "");
+        temp = gson.fromJson(json, new TypeToken<List<String>>(){}.getType());
+        return temp;
     }
 
     @Override
