@@ -255,13 +255,13 @@ public class FullScreenImage extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String LATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                    String LATITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-                    String LONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                    String LONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-                    String image_length=exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
-                    String image_width=exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
-                    Log.e("Location",LATITUDE+LATITUDE_REF+LONGITUDE+LONGITUDE_REF+image_length+image_width);
+                    float[] latLong = new float[2];
+                    boolean hasLatLong = exif.getLatLong(latLong);
+                    if (hasLatLong) {
+                        System.out.println(isImageFile(listOfPathImages.get(j)));
+                        System.out.println("Latitude: " + latLong[0]);
+                        System.out.println("Longitude: " + latLong[1]);
+                    }
                     imageFragment item=new imageFragment(listOfPathImages.get(j));
                     frag_array.add(item);
                 }
