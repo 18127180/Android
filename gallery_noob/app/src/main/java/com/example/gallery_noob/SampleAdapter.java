@@ -35,6 +35,12 @@ public class SampleAdapter extends ArrayAdapter<String> {
     }
 
     @Override
+    public void remove(@Nullable String object) {
+        super.remove(object);
+        al_images.remove(object);
+    }
+
+    @Override
     public View getView(final int position, View convertView,
                         final ViewGroup parent) {
 

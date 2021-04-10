@@ -59,7 +59,7 @@ public class FirstFragment extends Fragment {
 
     private static final int MY_READ_PERMISION_CODE=101;
     private static final int CAMERA_PERMISION_CODE=102;
-    private static final int REQUEST_FROM_FAV=103;
+    private static final int REQUEST_FROM_GALLERY=103;
 
     int REQUEST_CODE_CAMERA=123;
     static int gridSize = 3;
@@ -213,7 +213,7 @@ public class FirstFragment extends Fragment {
                 intent.putExtra("path", path);
                 intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)images);
                 intent.putExtra("req_from",1);
-                startActivityForResult(intent,REQUEST_FROM_FAV);
+                startActivityForResult(intent,REQUEST_FROM_GALLERY);
             }
         });
         recyclerView.setAdapter(imageAdapter);
@@ -247,6 +247,12 @@ public class FirstFragment extends Fragment {
                 if(data != null) {
                     galleryAddPic();
                 }else   Log.e("Error","Intent get from camera intent 'data' is null");
+            }else if(requestCode == REQUEST_FROM_GALLERY){
+                ArrayList<String> del = data.getExtras().getStringArrayList("delList");
+                if(del.isEmpty()) return;
+                images.removeAll(del);
+
+                imageAdapter.notifyDataSetChanged();
             }
         }
     }

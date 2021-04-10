@@ -21,6 +21,16 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         return path.get(position);
     }
 
+//    @Override
+//    public long getItemId(int position) {
+//        return path.get(position).getId();
+//    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+
     public boolean isImageFile(String path) {
         String mimeType = URLConnection.guessContentTypeFromName(path);
         return mimeType != null && mimeType.startsWith("image");

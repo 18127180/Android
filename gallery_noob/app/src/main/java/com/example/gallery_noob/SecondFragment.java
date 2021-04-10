@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.etsy.android.grid.StaggeredGridView;
@@ -22,6 +23,8 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,7 +45,8 @@ public class SecondFragment extends Fragment {
 //    ImageAdapter imageAdapter;
 //    ArrayList<String> images;
 //    RecyclerView recyclerView;
-    private static final int REQUEST_FROM_FAV = 2;
+    private static final int REQUEST_FROM_FAVOURITE = 744;
+
     private static final String TAG = "StaggeredGridActivity";
     public static final String SAVED_DATA_KEY = "SAVED_DATA";
 
@@ -91,26 +95,6 @@ public class SecondFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_second, container, false);
 
-//        images = new ArrayList<>();
-//        images = imagesGallery.listOfImages(getContext());
-//        imageAdapter=new ImageAdapter(getContext(),images,new ImageAdapter.PhotoListiner(){
-//            @Override
-//            public void onPhotoClick(String path) {
-//                Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
-//                intent.putExtra("path", path);
-//                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)images);
-//                intent.putExtra("req_from",1);
-//                startActivity(intent);
-//            }
-//        });
-//
-//        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-//        StaggeredGridLayoutManager st = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
-//        recyclerView.setLayoutManager(st);
-//        st.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-//        recyclerView.setHasFixedSize(true);
-//        recyclerView.setAdapter(imageAdapter);
-
         mGridView = (StaggeredGridView) rootView.findViewById(R.id.grid_view);
 //        all_medias = imagesGallery.listOfImages(getContext());
         // do we have saved data?
@@ -154,7 +138,7 @@ public class SecondFragment extends Fragment {
                     intent.putExtra("path", mData.get(position));
                     intent.putStringArrayListExtra("listOfImages", mData);
                     intent.putExtra("req_from", 2);
-                    startActivityForResult(intent, REQUEST_FROM_FAV);
+                    startActivityForResult(intent, REQUEST_FROM_FAVOURITE);
                 }
             });
         }else{
@@ -200,5 +184,21 @@ public class SecondFragment extends Fragment {
             Toast.makeText(getActivity(),"Thêm mục yêu thích",Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+            if(requestCode == REQUEST_FROM_FAVOURITE){
+                ArrayList<String> del = data.getExtras().getStringArrayList("delList");
+                if(del.isEmpty()) return;
+                for(String i:del){
+                    mAdapter.remove(i);
+                }
+
+                mAdapter.notifyDataSetChanged();
+            }
+        }
     }
 }

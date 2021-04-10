@@ -18,7 +18,6 @@ import java.io.File;
 public class imageFragment extends Fragment implements FragmentLifecycle{
     private PhotoView imageFrag;
     private String url;
-    static boolean lastFavStatus = false;
 
     public imageFragment(String url){
         this.url=url;

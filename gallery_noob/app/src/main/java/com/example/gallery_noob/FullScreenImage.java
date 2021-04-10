@@ -55,13 +55,16 @@ public class FullScreenImage extends AppCompatActivity {
     boolean gone = false;
     ImageButton back_btn;
     private ArrayList<String> listOfPathImages;
+    private ArrayList <Fragment> frag_array;
     ViewPager viewPager;
     MyFragmentAdapter adapter;
     private float x1,x2,y1,y2;
     private float MIN_DISTANCE=150;
     static int req_from = 1;
+    //---return elements
     ArrayList<String> delList;
     static ArrayList<String> favList;
+    //-----------------------------
     int cur_select;
 
     TextView send,imageMore;
@@ -303,7 +306,7 @@ public class FullScreenImage extends AppCompatActivity {
 
             //Log.e("Size cua mang ",""+listOfPathImages.size());
 //            adapter = new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
-            ArrayList <Fragment> frag_array=new ArrayList<>();
+            frag_array=new ArrayList<>();
             for (int j=0;j<listOfPathImages.size();j++)
             {
                 if (isImageFile(listOfPathImages.get(j)))
@@ -321,12 +324,12 @@ public class FullScreenImage extends AppCompatActivity {
                         System.out.println("Latitude: " + latLong[0]);
                         System.out.println("Longitude: " + latLong[1]);
                     }
-                    imageFragment item=new imageFragment(listOfPathImages.get(j));
+                    Fragment item=new imageFragment(listOfPathImages.get(j));
                     frag_array.add(item);
                 }
                 if (isVideoFile(listOfPathImages.get(j)))
                 {
-                    videoFragment item=new videoFragment(listOfPathImages.get(j));
+                    Fragment item=new videoFragment(listOfPathImages.get(j));
                     frag_array.add(item);
                 }
             }
@@ -423,21 +426,20 @@ public class FullScreenImage extends AppCompatActivity {
         }
     }
 
+    Uri uri;
     public void onSend() throws FileNotFoundException {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/*");
         String path = MediaStore.Images.Media.insertImage(getContentResolver(),position,"Temp",null);
-        Uri uri = Uri.parse(path);
+        uri = Uri.parse(path);
         share.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(share, "Share Image"));
-        File f = new File(path);
-        f.delete();
     }
 
     public void onDel() throws FileNotFoundException {
         File f = new File(position);
         if(f.exists()){
-            if (favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
+            if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
                 favList.remove(position);
                 saveFavouriteList();
             }
@@ -456,7 +458,11 @@ public class FullScreenImage extends AppCompatActivity {
 //                        viewPager.setAdapter(adapter);
 //                        viewPager.setCurrentItem(idx);
             //adapter.deletePath(position);(Dang comment)
+            int cur = viewPager.getCurrentItem();
+            frag_array.remove(cur);
+            listOfPathImages.remove(cur);
             adapter.notifyDataSetChanged();
+
             Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
         }
     }
@@ -502,23 +508,23 @@ public class FullScreenImage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+        if(uri != null){
+            getApplicationContext().getContentResolver().delete(uri, null, null);
+        }
+        Intent intent = new Intent();
         if (req_from == 1) {  //Neu tu first fragment sang day, ve First fragment
-            Intent intent = new Intent();
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putStringArrayListExtra("delList",delList);
             intent.putStringArrayListExtra("al_images", listOfPathImages);
             setResult(RESULT_OK, intent);
             finish();
         }else if(req_from == 2){    //Neu tu trang yeu thich qua thi quay lai trang yeu thich
 //            Intent intent = new Intent();
-            Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putStringArrayListExtra("delList",delList);
             intent.putStringArrayListExtra("al_images", listOfPathImages);
             setResult(RESULT_OK, intent);
             finish();
         }else if(req_from == 3){    //Neu tu trang album qua thi quay lai trang album
-            Intent intent = new Intent();
             intent.putStringArrayListExtra("delList",delList);
             setResult(RESULT_OK, intent);
             finish();
