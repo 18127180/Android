@@ -4,12 +4,15 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
@@ -32,11 +35,15 @@ import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FullScreenImage extends AppCompatActivity {
     ImageView imageView;
@@ -54,10 +61,13 @@ public class FullScreenImage extends AppCompatActivity {
     private float MIN_DISTANCE=150;
     static int req_from = 1;
     ArrayList<String> delList;
+    static ArrayList<String> favList;
     int cur_select;
 
     TextView send,imageMore;
     TextView del;
+    static TextView fav;
+    static boolean favStatus;
 
     public static boolean isImageFile(String path) {
         String mimeType = URLConnection.guessContentTypeFromName(path);
@@ -185,6 +195,22 @@ public class FullScreenImage extends AppCompatActivity {
                 }
             }
         });
+
+        //-----------------------------------------Favourite processing---------------------------------------------------------
+
+        favList = new ArrayList<>();
+        favList = loadFavouriteList();
+        favStatus = false;
+
+        fav = (TextView)findViewById(R.id.favourite);
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFav();
+            }
+        });
+
+        //----------------------------------------------------------------------------------------------------------------------
 
         viewPager.setOnTouchListener(new View.OnTouchListener(){
 
@@ -378,6 +404,10 @@ public class FullScreenImage extends AppCompatActivity {
     public void onDel() throws FileNotFoundException {
         File f = new File(position);
         if(f.exists()){
+            if (favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
+                favList.remove(position);
+                saveFavouriteList();
+            }
             f.delete();
             ContentResolver contentResolver = getContentResolver();
             contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -395,6 +425,44 @@ public class FullScreenImage extends AppCompatActivity {
             //adapter.deletePath(position);(Dang comment)
             adapter.notifyDataSetChanged();
             Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onFav(){
+        favStatus = !favStatus;
+        int cur = viewPager.getCurrentItem();
+        String path = listOfPathImages.get(cur);
+        if(favStatus){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite_24,0,0);
+            }
+        }else{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite,0,0);
+            }
+        }
+
+        if(FullScreenImage.favList != null){
+            Log.e("ERROR","Chay ! null");
+            if(favStatus && !favList.contains(path)){
+                favList.add(path);
+                saveFavouriteList();
+            }else if(!favStatus && favList.contains(path)){
+                favList.remove(path);
+                saveFavouriteList();
+            }
+        }else{
+            Log.e("ERROR","Chay null");
+            if(favStatus) {
+                favList = new ArrayList<>();
+                favList.add(path);
+                saveFavouriteList();
+            }
+        }
+        Toast.makeText(getApplicationContext(),String.valueOf(cur),Toast.LENGTH_LONG).show();
+
+        for(String i: favList){
+            Log.e("E",i);
         }
     }
 
@@ -422,5 +490,23 @@ public class FullScreenImage extends AppCompatActivity {
             setResult(RESULT_OK, intent);
             finish();
         }
+    }
+
+    private ArrayList<String> loadFavouriteList() {      //ham lay danh sach favourite
+        ArrayList<String> temp = new ArrayList<>();
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("app", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("favourite", "");
+        temp = gson.fromJson(json, new TypeToken<List<String>>(){}.getType());
+        return temp;
+    }
+
+    public void saveFavouriteList(){     //ham luu danh sach favourite
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("app", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(FullScreenImage.favList);
+        edit.putString("favourite", json);
+        edit.commit();
     }
 }
