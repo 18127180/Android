@@ -30,6 +30,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -250,6 +251,19 @@ public class FullScreenImage extends AppCompatActivity {
             {
                 if (isImageFile(listOfPathImages.get(j)))
                 {
+                    ExifInterface exif = null;
+                    try {
+                        exif = new ExifInterface(listOfPathImages.get(j));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String LATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    String LATITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                    String LONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    String LONGITUDE_REF = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+                    String image_length=exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
+                    String image_width=exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
+                    Log.e("Location",LATITUDE+LATITUDE_REF+LONGITUDE+LONGITUDE_REF+image_length+image_width);
                     imageFragment item=new imageFragment(listOfPathImages.get(j));
                     frag_array.add(item);
                 }
