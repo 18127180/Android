@@ -64,9 +64,9 @@
             android:layout_marginLeft="20dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="10 tháng 4, 2021 14:39"
             android:gravity="center_vertical"
             android:textColor="@color/black"
+            android:textStyle="bold"
             android:layout_weight="9"/>
     </LinearLayout>
     <LinearLayout
@@ -90,16 +90,13 @@
                 android:id="@+id/name_media"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="120210410_143945.jpg"
-                android:gravity="center"
+                android:textStyle="bold"
                 android:textColor="@color/black" />
             <TextView
                 android:id="@+id/path_media"
                 android:layout_marginTop="5dp"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="/Bộ nhớ trong/DCIM/Camera"
-                android:gravity="center" />
+                android:layout_height="match_parent" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,16 +104,12 @@
                 <TextView
                     android:id="@+id/size_media"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="2,02 MB"
-                    android:gravity="center" />
+                    android:layout_height="match_parent" />
                 <TextView
                     android:id="@+id/window_media"
                     android:layout_marginLeft="15dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="3264x2448"
-                    android:gravity="center" />
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -142,7 +135,7 @@
             android:text="344 Võ văn tần, phường 5, Quận 3, Thành phố hồ chí minh, Việt nam"/>
 
         <ImageView
-            android:id="@+id/imageAddNoteMain"
+            android:id="@+id/set_location_btn"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_weight="1"
@@ -158,6 +151,7 @@
         android:layout_marginTop="20dp"
         android:weightSum="10">
         <ImageView
+            android:id="@+id/icon_camera"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_camera_alt_24"
@@ -173,9 +167,8 @@
                 android:id="@+id/camera_media"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Samsung SM-M315F"
-                android:gravity="center"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -183,30 +176,22 @@
                 <TextView
                     android:id="@+id/sub1_camera_media"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="F2,0"
-                    android:gravity="center" />
+                    android:layout_height="match_parent"/>
                 <TextView
                     android:id="@+id/sub2_camera_media"
                     android:layout_marginLeft="15dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="1/25s"
-                    android:gravity="center" />
+                    android:layout_height="match_parent" />
                 <TextView
                     android:id="@+id/sub3_camera_media"
                     android:layout_marginLeft="15dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="3,72mm"
-                    android:gravity="center" />
+                    android:layout_height="match_parent" />
                 <TextView
                     android:id="@+id/sub4_camera_media"
                     android:layout_marginLeft="15dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="ISO 800"
-                    android:gravity="center" />
+                    android:layout_height="match_parent" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -215,16 +200,12 @@
                 <TextView
                     android:id="@+id/mode1_camera_media"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Cân bằng trắng Tự động"
-                    android:gravity="center" />
+                    android:layout_height="match_parent" />
                 <TextView
                     android:id="@+id/mode2_camera_media"
                     android:layout_marginLeft="15dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Không có flash"
-                    android:gravity="center" />
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

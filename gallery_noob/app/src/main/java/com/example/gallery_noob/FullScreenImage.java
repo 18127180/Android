@@ -115,11 +115,11 @@ public class FullScreenImage extends AppCompatActivity {
             exif += "\n TAG_MODEL: " + exifInterface.getAttribute(ExifInterface.TAG_MODEL);
             exif += "\n TAG_ORIENTATION: " + exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
             exif += "\n TAG_WHITE_BALANCE: " + exifInterface.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
-            exif += "\n TAG_FOCAL_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+            exif += "\n TAG_FOCAL_LENGTH: " + exifInterface.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH,0);
             exif += "\n TAG_FLASH: " + exifInterface.getAttribute(ExifInterface.TAG_FLASH);
             exif += "\n TAG_ISO: " + exifInterface.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);//TAG_F_NUMBER
             exif += "\n F: " + exifInterface.getAttribute(ExifInterface.TAG_F_NUMBER);//TAG_SHUTTER_SPEED_VALUE
-            exif += "\n Exposure: " + exifInterface.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME,0);//TAG_SHUTTER_SPEED_VALUE
+            exif += "\n Exposure: " + exifInterface.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);//TAG_SHUTTER_SPEED_VALUE
             exif += "\nGPS related:";
             exif += "\n TAG_GPS_DATESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
             exif += "\n TAG_GPS_TIMESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
@@ -156,6 +156,7 @@ public class FullScreenImage extends AppCompatActivity {
                         switch (item.getItemId()) {
                             case R.id.item1:
                                 Intent goToNextActivity = new Intent(getApplicationContext(), detail_media_activity.class);
+                                goToNextActivity.putExtra("current_path",listOfPathImages.get(cur_select));
                                 startActivity(goToNextActivity);
                                 break;
                             case R.id.item2:

@@ -1,9 +1,12 @@
 package com.example.gallery_noob;
 
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -39,5 +42,15 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return path.size();
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        if (position < getCount()) {
+            FragmentManager manager = ((Fragment) object).getFragmentManager();
+            FragmentTransaction trans = manager.beginTransaction();
+            trans.remove((Fragment) object);
+            trans.commit();
+        }
     }
 }
