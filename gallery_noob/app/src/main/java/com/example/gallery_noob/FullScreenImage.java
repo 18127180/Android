@@ -17,12 +17,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -33,6 +34,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.Fragment;
+import androidx.transition.Slide;
+import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.gson.Gson;
@@ -46,13 +50,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FullScreenImage extends AppCompatActivity {
-    ImageView imageView;
+    static LinearLayout function_bar;
+    static LinearLayout title_bar;
 
     static String position;
     private static final int REQUEST_PERMISSIONS = 100;
     static boolean req = false;
     Button button;
-    boolean gone = false;
+    static boolean visibility;
     ImageButton back_btn;
     private ArrayList<String> listOfPathImages;
     private ArrayList <Fragment> frag_array;
@@ -201,13 +206,13 @@ public class FullScreenImage extends AppCompatActivity {
             }
         });
 
-
         viewPager= (ViewPager) findViewById(R.id.view_pager);
-        LinearLayout ln= (LinearLayout)findViewById(R.id.full_scr);
-        LinearLayout ln3= (LinearLayout)findViewById(R.id.header_detail);
-        //ln.setVisibility(View.GONE);
-        //ln1.setVisibility(View.GONE);
-        //ln3.setVisibility(View.GONE);
+        function_bar= (LinearLayout)findViewById(R.id.func_bar);
+        title_bar= (LinearLayout)findViewById(R.id.title_bar);
+        function_bar.setVisibility(View.GONE);
+        title_bar.setVisibility(View.GONE);
+        visibility = false;
+
         send = (TextView)findViewById(R.id.send);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,9 +253,7 @@ public class FullScreenImage extends AppCompatActivity {
         });
 
         //----------------------------------------------------------------------------------------------------------------------
-
         viewPager.setOnTouchListener(new View.OnTouchListener(){
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction())
@@ -276,6 +279,7 @@ public class FullScreenImage extends AppCompatActivity {
 //                                ln3.setVisibility(View.VISIBLE);
 //                            }
                         }
+                        break;
                 }
                 return false;
             }
@@ -548,5 +552,23 @@ public class FullScreenImage extends AppCompatActivity {
         String json = gson.toJson(FullScreenImage.favList);
         edit.putString("favourite", json);
         edit.commit();
+    }
+
+    public static void toggleBar(){
+        Transition transition = new Slide(Gravity.BOTTOM);
+        transition.setDuration(200);
+        transition.addTarget(function_bar);
+        TransitionManager.beginDelayedTransition((ViewGroup) function_bar.getParent(),transition);
+
+        if(visibility){
+            function_bar.setVisibility(View.GONE);
+            title_bar.setVisibility(View.GONE);
+            Log.e("ERROR","turn invisible");
+        }else{
+            function_bar.setVisibility(View.VISIBLE);
+            title_bar.setVisibility(View.VISIBLE);
+            Log.e("ERROR","turn visible");
+        }
+        visibility = !visibility;
     }
 }

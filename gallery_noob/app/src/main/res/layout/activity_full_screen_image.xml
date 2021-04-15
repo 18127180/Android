@@ -2,130 +2,132 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/full_scr_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FullScreenImage"
-    android:id="@+id/full_scr_layout">
+    tools:context=".FullScreenImage">
 
     <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/view_pager">
-    </androidx.viewpager.widget.ViewPager>
+        android:layout_height="match_parent"></androidx.viewpager.widget.ViewPager>
 
     <Button
         android:id="@+id/button"
         android:layout_width="148dp"
         android:layout_height="60dp"
-        android:text="Begin"
-        android:textSize="18sp"
-        android:visibility="gone"
-        app:backgroundTint="@android:color/holo_red_dark"
-        app:cornerRadius="10dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="250dp"
-        />
+        android:text="@string/Begin"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:backgroundTint="@android:color/holo_red_dark"
+        app:cornerRadius="10dp" />
 
     <LinearLayout
+        android:id="@+id/func_bar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/full_scr">
+        android:animateLayoutChanges="true"
+        android:background="#FFFFFF"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/send"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="Send"
             android:drawableTop="@drawable/ic_baseline_send_24"
             android:drawablePadding="10dp"
-            android:paddingTop="10dp"/>
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:text="Send" />
 
         <TextView
             android:id="@+id/edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:drawablePadding="10dp"
             android:drawableTop="@drawable/ic_baseline_edit_24"
-            android:text="Edit"
-            android:paddingTop="10dp"/>
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:text="Edit" />
 
         <TextView
             android:id="@+id/favourite"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:drawablePadding="10dp"
             android:drawableTop="@drawable/ic_baseline_favorite"
-            android:text="Favorites"
-            android:paddingTop="10dp"/>
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:text="Favorites" />
 
         <TextView
             android:id="@+id/delete"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:drawablePadding="10dp"
             android:drawableTop="@drawable/ic_baseline_delete_outline_24"
-            android:text="Delete"
-            android:paddingTop="10dp"/>
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:text="Delete" />
 
         <TextView
             android:id="@+id/more"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:drawablePadding="10dp"
             android:drawableTop="@drawable/ic_baseline_more_horiz_24"
-            android:text="More"
-            android:paddingTop="10dp"/>
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:text="More" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="60dp"
         android:layout_gravity="center"
-        android:id="@+id/header_detail">
+        android:animateLayoutChanges="true"
+        android:background="#FFFFFF"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/back_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@null"
+            android:paddingLeft="-50dp"
             android:src="@drawable/ic_baseline_arrow_back_ios_24" />
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_gravity="center">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_height="30dp"
+                android:gravity="center|bottom"
                 android:text="2 tháng 3" />
 
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="16:11" />
         </LinearLayout>
@@ -133,12 +135,11 @@
         <Button
             android:id="@+id/button13"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Sửa"
             android:background="@android:color/transparent"
-            android:textColor="@color/blue"
-            />
+            android:text="Sửa"
+            android:textColor="@color/blue" />
     </LinearLayout>
 
 </RelativeLayout>

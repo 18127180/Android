@@ -30,8 +30,9 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
 //    }
 
     @Override
-    public int getItemPosition(@NonNull Object object) {
-        return POSITION_NONE;
+    public int getItemPosition(Object object) {
+        if (path.contains(object)) return path.indexOf(object);
+        else return POSITION_NONE;
     }
 
     public boolean isImageFile(String path) {

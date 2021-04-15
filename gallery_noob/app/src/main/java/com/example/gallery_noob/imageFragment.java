@@ -28,6 +28,12 @@ public class imageFragment extends Fragment implements FragmentLifecycle{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.image_full_screen, container,false);
         imageFrag=view.findViewById(R.id.imageFull);
+        imageFrag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FullScreenImage.toggleBar();
+            }
+        });
         Glide.with(view)
                 .load(new File(url))
                 .into(imageFrag);

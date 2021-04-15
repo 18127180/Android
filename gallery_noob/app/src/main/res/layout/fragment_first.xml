@@ -7,9 +7,10 @@
     tools:context=".FirstFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_gallery_images"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recyclerview_gallery_images"/>
+        android:layout_height="682dp"
+        android:layout_marginBottom="55dp" />
 
     <Button
         android:id="@+id/button_remove"
@@ -41,18 +42,18 @@
 
     <com.jcminarro.roundkornerlayout.RoundKornerLinearLayout
         android:id="@+id/ign_layout"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="55dp"
         android:background="@color/grey_date_layout"
         android:gravity="center"
-        app:corner_radius="30dp"
-        >
+        android:orientation="horizontal"
+        app:corner_radius="30dp">
 
         <Button
             android:id="@+id/button9"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
@@ -62,65 +63,64 @@
             android:text="Năm"
             android:textColor="#000000"
             android:textSize="10dp"
-            app:backgroundTint="@color/grey_date_layout"
-            style="?android:attr/borderlessButtonStyle"/>
+            app:backgroundTint="@color/grey_date_layout" />
 
         <Button
             android:id="@+id/button8"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Tháng"
-            android:textSize="10dp"
-            android:textColor="#000000"
-            android:background="@drawable/round_btn"
             android:layout_margin="3dp"
-            app:backgroundTint="@color/grey_date_layout"
-            style="?android:attr/borderlessButtonStyle"/>
+            android:layout_weight="1"
+            android:background="@drawable/round_btn"
+            android:text="Tháng"
+            android:textColor="#000000"
+            android:textSize="10dp"
+            app:backgroundTint="@color/grey_date_layout" />
 
         <Button
             android:id="@+id/button7"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="3dp"
             android:layout_weight="1"
+            android:background="@drawable/round_btn"
             android:text="Ngày"
             android:textColor="#000000"
             android:textSize="10dp"
-            android:background="@drawable/round_btn"
-            android:layout_margin="3dp"
-            app:backgroundTint="@color/grey_date_layout"
-            style="?android:attr/borderlessButtonStyle"/>
+            app:backgroundTint="@color/grey_date_layout" />
 
         <Button
             android:id="@+id/button6"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="3dp"
             android:layout_weight="1"
+            android:background="@drawable/round_btn"
             android:text="Tất cả ảnh"
             android:textSize="10dp"
-            android:background="@drawable/round_btn"
-            android:layout_margin="3dp"
-            app:backgroundTint="@color/grey_all_btn"
-            style="?android:attr/borderlessButtonStyle"/>
+            app:backgroundTint="@color/grey_all_btn" />
     </com.jcminarro.roundkornerlayout.RoundKornerLinearLayout>
 
     <LinearLayout
-        android:layout_height="50dp"
         android:id="@+id/layout_select"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="55dp"
         android:background="@color/grey_date_layout"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/imageButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_baseline_share_24"
-            android:background="@color/grey_date_layout"/>
+            android:background="@color/grey_date_layout"
+            android:src="@drawable/ic_baseline_share_24" />
 
         <TextView
             android:id="@+id/textView"
@@ -135,8 +135,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_baseline_restore_from_trash_24"
-            android:background="@color/grey_date_layout"/>
+            android:background="@color/grey_date_layout"
+            android:src="@drawable/ic_baseline_restore_from_trash_24" />
 
     </LinearLayout>
 

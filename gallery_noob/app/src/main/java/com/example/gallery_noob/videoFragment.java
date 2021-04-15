@@ -30,6 +30,12 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view=inflater.inflate(R.layout.full_screen_video, container,false);
         videoView = (VideoView) view.findViewById(R.id.videoView);
+        videoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FullScreenImage.toggleBar();
+            }
+        });
         videoView.setVideoURI(Uri.parse(url));
         videoView.requestFocus();
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
