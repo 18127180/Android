@@ -311,6 +311,8 @@ public class FirstFragment extends Fragment {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         getContext().sendBroadcast(mediaScanIntent);
+        images.add(currentPhotoPath);
+        imageAdapter.notifyDataSetChanged();
     }
 
     @Override

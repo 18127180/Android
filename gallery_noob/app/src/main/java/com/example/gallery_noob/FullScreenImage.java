@@ -32,6 +32,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.Fragment;
 import androidx.transition.Slide;
@@ -433,15 +434,21 @@ public class FullScreenImage extends AppCompatActivity {
 
     Uri uri;
     public void onSend() throws FileNotFoundException {
+        int cur = viewPager.getCurrentItem();
+        position = listOfPathImages.get(cur);
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/*");
-        String path = MediaStore.Images.Media.insertImage(getContentResolver(),position,"Temp",null);
-        uri = Uri.parse(path);
+//        String path = MediaStore.Images.Media.insertImage(getContentResolver(),position,"Temp",null);
+//        uri = Uri.parse(path);
+        uri = FileProvider.getUriForFile(this,"com.example.gallery_noob",new File(position));
+        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         share.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(share, "Share Image"));
     }
 
     public void onDel() throws FileNotFoundException {
+        int cur = viewPager.getCurrentItem();
+        position = listOfPathImages.get(cur);
         File f = new File(position);
         if(f.exists()){
             if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
@@ -463,7 +470,7 @@ public class FullScreenImage extends AppCompatActivity {
 //                        viewPager.setAdapter(adapter);
 //                        viewPager.setCurrentItem(idx);
             //adapter.deletePath(position);(Dang comment)
-            int cur = viewPager.getCurrentItem();
+
             frag_array.remove(cur);
             listOfPathImages.remove(cur);
             adapter.notifyDataSetChanged();
@@ -513,9 +520,9 @@ public class FullScreenImage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        if(uri != null){
-            getApplicationContext().getContentResolver().delete(uri, null, null);
-        }
+//        if(uri != null){
+//            getApplicationContext().getContentResolver().delete(uri, null, null);
+//        }
         Intent intent = new Intent();
         if (req_from == 1) {  //Neu tu first fragment sang day, ve First fragment
             intent.putStringArrayListExtra("delList",delList);
