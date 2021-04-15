@@ -244,9 +244,7 @@ public class FirstFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             if(requestCode == REQUEST_CODE_CAMERA){
-                if(data != null) {
-                    galleryAddPic();
-                }else   Log.e("Error","Intent get from camera intent 'data' is null");
+                galleryAddPic();
             }else if(requestCode == REQUEST_FROM_GALLERY){
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
                 if(del.isEmpty()) return;
@@ -308,22 +306,24 @@ public class FirstFragment extends Fragment {
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
+//        Uri contentUri = Uri.fromFile(f);
+        Uri contentUri = FileProvider.getUriForFile(getContext(),"com.example.gallery_noob",f);
         mediaScanIntent.setData(contentUri);
         getContext().sendBroadcast(mediaScanIntent);
-        images.add(currentPhotoPath);
+        images.add(0,currentPhotoPath);
         imageAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(currentPhotoPath!=null) {
-            Toast.makeText(getContext(), currentPhotoPath, Toast.LENGTH_LONG).show();
-            //addImageToGallery(getActivity().getContentResolver(),new File(currentPhotoPath));
-            galleryAddPic();
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if(currentPhotoPath!=null) {
+//            Toast.makeText(getContext(), currentPhotoPath, Toast.LENGTH_LONG).show();
+//            //addImageToGallery(getActivity().getContentResolver(),new File(currentPhotoPath));
+//            galleryAddPic();
+//            currentPhotoPath = null;
+//        }
+//    }
 
     // invoked when the activity may be temporarily destroyed, save the instance state here
     @Override
