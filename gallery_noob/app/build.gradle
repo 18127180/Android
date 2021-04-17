@@ -2,6 +2,58 @@ plugins {
     id 'com.android.application'
 }
 
+// Apply the IMGLYPlugin
+apply plugin: 'ly.img.android.sdk'
+apply plugin: 'kotlin-android'
+
+// Configure the PESDKPlugin
+imglyConfig {
+
+//    // Optional: Enable the VideoEditor SDK
+//    vesdk {
+//        enabled true
+//        licencePath 'vesdk_android_license.dms'
+//    }
+
+    // Optional: Enable the PhotoEditor SDK
+    pesdk {
+        enabled true
+        licencePath 'LICENSE'
+    }
+
+    // If you are using another supportLibVersion ('com.android.support') please change this version here our update your own supportLibVersion
+    supportLibVersion "28.0.0"
+
+    // Define the modules you are need
+    modules {
+        // Add all the UI modules you are need
+        include 'ui:core'
+        include 'ui:text'
+        include 'ui:focus'
+        include 'ui:frame'
+        include 'ui:brush'
+        include 'ui:filter'
+        include 'ui:camera'
+        include 'ui:sticker'
+        include 'ui:overlay'
+        include 'ui:transform'
+        include 'ui:adjustment'
+        include 'ui:text-design'
+
+        // Add the serializer if you need
+        include 'backend:serializer'
+
+        // Add asset packs if you need
+        include 'assets:font-basic'
+        include 'assets:frame-basic'
+        include 'assets:filter-basic'
+        include 'assets:overlay-basic'
+        include 'assets:sticker-shapes'
+        include 'assets:sticker-emoticons'
+        include 'backend:sticker-smart'
+    }
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -12,7 +64,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
