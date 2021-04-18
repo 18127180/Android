@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "780592097647",
+    "project_id": "calcium-hope-310717",
+    "storage_bucket": "calcium-hope-310717.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780592097647:android:e44c39c669406996c1209a",
+        "android_client_info": {
+          "package_name": "com.example.gallery_noob"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "780592097647-1gmvvfhqj7rdv4vrmvr2n2se72l8kusn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeIIAq1rkjiwO-0iH9bleWE7lc8fZoM4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780592097647-1gmvvfhqj7rdv4vrmvr2n2se72l8kusn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

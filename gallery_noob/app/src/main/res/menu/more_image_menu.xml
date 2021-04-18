@@ -6,4 +6,7 @@
     <item
         android:id="@+id/item2"
         android:title="Đặt làm hình nền"/>
+    <item
+        android:id="@+id/item3"
+        android:title="Face tag"/>
 </menu>

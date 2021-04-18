@@ -199,6 +199,10 @@ public class FullScreenImage extends AppCompatActivity {
 //                                    e.printStackTrace();
 //                                }
                                 break;
+                            case R.id.item3:
+                                Intent goTo = new Intent(getApplicationContext(), faceDetection.class);
+                                goTo.putExtra("current_path",listOfPathImages.get(cur_select));
+                                startActivity(goTo);
                         }
                         return false;
                     }

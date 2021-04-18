@@ -7,11 +7,17 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,6 +34,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -36,6 +45,8 @@ public class MapsActivity extends FragmentActivity implements
     private LocationRequest locationRequest;
     private Location lastLocation;
     private Marker currentLocationUserMarker;
+    private MarkerOptions markerOptions;
+
     private static final int Request_User_Location_Code=99;
 
     @Override
@@ -54,6 +65,54 @@ public class MapsActivity extends FragmentActivity implements
         mapFragment.getMapAsync(this);
     }
 
+    @SuppressLint("SetTextI18n")
+    public void onClick (View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.search_map_btn:
+                EditText addressField=findViewById(R.id.location_search);
+                String address=addressField.getText().toString();
+                List<Address> addressList = null;
+                if (!TextUtils.isEmpty(address))
+                {
+                    Geocoder geocoder=new Geocoder(this);
+                    try {
+                        addressList=geocoder.getFromLocationName(address,6);
+                        if (addressList!=null)
+                        {
+                            for (int i=0;i<addressList.size();i++)
+                            {
+                                Address userAddress=addressList.get(i);
+                                addressField.setText(userAddress.getAddressLine(0));
+                                LatLng latLng=new LatLng(userAddress.getLatitude(),userAddress.getLongitude());
+
+                                currentLocationUserMarker.setPosition(latLng);
+                                currentLocationUserMarker.setTitle(address);
+//                                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+
+//                                mMap.addMarker(userMarketOptions);
+
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(userAddress.getLatitude(), userAddress.getLongitude()), 17.0f));
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(this,"Location not found!",Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(this,"Please write any location name!",Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -70,7 +129,47 @@ public class MapsActivity extends FragmentActivity implements
         // Add a marker in Sydney and move the camera
         if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient();
+
             mMap.setMyLocationEnabled(true);
+        }
+    }
+
+    public void current_location_image(String address){
+
+        EditText addressField=findViewById(R.id.location_search);
+        List<Address> addressList = null;
+        MarkerOptions userMarketOptions= new MarkerOptions();
+        if (!TextUtils.isEmpty(address))
+        {
+            Geocoder geocoder=new Geocoder(this);
+            try {
+                addressList=geocoder.getFromLocationName(address,6);
+                if (addressList!=null)
+                {
+                    for (int i=0;i<addressList.size();i++)
+                    {
+                        Address userAddress=addressList.get(i);
+                        addressField.setText(userAddress.getAddressLine(0));
+                        LatLng latLng=new LatLng(userAddress.getLatitude(),userAddress.getLongitude());
+
+                        currentLocationUserMarker.setPosition(latLng);
+                        currentLocationUserMarker.setTitle(address);
+
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(userAddress.getLatitude(), userAddress.getLongitude()), 17.0f));
+                    }
+                }
+                else
+                {
+                    Toast.makeText(this,"Location not found!",Toast.LENGTH_SHORT).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            Toast.makeText(this,"Please write any location name!",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -111,6 +210,7 @@ public class MapsActivity extends FragmentActivity implements
                             buildGoogleApiClient();
                         }
                         mMap.setMyLocationEnabled(true);
+//                        current_location_image();
                     }
                 }
                 else {
@@ -131,7 +231,7 @@ public class MapsActivity extends FragmentActivity implements
 
         LatLng latLng=new LatLng(location.getLatitude(), location.getLongitude());
 
-        MarkerOptions markerOptions=new MarkerOptions();
+        markerOptions=new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("user Current Location");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
@@ -140,6 +240,8 @@ public class MapsActivity extends FragmentActivity implements
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17.0f));
+
+        current_location_image("Hẻm 32 cao thắng");
 
         if (googleApiClient !=null)
         {
