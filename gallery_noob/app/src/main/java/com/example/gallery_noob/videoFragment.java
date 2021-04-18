@@ -109,4 +109,9 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
             }
         }
     }
+
+    @Override
+    public void addImageTransition() {
+
+    }
 }

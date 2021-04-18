@@ -1,5 +1,9 @@
 package com.example.gallery_noob;
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +22,7 @@ import java.io.File;
 public class imageFragment extends Fragment implements FragmentLifecycle{
     private PhotoView imageFrag;
     private String url;
+    private static final int FADE_IN_TIME = 1000;
 
     public imageFragment(String url){
         this.url=url;
@@ -39,6 +44,8 @@ public class imageFragment extends Fragment implements FragmentLifecycle{
                 .into(imageFrag);
         return view;
     }
+
+
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -110,5 +117,15 @@ public class imageFragment extends Fragment implements FragmentLifecycle{
                 }
             }
         }
+    }
+
+    @Override
+    public void addImageTransition() {
+        // Transition drawable with a transparent drawable and the final bitmap
+        @SuppressLint("ResourceAsColor") TransitionDrawable td = new TransitionDrawable(new Drawable[] {
+                new ColorDrawable(R.color.imgly_transparent_color),
+                imageFrag.getDrawable() });
+        imageFrag.setImageDrawable(td);
+        td.startTransition(FADE_IN_TIME);
     }
 }

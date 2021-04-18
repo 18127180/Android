@@ -135,6 +135,16 @@ public class FirstFragment extends Fragment {
 //            }
             dispatchTakePictureIntent();
         }
+        if (id==R.id.action_setting_slideshow)
+        {
+            Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
+            intent.putExtra("path", images.get(0));
+            intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)images);
+            intent.putExtra("req_from",1);
+            intent.putExtra("slideShow_MODE",true);
+            startActivityForResult(intent,REQUEST_FROM_GALLERY);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

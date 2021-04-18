@@ -11,10 +11,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -23,6 +25,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -30,6 +34,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -48,6 +53,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,11 +102,21 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
     static ArrayList<String> favList;
     //-----------------------------
     int cur_select;
-
+    private int slideShowPosition;
     TextView send,imageMore;
     TextView del,edit;
     static TextView fav;
     static boolean favStatus;
+    boolean slideShow_MODE;
+
+    Handler mSlideshowHandler = new Handler();
+    private Runnable runSlideshow = new Runnable() {
+        public void run() {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true);
+            mSlideshowHandler.postDelayed(runSlideshow,
+                    3000);
+        }
+    };
 
     @Override
     public void permissionGranted() {}
@@ -140,37 +156,6 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         }
 
         return inSampleSize;
-    }
-
-    public String readExif(String path)
-    {
-        String exif="Exif: " + path;
-        try {
-            ExifInterface exifInterface = new ExifInterface(path);
-            exif += "\nIMAGE_LENGTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
-            exif += "\nIMAGE_WIDTH: " + exifInterface.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
-            exif += "\n DATETIME: " + exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
-            exif += "\n TAG_MAKE: " + exifInterface.getAttribute(ExifInterface.TAG_MAKE);
-            exif += "\n TAG_MODEL: " + exifInterface.getAttribute(ExifInterface.TAG_MODEL);
-            exif += "\n TAG_ORIENTATION: " + exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
-            exif += "\n TAG_WHITE_BALANCE: " + exifInterface.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
-            exif += "\n TAG_FOCAL_LENGTH: " + exifInterface.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH,0);
-            exif += "\n TAG_FLASH: " + exifInterface.getAttribute(ExifInterface.TAG_FLASH);
-            exif += "\n TAG_ISO: " + exifInterface.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);//TAG_F_NUMBER
-            exif += "\n F: " + exifInterface.getAttribute(ExifInterface.TAG_F_NUMBER);//TAG_SHUTTER_SPEED_VALUE
-            exif += "\n Exposure: " + exifInterface.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);//TAG_SHUTTER_SPEED_VALUE
-            exif += "\nGPS related:";
-            exif += "\n TAG_GPS_DATESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
-            exif += "\n TAG_GPS_TIMESTAMP: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
-            exif += "\n TAG_GPS_LATITUDE: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-            exif += "\n TAG_GPS_LATITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-            exif += "\n TAG_GPS_LONGITUDE: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-            exif += "\n TAG_GPS_LONGITUDE_REF: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-            exif += "\n TAG_GPS_PROCESSING_METHOD: " + exifInterface.getAttribute(ExifInterface.TAG_GPS_PROCESSING_METHOD);
-        }catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } return exif;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -222,15 +207,6 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                                 } catch (IOException e) {
                                     Log.e("TAG", "Cannot set image as wallpaper", e);
                                 }
-
-//                                WallpaperManager myWallpaperManager
-//                                        = WallpaperManager.getInstance(getApplicationContext());
-//                                try {
-//                                    myWallpaperManager.setBitmap(BitmapFactory.decodeFile(listOfPathImages.get(cur_select)));
-//                                } catch (IOException e) {
-//                                    // TODO Auto-generated catch block
-//                                    e.printStackTrace();
-//                                }
                                 break;
                             case R.id.item3:
                                 Intent goTo = new Intent(getApplicationContext(), faceDetection.class);
@@ -357,16 +333,13 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
             listOfPathImages = getIntent().getStringArrayListExtra("listOfImages");
             position=i.getExtras().getString("path");
             req_from = i.getExtras().getInt("req_from");
+            slideShow_MODE=i.getExtras().getBoolean("slideShow_MODE");
             delList = new ArrayList<>();
-
-            //Log.e("Size cua mang ",""+listOfPathImages.size());
-//            adapter = new ViewPagerAdapter(this,listOfPathImages.toArray(new String[listOfPathImages.size()]));
             frag_array=new ArrayList<>();
             for (int j=0;j<listOfPathImages.size();j++)
             {
                 if (isImageFile(listOfPathImages.get(j)))
                 {
-                    Log.e("Information",readExif(listOfPathImages.get(j)));
                     ExifInterface exif = null;
                     try {
                         exif = new ExifInterface(listOfPathImages.get(j));
@@ -400,9 +373,17 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
 
                 @Override
                 public void onPageSelected(int position) {
-                    FragmentLifecycle fragmentToShow = (FragmentLifecycle)adapter.getItem(position);
-                    fragmentToShow.onResumeFragment();
-                    cur_select=position;
+                    if (slideShow_MODE==true) {
+                        FragmentLifecycle fragmentToShow = (FragmentLifecycle) adapter.getItem(position);
+                        fragmentToShow.onResumeFragment();
+                        cur_select = position;
+                    }
+                    else
+                    {
+                        FragmentLifecycle fragmentToShow = (FragmentLifecycle) adapter.getItem(position);
+                        fragmentToShow.onResumeFragment();
+                        cur_select = position;
+                    }
                 }
 
                 @Override
@@ -411,8 +392,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                 }
             };
             viewPager.setOnPageChangeListener(pageChangeListener);
-//            pageChangeListener.onPageSelected(listOfPathImages.indexOf(position));
-            viewPager.post(() -> viewPager.setCurrentItem(listOfPathImages.indexOf(position)));
+            viewPager.post(() -> viewPager.setCurrentItem(listOfPathImages.indexOf(position),false));
             viewPager.post(new Runnable()
             {
                 @Override
@@ -421,6 +401,112 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                     pageChangeListener.onPageSelected(viewPager.getCurrentItem());
                 }
             });
+
+            if (slideShow_MODE)
+            {
+                try {
+                    Interpolator sInterpolator = new AccelerateInterpolator();
+                    Field mScroller;
+                    mScroller = ViewPager.class.getDeclaredField("mScroller");
+                    mScroller.setAccessible(true);
+                    FixedSpeedScroller scroller = new FixedSpeedScroller(viewPager.getContext(), sInterpolator);
+                    mScroller.set(viewPager, scroller);
+                } catch (NoSuchFieldException e) {
+                } catch (IllegalArgumentException e) {
+                } catch (IllegalAccessException e) {
+                }
+                viewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
+                    private static final float MIN_SCALE = 0.85f;
+                    private static final float MIN_ALPHA = 0.5f;
+                    private static final float MIN_SCALE1 = 0.75f;
+                    @Override
+                    public void transformPage(View view, float position) {
+                        switch (cur_select%3)
+                        {
+                            case 0:
+                                Log.e("slide",""+cur_select);
+                                if(position <= -1.0F || position >= 1.0F) {
+                                    view.setTranslationX(view.getWidth() * position);
+                                    view.setAlpha(0.0F);
+                                } else if( position == 0.0F ) {
+                                    view.setTranslationX(view.getWidth() * position);
+                                    view.setAlpha(1.0F);
+                                } else {
+                                    // position is between -1.0F & 0.0F OR 0.0F & 1.0F
+                                    view.setTranslationX(view.getWidth() * -position);
+                                    view.setAlpha(1.0F - Math.abs(position));
+                                }
+                                break;
+                            case 1:
+                                Log.e("slide",""+cur_select);
+                                int pageWidth = view.getWidth();
+                                int pageHeight = view.getHeight();
+                                if (position < -1) { // [-Infinity,-1)
+                                    // This page is way off-screen to the left.
+                                    view.setAlpha(0f);
+
+                                } else if (position <= 1) { // [-1,1]
+                                    // Modify the default slide transition to shrink the page as well
+                                    float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
+                                    float vertMargin = pageHeight * (1 - scaleFactor) / 2;
+                                    float horzMargin = pageWidth * (1 - scaleFactor) / 2;
+                                    if (position < 0) {
+                                        view.setTranslationX(horzMargin - vertMargin / 2);
+                                    } else {
+                                        view.setTranslationX(-horzMargin + vertMargin / 2);
+                                    }
+
+                                    // Scale the page down (between MIN_SCALE and 1)
+                                    view.setScaleX(scaleFactor);
+                                    view.setScaleY(scaleFactor);
+
+                                    // Fade the page relative to its size.
+                                    view.setAlpha(MIN_ALPHA +
+                                            (scaleFactor - MIN_SCALE) /
+                                                    (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+
+                                } else { // (1,+Infinity]
+                                    // This page is way off-screen to the right.
+                                    view.setAlpha(0f);
+                                }
+                                break;
+                            case 2:
+                                Log.e("slide",""+cur_select);
+                                int pageWidth1 = view.getWidth();
+
+                                if (position < -1) { // [-Infinity,-1)
+                                    // This page is way off-screen to the left.
+                                    view.setAlpha(0f);
+
+                                } else if (position <= 0) { // [-1,0]
+                                    // Use the default slide transition when moving to the left page
+                                    view.setAlpha(1f);
+                                    view.setTranslationX(0f);
+                                    view.setScaleX(1f);
+                                    view.setScaleY(1f);
+
+                                } else if (position <= 1) { // (0,1]
+                                    // Fade the page out.
+                                    view.setAlpha(1 - position);
+
+                                    // Counteract the default slide transition
+                                    view.setTranslationX(pageWidth1 * -position);
+
+                                    // Scale the page down (between MIN_SCALE and 1)
+                                    float scaleFactor = MIN_SCALE1
+                                            + (1 - MIN_SCALE1) * (1 - Math.abs(position));
+                                    view.setScaleX(scaleFactor);
+                                    view.setScaleY(scaleFactor);
+
+                                } else { // (1,+Infinity]
+                                    // This page is way off-screen to the right.
+                                    view.setAlpha(0f);
+                                }
+                                break;
+                        }
+                    }
+                });
+            }
         }
         //ImageAdapter imageAdapter= new ImageAdapter(this);
 //        if(position!=null)
@@ -676,6 +762,25 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         new EditorBuilder(this)
                 .setSettingsList(settingsList)
                 .startActivityForResult(this, PESDK_RESULT);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e("Eroor","pause");
+        if (mSlideshowHandler!= null) {
+            mSlideshowHandler.removeCallbacks(runSlideshow);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("Eroor","resume");
+        if (slideShow_MODE)
+        {
+            mSlideshowHandler.postDelayed(runSlideshow, 3000);
+        }
     }
 
     @Override

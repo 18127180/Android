@@ -24,6 +24,12 @@
                 android:icon="@drawable/ic_baseline_camera_alt_24"
                 app:showAsAction="ifRoom"
                 />
+            <item
+                android:id="@+id/action_setting_slideshow"
+                android:title="Trình chiếu"
+                android:icon="@drawable/ic_baseline_slideshow_24"
+                app:showAsAction="ifRoom"
+                />
         </menu>
     </item>
 </menu>
