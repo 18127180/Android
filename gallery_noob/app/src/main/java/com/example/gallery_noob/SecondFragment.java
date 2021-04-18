@@ -142,7 +142,7 @@ public class SecondFragment extends Fragment {
                 }
             });
         }else{
-            Toast.makeText(getActivity(),"No favourites found",Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(),"No favourites found",Toast.LENGTH_SHORT).show();
         }
 
         return rootView;
