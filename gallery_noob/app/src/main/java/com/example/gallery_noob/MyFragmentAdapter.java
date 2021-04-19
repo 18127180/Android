@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class MyFragmentAdapter extends FragmentPagerAdapter {
     ArrayList <Fragment> path;
     private Fragment mCurrentPrimaryItem = null;
+    private long baseId = 0;
 
     public MyFragmentAdapter(@NonNull FragmentManager fm, ArrayList<Fragment> path) {
         super(fm);
@@ -51,5 +52,15 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
             trans.remove(fragment);
             trans.commit();
         }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return baseId + position;
+    }
+
+    public void notifyChangeInPosition(int n) {
+        // shift the ID returned by getItemId outside the range of all previous fragments
+        baseId += getCount() + n;
     }
 }

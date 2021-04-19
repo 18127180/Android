@@ -608,6 +608,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
 
             frag_array.remove(cur);
             listOfPathImages.remove(cur);
+            adapter.notifyChangeInPosition(1);
             adapter.notifyDataSetChanged();
 
             Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
