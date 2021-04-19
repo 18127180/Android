@@ -24,13 +24,22 @@
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher_demo"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
-        android:icon="@mipmap/ic_launcher_demo"
         android:roundIcon="@mipmap/ic_launcher_demo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Gallery_noob">
+        <activity
+            android:noHistory="true"
+            android:name=".Welcome">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".faceDetection">
             <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -61,11 +70,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity android:name=".FullScreenImage">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <provider

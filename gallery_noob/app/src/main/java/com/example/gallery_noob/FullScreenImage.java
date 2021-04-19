@@ -1,13 +1,11 @@
 package com.example.gallery_noob;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -35,7 +33,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
@@ -323,10 +320,10 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         Intent i=getIntent();
         position=null;
 
-        if(!req){
-            position=null;
-            listOfPathImages=null;
-        }else{
+//        if(!req){
+//            position=null;
+//            listOfPathImages=null;
+//        }else{
             listOfPathImages=new ArrayList<String>();
             listOfPathImages = getIntent().getStringArrayListExtra("listOfImages");
             position=i.getExtras().getString("path");
@@ -516,56 +513,56 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
 //            Picasso.get().load(new File(position)).into(imageView);
 //        }
 
-        if ((ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            req=false;
-            button.setVisibility(View.VISIBLE);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if ((ContextCompat.checkSelfPermission(getApplicationContext(),
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
-                            Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-                        if ((ActivityCompat.shouldShowRequestPermissionRationale(FullScreenImage.this,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(FullScreenImage.this,
-                                Manifest.permission.READ_EXTERNAL_STORAGE))) {
-                        } else {
-                            ActivityCompat.requestPermissions(FullScreenImage.this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                                    REQUEST_PERMISSIONS);
-                        }
-                    }
-                }
-            });
-        }
-        else{
-            if(!req) startActivity(new Intent(FullScreenImage.this, MainActivity.class));
-            req=true;
-        }
-    }
+//        if ((ContextCompat.checkSelfPermission(getApplicationContext(),
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
+//                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+//            req=false;
+//            button.setVisibility(View.VISIBLE);
+//            button.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if ((ContextCompat.checkSelfPermission(getApplicationContext(),
+//                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
+//                            Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+//                        if ((ActivityCompat.shouldShowRequestPermissionRationale(FullScreenImage.this,
+//                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(FullScreenImage.this,
+//                                Manifest.permission.READ_EXTERNAL_STORAGE))) {
+//                        } else {
+//                            ActivityCompat.requestPermissions(FullScreenImage.this,
+//                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+//                                    REQUEST_PERMISSIONS);
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//        else{
+//            if(!req) startActivity(new Intent(FullScreenImage.this, MainActivity.class));
+//            req=true;
+//        }
+//    }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        PermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case REQUEST_PERMISSIONS: {
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults.length > 0 && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                        Intent intent = new Intent(this,MainActivity.class);
-                        startActivity(intent);
-                        req=true;
-                        break;
-                    } else {
-                        Toast.makeText(this, "The app was not allowed to read or write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        PermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        switch (requestCode) {
+//            case REQUEST_PERMISSIONS: {
+//                for (int i = 0; i < grantResults.length; i++) {
+//                    if (grantResults.length > 0 && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+//                        Intent intent = new Intent(this,MainActivity.class);
+//                        startActivity(intent);
+//                        req=true;
+//                        break;
+//                    } else {
+//                        Toast.makeText(this, "The app was not allowed to read or write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     Uri uri;
     public void onSend() throws FileNotFoundException {
