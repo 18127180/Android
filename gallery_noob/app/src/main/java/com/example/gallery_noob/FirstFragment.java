@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -85,6 +86,46 @@ public class FirstFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    ImageAdapter.PhotoListiner default_mode_adapter=new ImageAdapter.PhotoListiner(){
+        @Override
+        public void onPhotoClick(image_Item item) {
+            Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
+            intent.putExtra("path", item.getPath());
+            intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)images);
+            intent.putExtra("req_from",1);
+            startActivityForResult(intent,REQUEST_FROM_GALLERY);
+        }
+
+        @Override
+        public void onLongClick(image_Item item) {
+            OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+                @Override
+                public void handleOnBackPressed() {
+                    imageAdapter.setMultiCheckMode(false);
+                    imageAdapter.setPhotoListener(default_mode_adapter);
+                    imageAdapter.resetCheckMode();
+                    this.setEnabled(false);
+                }
+            };
+            requireActivity().getOnBackPressedDispatcher().addCallback(callback);
+
+            imageAdapter.setMultiCheckMode(true);
+            item.setChecked(true);
+            imageAdapter.setPhotoListener(new ImageAdapter.PhotoListiner() {
+                @Override
+                public void onPhotoClick(image_Item item) {
+                    item.setChecked(!item.isChecked());
+                    imageAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onLongClick(image_Item item) {
+
+                }
+            });
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -216,18 +257,10 @@ public class FirstFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
         images=imagesGallery.listOfImages(getContext());
-        imageAdapter=new ImageAdapter(getContext(),images,new ImageAdapter.PhotoListiner(){
-            @Override
-            public void onPhotoClick(String path) {
-                Intent intent= new Intent(getActivity().getApplicationContext(),FullScreenImage.class);
-                intent.putExtra("path", path);
-                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)images);
-                intent.putExtra("req_from",1);
-                startActivityForResult(intent,REQUEST_FROM_GALLERY);
-            }
-        });
+        imageAdapter=new ImageAdapter(getContext(),images,default_mode_adapter);
         recyclerView.setAdapter(imageAdapter);
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

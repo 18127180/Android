@@ -13,4 +13,11 @@
         app:layout_constraintDimensionRatio="1"
         android:id="@+id/image"
         tools:ignore="MissingConstraints"/>
+    <CheckBox
+        android:id="@+id/check_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/image"
+        app:layout_constraintLeft_toLeftOf="@id/image"
+        android:layout_marginLeft="10dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

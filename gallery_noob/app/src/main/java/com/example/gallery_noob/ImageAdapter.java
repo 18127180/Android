@@ -1,5 +1,6 @@
 package com.example.gallery_noob;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,22 +18,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private List<String> images;
+    private List<image_Item> images;
     protected PhotoListiner photoListiner;
+    private boolean multiCheckMode=false;
 
     public ImageAdapter(Context context, List<String> images, PhotoListiner photoListiner) {
         this.context=context;
-        this.images=images;
+//        this.images=images;
+        this.images=new ArrayList<>();
+        for (String image:images)
+        {
+            this.images.add(new image_Item(image));
+        }
         this.photoListiner=photoListiner;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (isImageFile(images.get(position)))
+        Log.e("Current path",images.get(position).getPath());
+        if (isImageFile(images.get(position).getPath()))
             return 0;
         return 1;
     }
@@ -54,26 +64,54 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         {
             case 0:
                 ViewHolder_image viewHolder1 = (ViewHolder_image) holder;
-                String image=images.get(position);
+                String image=images.get(position).getPath();
                 Glide.with(context).load(image).into(viewHolder1.image);
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        photoListiner.onPhotoClick(image);
+                        photoListiner.onPhotoClick(images.get(position));
                     }
                 });
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        photoListiner.onLongClick(images.get(position));
+                        return false;
+                    }
+                });
+                if (multiCheckMode)
+                {
+                    viewHolder1.checkBox.setVisibility(View.VISIBLE);
+                    viewHolder1.checkBox.setChecked(images.get(position).isChecked());
+                }else {
+                    viewHolder1.checkBox.setVisibility(View.GONE);
+                }
                 break;
             case 1:
                 ViewHolder_video viewHolder2 = (ViewHolder_video) holder;
-                String thumnail=images.get(position);
+                String thumnail=images.get(position).getPath();
                 Glide.with(context).load(thumnail).into(viewHolder2.thumbmail);
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        photoListiner.onPhotoClick(thumnail);
+                        photoListiner.onPhotoClick(images.get(position));
                     }
                 });
-                viewHolder2.duration.setText(getVideoDuration(context,Uri.parse(images.get(position))));
+                viewHolder2.duration.setText(getVideoDuration(context,Uri.parse(images.get(position).getPath())));
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        photoListiner.onLongClick(images.get(position));
+                        return false;
+                    }
+                });
+                if (multiCheckMode)
+                {
+                    viewHolder2.checkBox.setVisibility(View.VISIBLE);
+                    viewHolder2.checkBox.setChecked(images.get(position).isChecked());
+                }else {
+                    viewHolder2.checkBox.setVisibility(View.GONE);
+                }
                 break;
         }
     }
@@ -103,16 +141,18 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public class ViewHolder_image extends RecyclerView.ViewHolder{
         ImageView image;
-
+        CheckBox checkBox;
         public ViewHolder_image(@NonNull View itemView)
         {
             super(itemView);
             image=itemView.findViewById(R.id.image);
+            checkBox=itemView.findViewById(R.id.check_image);
         }
     }
     public class ViewHolder_video extends RecyclerView.ViewHolder{
         ImageView thumbmail;
         TextView duration;
+        CheckBox checkBox;
 
 
         public ViewHolder_video(@NonNull View itemView)
@@ -120,11 +160,17 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(itemView);
             thumbmail=itemView.findViewById(R.id.image);
             duration=itemView.findViewById(R.id.duration_video);
+            checkBox=itemView.findViewById(R.id.check_video);
         }
     }
 
     public interface PhotoListiner{
-        void onPhotoClick(String path);
+        void onPhotoClick(image_Item item);
+        void onLongClick(image_Item item);
+    }
+
+    public void setPhotoListener(PhotoListiner Listener){
+        this.photoListiner=Listener;
     }
 
     public static boolean isImageFile(String path) {
@@ -151,12 +197,39 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static String formatDuration(long duration) {
         long seconds = duration;
         long absSeconds = Math.abs(seconds);
-        String positive = String.format(
+        @SuppressLint("DefaultLocale") String positive = String.format(
                 "%d:%02d:%02d",
                 absSeconds / 3600,
                 (absSeconds % 3600) / 60,
                 absSeconds % 60);
         return seconds < 0 ? "-" + positive : positive;
+    }
+
+    public void setMultiCheckMode(boolean multiCheckMode)
+    {
+        this.multiCheckMode=multiCheckMode;
+        notifyDataSetChanged();
+    }
+
+    public void resetCheckMode()
+    {
+        for (image_Item item:images)
+        {
+            item.setChecked(false);
+        }
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<image_Item> getCheckedNotes(){
+        ArrayList<image_Item> checkedNotes = new ArrayList<>();
+        for (image_Item n: this.images)
+        {
+            if (n.isChecked())
+            {
+                checkedNotes.add(n);
+            }
+        }
+        return checkedNotes;
     }
 }
 
