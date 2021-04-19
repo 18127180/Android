@@ -138,7 +138,7 @@ public class ThirdFragment extends Fragment {
             if(resultCode == RESULT_OK){
                 Log.e("CB","SUCCESS");
                 //just need the callback from PhotosActivity
-
+                al_images.clear();
                 al_images.addAll(data.getExtras().getParcelableArrayList("al_images"));
                 obj_adapter.notifyDataSetChanged();
             }

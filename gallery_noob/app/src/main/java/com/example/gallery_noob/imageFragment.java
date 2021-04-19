@@ -54,44 +54,7 @@ public class imageFragment extends Fragment implements FragmentLifecycle{
         {
             if (!isVisibleToUser)
             {
-//                if(FullScreenImage.favList != null){
-//                    Log.e("ERROR","Chay ! null");
-//                    if(lastFavStatus && !FullScreenImage.favList.contains(url)){
-//                        FullScreenImage.favList.add(url);
-//                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("app", Context.MODE_PRIVATE);
-//                        SharedPreferences.Editor edit = sharedPreferences.edit();
-//                        Gson gson = new Gson();
-//                        String json = gson.toJson(FullScreenImage.favList);
-//                        edit.putString("favourite", json);
-//                        edit.commit();
-//                    }else if(!lastFavStatus && FullScreenImage.favList.contains(url)){
-//                        FullScreenImage.favList.remove(url);
-//                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("app", Context.MODE_PRIVATE);
-//                        SharedPreferences.Editor edit = sharedPreferences.edit();
-//                        Gson gson = new Gson();
-//                        String json = gson.toJson(FullScreenImage.favList);
-//                        edit.putString("favourite", json);
-//                        edit.commit();
-//                    }
-//                    for(String i: FullScreenImage.favList){
-//                        Log.e("favList",i);
-//                    }
-//                }else{
-//                    Log.e("ERROR","Chay null");
-//                    if(lastFavStatus) {
-//                        FullScreenImage.favList = new ArrayList<>();
-//                        FullScreenImage.favList.add(url);
-//                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("app", Context.MODE_PRIVATE);
-//                        SharedPreferences.Editor edit = sharedPreferences.edit();
-//                        Gson gson = new Gson();
-//                        String json = gson.toJson(FullScreenImage.favList);
-//                        edit.putString("favourite", json);
-//                        edit.commit();
-//                        for(String i: FullScreenImage.favList){
-//                            Log.e("favList",i);
-//                        }
-//                    }
-//                }
+                //execute your data loading logic
             }
         }
     }

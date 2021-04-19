@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
@@ -77,32 +76,18 @@ public class Adapter_PhotosFolder extends ArrayAdapter<Model_images> {
 
         if(al_menu.get(position).getAl_imagepath().size()>0) {
             Glide.with(context).load("file://" + al_menu.get(position).getAl_imagepath().get(0))
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .skipMemoryCache(true)
                     .into(viewHolder.iv_image);
         }else{
 
         }
 
-
         return convertView;
-
     }
 
     private static class ViewHolder {
         TextView tv_foldern, tv_foldersize;
         ImageView iv_image;
     }
-
-    public void refillItems(ArrayList<Model_images>al_images){
-        al_menu.clear();
-        al_menu.addAll(al_images);
-    }
-
-    public void refresh(ArrayList<Model_images> items){
-        this.al_menu = items;
-        notifyDataSetChanged();
-    }
-
-
 }
