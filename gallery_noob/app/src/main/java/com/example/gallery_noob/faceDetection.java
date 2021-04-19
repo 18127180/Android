@@ -21,8 +21,6 @@ import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.google.mlkit.vision.face.FaceLandmark;
 
-import org.opencv.android.OpenCVLoader;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -39,14 +37,6 @@ public class faceDetection extends AppCompatActivity {
         setContentView(R.layout.activity_face_detection);
         imageView=findViewById(R.id.image_detect);
         textView=findViewById(R.id.text_detect);
-        if (OpenCVLoader.initDebug())
-        {
-            Log.e("Ok","Success");
-        }
-        else
-        {
-            Log.e("Ok","Failed");
-        }
 
         path=getIntent().getStringExtra("current_path");
         if (path!=null)
