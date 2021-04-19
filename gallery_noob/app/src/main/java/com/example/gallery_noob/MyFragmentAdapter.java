@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 public class MyFragmentAdapter extends FragmentPagerAdapter {
     ArrayList <Fragment> path;
+    private Fragment mCurrentPrimaryItem = null;
+
     public MyFragmentAdapter(@NonNull FragmentManager fm, ArrayList<Fragment> path) {
         super(fm);
         this.path=path;
@@ -23,11 +25,6 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         return path.get(position);
     }
-
-//    @Override
-//    public long getItemId(int position) {
-//        return path.get(position).getId();
-//    }
 
     @Override
     public int getItemPosition(Object object) {
@@ -48,9 +45,10 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         if (position < getCount()) {
-            FragmentManager manager = ((Fragment) object).getFragmentManager();
+            Fragment fragment =(Fragment)object;
+            FragmentManager manager = fragment.getFragmentManager();
             FragmentTransaction trans = manager.beginTransaction();
-            trans.remove((Fragment) object);
+            trans.remove(fragment);
             trans.commit();
         }
     }

@@ -55,10 +55,8 @@ public class PhotosActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //Intent intent = new Intent(PhotosActivity.this,ThirdFragment.class);
-        //startActivity(intent);
         Intent intent = new Intent();
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putParcelableArrayListExtra("al_images", al_images);
         setResult(RESULT_OK, intent);
         finish();

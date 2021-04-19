@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
@@ -68,8 +67,8 @@ public class GridViewAdapter extends ArrayAdapter<Model_images> {
         }
 
         Glide.with(context).load("file://"+ al_menu.get(int_position).getAl_imagepath().get(position))
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                .skipMemoryCache(true)
                 .into(viewHolder.iv_image);
 
         return convertView;

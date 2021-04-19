@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -238,7 +236,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                 }
             }
         });
-        //-----------------------edit-------------------------
+        //=======================================edit===============================================
         edit = (TextView)findViewById(R.id.edit);
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,7 +248,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                 openEditor(uri);
             }
         });
-
+        //=============================================del==========================================
         del = (TextView)findViewById(R.id.delete);
         del.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,6 +362,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
             adapter=new MyFragmentAdapter(getSupportFragmentManager(),frag_array);
 //            viewPager.setOffscreenPageLimit(0);
             viewPager.setAdapter(adapter);
+            viewPager.setOffscreenPageLimit(2);
 //            viewPager.setCurrentItem(listOfPathImages.indexOf(position));
             ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
                 @Override
@@ -655,7 +654,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        super.onBackPressed();
 //        if(uri != null){
 //            getApplicationContext().getContentResolver().delete(uri, null, null);
 //        }
