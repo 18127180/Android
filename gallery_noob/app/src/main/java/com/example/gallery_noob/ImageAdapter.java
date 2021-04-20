@@ -231,5 +231,17 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
         return checkedNotes;
     }
+
+    public void del_item(String path)
+    {
+        for (image_Item item: images)
+        {
+            if (item.getPath()==path)
+            {
+                images.remove(item);
+                break;
+            }
+        }
+    }
 }
 

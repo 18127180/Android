@@ -213,6 +213,19 @@ public class FirstFragment extends Fragment {
         del_multi_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("onclick del","true");
+                ArrayList<image_Item> checkedMedia=imageAdapter.getCheckedNotes();
+                for (image_Item item : checkedMedia)
+                {
+                    try {
+                        onDel(item.getPath());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                visibility=true;
+                toggleBar();
+                imageAdapter.notifyDataSetChanged();
 
             }
         });
@@ -258,27 +271,13 @@ public class FirstFragment extends Fragment {
 //                saveFavouriteList();
 //            }
             f.delete();
-            ContentResolver contentResolver = getContext();
+            ContentResolver contentResolver = getContext().getContentResolver();
             contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     MediaStore.Images.ImageColumns.DATA + "=?", new String[]{position});
-            delList.add(position);
         }
         if(position != null){
-//                        int idx = listOfPathImages.indexOf(position);
-//                        if(idx==listOfPathImages.size()-1){
-//                            idx--;
-//                        }
-//                        adapter = new ViewPagerAdapter(getApplicationContext(),listOfPathImages.toArray(new String[listOfPathImages.size()]));
-//                        viewPager.setAdapter(adapter);
-//                        viewPager.setCurrentItem(idx);
-            //adapter.deletePath(position);(Dang comment)
-
-            frag_array.remove(cur);
-            listOfPathImages.remove(cur);
-            adapter.notifyChangeInPosition(1);
-            adapter.notifyDataSetChanged();
-
-            Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
+            images.remove(position);
+            imageAdapter.del_item(position);
         }
     }
 
