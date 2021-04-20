@@ -1,6 +1,7 @@
 package com.example.gallery_noob;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -27,10 +30,14 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.Slide;
+import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 
 import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,11 +59,16 @@ public class FirstFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
+    static boolean visibility;
+    static LinearLayout layout_select;
     private String mParam1;
     private String mParam2;
     RecyclerView recyclerView;
     ImageAdapter imageAdapter;
     List<String> images;
+    Button btn_select;
+    RoundKornerLinearLayout layout_date;
+    private ImageButton del_multi_btn;
 
     private static final int MY_READ_PERMISION_CODE=101;
     private static final int CAMERA_PERMISION_CODE=102;
@@ -99,31 +111,8 @@ public class FirstFragment extends Fragment {
 
         @Override
         public void onLongClick(image_Item item) {
-            OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
-                @Override
-                public void handleOnBackPressed() {
-                    imageAdapter.setMultiCheckMode(false);
-                    imageAdapter.setPhotoListener(default_mode_adapter);
-                    imageAdapter.resetCheckMode();
-                    this.setEnabled(false);
-                }
-            };
-            requireActivity().getOnBackPressedDispatcher().addCallback(callback);
-
-            imageAdapter.setMultiCheckMode(true);
             item.setChecked(true);
-            imageAdapter.setPhotoListener(new ImageAdapter.PhotoListiner() {
-                @Override
-                public void onPhotoClick(image_Item item) {
-                    item.setChecked(!item.isChecked());
-                    imageAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onLongClick(image_Item item) {
-
-                }
-            });
+            toggleBar();
         }
     };
 
@@ -212,19 +201,28 @@ public class FirstFragment extends Fragment {
             }
         }
 
-        Button btn_select=rootView.findViewById(R.id.button_select);
+        del_multi_btn=rootView.findViewById(R.id.del_multi_button);
+        btn_select=rootView.findViewById(R.id.button_select);
         Button btn_remove=rootView.findViewById(R.id.button_remove);
-        RoundKornerLinearLayout layout_date=(RoundKornerLinearLayout) rootView.findViewById(R.id.ign_layout);
-        LinearLayout layout_select=(LinearLayout) rootView.findViewById(R.id.layout_select);
+        layout_date=(RoundKornerLinearLayout) rootView.findViewById(R.id.ign_layout);
+        layout_select=(LinearLayout) rootView.findViewById(R.id.layout_select);
         layout_select.setVisibility(View.GONE);
-        //BottomNavigationView bottomNavigationView =( BottomNavigationView) mainView.findViewById(R.id.bottomNavigationView);
+        visibility=false;
+
+
+        del_multi_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         btn_select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btn_select.setVisibility(View.GONE);
                 layout_date.setVisibility(View.GONE);
-                layout_select.setVisibility(View.VISIBLE);
+                toggleBar();
                 //Intent intent=new Intent(getActivity(),MainActivity.class);
                 //intent.putExtra("key","allow_select");
                 //startActivity(intent);
@@ -235,9 +233,7 @@ public class FirstFragment extends Fragment {
         btn_remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btn_select.setVisibility(View.VISIBLE);
-                layout_date.setVisibility(View.VISIBLE);
-                layout_select.setVisibility(View.GONE);
+                toggleBar();
             }
         });
 
@@ -253,6 +249,88 @@ public class FirstFragment extends Fragment {
         });*/
         return rootView;
     }
+
+    public void onDel(String position) throws FileNotFoundException {
+        File f = new File(position);
+        if(f.exists()){
+//            if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
+//                favList.remove(position);
+//                saveFavouriteList();
+//            }
+            f.delete();
+            ContentResolver contentResolver = getContext();
+            contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    MediaStore.Images.ImageColumns.DATA + "=?", new String[]{position});
+            delList.add(position);
+        }
+        if(position != null){
+//                        int idx = listOfPathImages.indexOf(position);
+//                        if(idx==listOfPathImages.size()-1){
+//                            idx--;
+//                        }
+//                        adapter = new ViewPagerAdapter(getApplicationContext(),listOfPathImages.toArray(new String[listOfPathImages.size()]));
+//                        viewPager.setAdapter(adapter);
+//                        viewPager.setCurrentItem(idx);
+            //adapter.deletePath(position);(Dang comment)
+
+            frag_array.remove(cur);
+            listOfPathImages.remove(cur);
+            adapter.notifyChangeInPosition(1);
+            adapter.notifyDataSetChanged();
+
+            Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void toggleBar(){
+        Transition transition = new Slide(Gravity.BOTTOM);
+        transition.setDuration(200);
+        transition.addTarget(layout_select);
+        TransitionManager.beginDelayedTransition((ViewGroup) layout_select.getParent(),transition);
+
+        if(visibility){
+            layout_select.setVisibility(View.GONE);
+            imageAdapter.setMultiCheckMode(false);
+            imageAdapter.setPhotoListener(default_mode_adapter);
+            imageAdapter.resetCheckMode();
+            btn_select.setVisibility(View.VISIBLE);
+            layout_date.setVisibility(View.VISIBLE);
+        }else{
+            OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+                @Override
+                public void handleOnBackPressed() {
+                    imageAdapter.setMultiCheckMode(false);
+                    imageAdapter.setPhotoListener(default_mode_adapter);
+                    imageAdapter.resetCheckMode();
+
+                    layout_select.setVisibility(View.GONE);
+                    btn_select.setVisibility(View.VISIBLE);
+                    layout_date.setVisibility(View.VISIBLE);
+                    this.setEnabled(false);
+                }
+            };
+            requireActivity().getOnBackPressedDispatcher().addCallback(callback);
+
+            layout_select.setVisibility(View.VISIBLE);
+            btn_select.setVisibility(View.GONE);
+            layout_date.setVisibility(View.GONE);
+            imageAdapter.setMultiCheckMode(true);
+            imageAdapter.setPhotoListener(new ImageAdapter.PhotoListiner() {
+                @Override
+                public void onPhotoClick(image_Item item) {
+                    item.setChecked(!item.isChecked());
+                    imageAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onLongClick(image_Item item) {
+
+                }
+            });
+        }
+        visibility = !visibility;
+    }
+
     public void loadImages(){
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
