@@ -368,11 +368,13 @@ public class FirstFragment extends Fragment {
             }else if(requestCode == REQUEST_FROM_GALLERY){
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
                 if(del.isEmpty()) return;
+//                images.removeAll(del);
+//                for(String item_to_del: del){
+//                    imageAdapter.del_item(item_to_del);
+//                }
+//                imageAdapter.notifyDataSetChanged();
+                imageAdapter.removeAll(del);
                 images.removeAll(del);
-                for(String item_to_del: del){
-                    imageAdapter.del_item(item_to_del);
-                }
-                imageAdapter.notifyDataSetChanged();
             }
         }
     }

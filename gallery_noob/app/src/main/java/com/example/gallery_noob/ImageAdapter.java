@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private List<image_Item> images;
+    private ArrayList<image_Item> images;
     protected PhotoListiner photoListiner;
     private boolean multiCheckMode=false;
 
@@ -242,6 +242,15 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 break;
             }
         }
+    }
+
+    public void removeAll(List<String> items_to_delete){
+        ArrayList<image_Item>temp = new ArrayList<>();
+        for(String tempString: items_to_delete){
+            temp.add(new image_Item(tempString));
+        }
+        images.removeAll(temp);
+        notifyDataSetChanged();
     }
 
     @Override
