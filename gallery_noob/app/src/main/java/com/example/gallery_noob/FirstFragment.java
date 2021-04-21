@@ -1,10 +1,18 @@
 package com.example.gallery_noob;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -43,8 +51,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,6 +73,7 @@ public class FirstFragment extends Fragment {
     static LinearLayout layout_select;
     private String mParam1;
     private String mParam2;
+    private int select_lang=0;
     RecyclerView recyclerView;
     ImageAdapter imageAdapter;
     List<String> images;
@@ -175,7 +186,69 @@ public class FirstFragment extends Fragment {
             startActivityForResult(intent,REQUEST_FROM_GALLERY);
         }
 
+        if (id==R.id.set_languages)
+        {
+            showChangeLanguageDialog();
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showChangeLanguageDialog(){
+        final String[] listItems={"VietNam","English"};
+        AlertDialog.Builder mBuilder= new AlertDialog.Builder(getContext());
+        mBuilder.setTitle("Chọn ngôn ngữ...");
+        mBuilder.setSingleChoiceItems(listItems, select_lang, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (i==0)
+                {
+                    setLocate("vi");
+                    getActivity().recreate();
+                }
+                if (i==1)
+                {
+                    select_lang=1;
+                    setLocate("en");
+                    getActivity().recreate();
+                }
+            }
+        });
+        AlertDialog mDialog=mBuilder.create();
+        mDialog.show();
+    }
+
+    private void setLocate(String lang)
+    {
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+//        Configuration config= new Configuration();
+//        config.locale=locale;
+        Resources res = getResources();
+        Configuration config = new Configuration(res.getConfiguration());
+        if (Build.VERSION.SDK_INT >= 17) {
+            config.setLocale(locale);
+            getContext().createConfigurationContext(config);
+        } else {
+            config.locale = locale;
+            res.updateConfiguration(config, res.getDisplayMetrics());
+        }
+//        getActivity().getBaseContext().getResources().updateConfiguration(config,getActivity().getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE).edit();
+        editor.putString("My_lang",lang);
+        editor.putInt("My_lang_sl",select_lang);
+        editor.apply();
+    }
+
+    public void loadLocale(){
+        SharedPreferences preferences=getActivity().getSharedPreferences("Settings", MODE_PRIVATE);
+        String language=preferences.getString("My_lang","");
+        int i=preferences.getInt("My_lang_sl",-1);
+        if (i!=-1)
+        {
+            select_lang=i;
+        }
+        setLocate(language);
     }
 
     @Override
@@ -187,6 +260,7 @@ public class FirstFragment extends Fragment {
         }
 
         // Inflate the layout for this fragment
+        loadLocale();
         View rootView = inflater.inflate(R.layout.fragment_first, container, false);
         recyclerView=(RecyclerView)rootView.findViewById(R.id.recyclerview_gallery_images);
         //Permission

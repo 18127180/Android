@@ -16,7 +16,7 @@
         android:id="@+id/button_remove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hủy"
+        android:text="@string/h_y"
         android:layout_alignParentRight="true"
         android:background="@drawable/round_btn"
         style="?android:attr/borderlessButtonStyle"
@@ -30,7 +30,7 @@
         android:id="@+id/button_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chọn"
+        android:text="@string/ch_n"
         android:layout_alignParentRight="true"
         android:background="@drawable/round_btn"
         style="?android:attr/borderlessButtonStyle"
@@ -60,7 +60,7 @@
             android:layout_weight="1"
             android:background="@drawable/round_btn"
             android:maxLines="1"
-            android:text="Năm"
+            android:text="@string/n_m"
             android:textColor="#000000"
             android:textSize="10dp"
             app:backgroundTint="@color/grey_date_layout" />
@@ -73,7 +73,7 @@
             android:layout_margin="3dp"
             android:layout_weight="1"
             android:background="@drawable/round_btn"
-            android:text="Tháng"
+            android:text="@string/th_ng"
             android:textColor="#000000"
             android:textSize="10dp"
             app:backgroundTint="@color/grey_date_layout" />
@@ -86,7 +86,7 @@
             android:layout_margin="3dp"
             android:layout_weight="1"
             android:background="@drawable/round_btn"
-            android:text="Ngày"
+            android:text="@string/ng_y"
             android:textColor="#000000"
             android:textSize="10dp"
             app:backgroundTint="@color/grey_date_layout" />
@@ -99,7 +99,7 @@
             android:layout_margin="3dp"
             android:layout_weight="1"
             android:background="@drawable/round_btn"
-            android:text="Tất cả ảnh"
+            android:text="@string/t_t_c_nh"
             android:textSize="10dp"
             app:backgroundTint="@color/grey_all_btn" />
     </com.jcminarro.roundkornerlayout.RoundKornerLinearLayout>
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Chọn Mục" />
+            android:text="@string/ch_n_m_c" />
 
         <ImageButton
             android:id="@+id/del_multi_button"

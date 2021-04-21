@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gallery_noob</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="l_u">Save</string>
+    <string name="tho_t">Exit</string>
+    <string name="chitiet">Detail</string>
+    <string name="sua">Fix</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="Begin">Begin</string>
+    <string name="chia_s">Share</string>
+    <string name="ch_nh_s_a">Fix</string>
+    <string name="y_u_th_ch">Favorites</string>
+    <string name="x_a">Delete</string>
+    <string name="th_m">Add</string>
+    <string name="s_a">Fix</string>
+    <string name="Search_bar">Search</string>
+    <string name="ch_n_m_c">Select</string>
+    <string name="th_vi_n">Library</string>
+    <string name="thich">Favorites</string>
+    <string name="album">Album</string>
+    <string name="t_o_m_c_y_u_th_ch">Create favorite folder</string>
+    <string name="ph_ng_to">Zoom out</string>
+    <string name="thu_nh">Zoom in</string>
+    <string name="ch_p_nh_quay_video">Capture/Video</string>
+    <string name="tr_nh_chi_u">SlideShow</string>
+    <string name="chi_ti_t">Detail</string>
+    <string name="hinhnen">Set wallpaper</string>
+    <string name="face_tag">Face tag</string>
+    <string name="ng_n_ng">Languages</string>
+    <string name="t_t_c_nh">All</string>
+    <string name="ng_y">Day</string>
+    <string name="th_ng">Month</string>
+    <string name="n_m">Year</string>
+    <string name="ch_n">Select</string>
+    <string name="h_y">Remove</string>
+</resources>

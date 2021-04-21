@@ -8,7 +8,7 @@
         <menu>
             <item
                 android:id="@+id/action_setting_create_favorite"
-                android:title="Tạo mục yêu thích"
+                android:title="@string/t_o_m_c_y_u_th_ch"
                 android:icon="@drawable/ic_baseline_add_24"
                 app:showAsAction="ifRoom"
                 />

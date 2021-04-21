@@ -131,8 +131,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="8"
-            android:layout_marginLeft="20dp"
-            android:text="344 Võ văn tần, phường 5, Quận 3, Thành phố hồ chí minh, Việt nam"/>
+            android:layout_marginLeft="20dp" />
 
         <ImageView
             android:id="@+id/set_location_btn"

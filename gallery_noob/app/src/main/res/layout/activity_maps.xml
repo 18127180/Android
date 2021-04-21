@@ -20,7 +20,7 @@
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:ems="10"
-            android:hint="Tìm kiếm"
+            android:hint="@string/Search_bar"
             android:layout_toRightOf="@id/back_map_btn"
             android:layout_toLeftOf="@id/search_map_btn"/>
         <ImageButton

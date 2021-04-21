@@ -3,14 +3,14 @@
 
     <item
         android:id="@+id/firstFragment"
-        android:title="Thư viện"
+        android:title="@string/th_vi_n"
         android:icon="@drawable/ic_baseline_image"/>
     <item
         android:id="@+id/secondFragment"
-        android:title="Yêu thích"
+        android:title="@string/thich"
         android:icon="@drawable/ic_baseline_favorite"/>
     <item
         android:id="@+id/thirdFragment"
-        android:title="Album"
+        android:title="@string/album"
         android:icon="@drawable/ic_baseline_photo_album"/>
 </menu>

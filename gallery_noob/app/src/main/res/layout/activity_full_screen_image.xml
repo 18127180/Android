@@ -43,7 +43,7 @@
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:text="Send" />
+            android:text="@string/chia_s" />
 
         <TextView
             android:id="@+id/edit"
@@ -54,7 +54,7 @@
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:text="Edit" />
+            android:text="@string/ch_nh_s_a" />
 
         <TextView
             android:id="@+id/favourite"
@@ -65,7 +65,7 @@
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:text="Favorites" />
+            android:text="@string/y_u_th_ch" />
 
         <TextView
             android:id="@+id/delete"
@@ -76,7 +76,7 @@
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:text="Delete" />
+            android:text="@string/x_a" />
 
         <TextView
             android:id="@+id/more"
@@ -87,7 +87,7 @@
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:text="More" />
+            android:text="@string/th_m" />
 
     </LinearLayout>
 
@@ -138,7 +138,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:text="Sửa"
+            android:text="@string/s_a"
             android:textColor="@color/blue" />
     </LinearLayout>
 

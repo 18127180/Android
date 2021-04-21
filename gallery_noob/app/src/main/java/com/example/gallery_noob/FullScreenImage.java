@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -52,6 +53,7 @@ import java.lang.reflect.Field;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ly.img.android.pesdk.PhotoEditorSettingsList;
 import ly.img.android.pesdk.assets.filter.basic.FilterPackBasic;
@@ -153,6 +155,54 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         return inSampleSize;
     }
 
+    public void onClickSubMenu() {
+        PopupMenu popupMenu=new PopupMenu(this, imageMore);
+        popupMenu.getMenuInflater().inflate(R.menu.more_image_menu,popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item1:
+                        Intent goToNextActivity = new Intent(getApplicationContext(), detail_media_activity.class);
+                        goToNextActivity.putExtra("current_path",listOfPathImages.get(cur_select));
+                        startActivity(goToNextActivity);
+                        break;
+                    case R.id.item2:
+                        DisplayMetrics displayMetrics = new DisplayMetrics();
+                        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                        int height = displayMetrics.heightPixels;
+                        int width = displayMetrics.widthPixels << 1; // best wallpaper width is twice screen width
+
+                        // First decode with inJustDecodeBounds=true to check dimensions
+                        final BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        BitmapFactory.decodeFile(listOfPathImages.get(cur_select), options);
+
+                        // Calculate inSampleSize
+                        options.inSampleSize = calculateInSampleSize(options, width, height);
+
+                        // Decode bitmap with inSampleSize set
+                        options.inJustDecodeBounds = false;
+                        Bitmap decodedSampleBitmap = BitmapFactory.decodeFile(listOfPathImages.get(cur_select), options);
+
+                        WallpaperManager wm = WallpaperManager.getInstance(getApplicationContext());
+                        try {
+                            wm.setBitmap(decodedSampleBitmap);
+                        } catch (IOException e) {
+                            Log.e("TAG", "Cannot set image as wallpaper", e);
+                        }
+                        break;
+                    case R.id.item3:
+                        Intent goTo = new Intent(getApplicationContext(), faceDetection.class);
+                        goTo.putExtra("current_path",listOfPathImages.get(cur_select));
+                        startActivity(goTo);
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,51 +217,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         imageMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu=new PopupMenu(getApplicationContext(), imageMore);
-                popupMenu.getMenuInflater().inflate(R.menu.more_image_menu,popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.item1:
-                                Intent goToNextActivity = new Intent(getApplicationContext(), detail_media_activity.class);
-                                goToNextActivity.putExtra("current_path",listOfPathImages.get(cur_select));
-                                startActivity(goToNextActivity);
-                                break;
-                            case R.id.item2:
-                                DisplayMetrics displayMetrics = new DisplayMetrics();
-                                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                                int height = displayMetrics.heightPixels;
-                                int width = displayMetrics.widthPixels << 1; // best wallpaper width is twice screen width
-
-                                // First decode with inJustDecodeBounds=true to check dimensions
-                                final BitmapFactory.Options options = new BitmapFactory.Options();
-                                options.inJustDecodeBounds = true;
-                                BitmapFactory.decodeFile(listOfPathImages.get(cur_select), options);
-
-                                // Calculate inSampleSize
-                                options.inSampleSize = calculateInSampleSize(options, width, height);
-
-                                // Decode bitmap with inSampleSize set
-                                options.inJustDecodeBounds = false;
-                                Bitmap decodedSampleBitmap = BitmapFactory.decodeFile(listOfPathImages.get(cur_select), options);
-
-                                WallpaperManager wm = WallpaperManager.getInstance(getApplicationContext());
-                                try {
-                                    wm.setBitmap(decodedSampleBitmap);
-                                } catch (IOException e) {
-                                    Log.e("TAG", "Cannot set image as wallpaper", e);
-                                }
-                                break;
-                            case R.id.item3:
-                                Intent goTo = new Intent(getApplicationContext(), faceDetection.class);
-                                goTo.putExtra("current_path",listOfPathImages.get(cur_select));
-                                startActivity(goTo);
-                        }
-                        return false;
-                    }
-                });
-                popupMenu.show();
+                onClickSubMenu();
             }
         });
 
