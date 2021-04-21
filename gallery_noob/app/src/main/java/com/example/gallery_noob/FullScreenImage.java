@@ -652,7 +652,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
 //        if(uri != null){
 //            getApplicationContext().getContentResolver().delete(uri, null, null);
 //        }
@@ -660,20 +660,16 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         if (req_from == 1) {  //Neu tu first fragment sang day, ve First fragment
             intent.putStringArrayListExtra("delList",delList);
             intent.putStringArrayListExtra("al_images", listOfPathImages);
-            setResult(RESULT_OK, intent);
-            finish();
         }else if(req_from == 2){    //Neu tu trang yeu thich qua thi quay lai trang yeu thich
 //            Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putStringArrayListExtra("delList",delList);
             intent.putStringArrayListExtra("al_images", listOfPathImages);
-            setResult(RESULT_OK, intent);
-            finish();
         }else if(req_from == 3){    //Neu tu trang album qua thi quay lai trang album
             intent.putStringArrayListExtra("delList",delList);
-            setResult(RESULT_OK, intent);
-            finish();
         }
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private ArrayList<String> loadFavouriteList() {      //ham lay danh sach favourite

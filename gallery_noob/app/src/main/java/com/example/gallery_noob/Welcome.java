@@ -47,7 +47,7 @@ public class Welcome extends AppCompatActivity {
                 }
             });
         }else{
-            startActivity(new Intent(Welcome.this, MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
     }
 

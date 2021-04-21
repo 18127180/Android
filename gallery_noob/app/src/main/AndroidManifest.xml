@@ -62,12 +62,11 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".detail_media_activity" />
         <activity
-            android:name=".PhotosActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".PhotosActivity"/>
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity android:name=".FullScreenImage">
 

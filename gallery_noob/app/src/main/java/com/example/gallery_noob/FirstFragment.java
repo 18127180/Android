@@ -369,7 +369,9 @@ public class FirstFragment extends Fragment {
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
                 if(del.isEmpty()) return;
                 images.removeAll(del);
-
+                for(String item_to_del: del){
+                    imageAdapter.del_item(item_to_del);
+                }
                 imageAdapter.notifyDataSetChanged();
             }
         }

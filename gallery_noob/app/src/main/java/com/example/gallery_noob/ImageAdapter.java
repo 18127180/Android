@@ -243,5 +243,10 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         }
     }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 }
 
