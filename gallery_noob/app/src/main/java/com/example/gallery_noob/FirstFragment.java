@@ -68,7 +68,7 @@ public class FirstFragment extends Fragment {
     List<String> images;
     Button btn_select;
     RoundKornerLinearLayout layout_date;
-    private ImageButton del_multi_btn;
+    private ImageButton del_multi_btn,share_btn;
 
     private static final int MY_READ_PERMISION_CODE=101;
     private static final int CAMERA_PERMISION_CODE=102;
@@ -202,6 +202,7 @@ public class FirstFragment extends Fragment {
         }
 
         del_multi_btn=rootView.findViewById(R.id.del_multi_button);
+        share_btn=rootView.findViewById(R.id.share_btn);
         btn_select=rootView.findViewById(R.id.button_select);
         Button btn_remove=rootView.findViewById(R.id.button_remove);
         layout_date=(RoundKornerLinearLayout) rootView.findViewById(R.id.ign_layout);
@@ -209,6 +210,18 @@ public class FirstFragment extends Fragment {
         layout_select.setVisibility(View.GONE);
         visibility=false;
 
+        share_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    onSend(imageAdapter.getCheckedNotes());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                visibility=true;
+                toggleBar();
+            }
+        });
 
         del_multi_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,7 +239,6 @@ public class FirstFragment extends Fragment {
                 visibility=true;
                 toggleBar();
                 imageAdapter.notifyDataSetChanged();
-
             }
         });
 
@@ -261,6 +273,29 @@ public class FirstFragment extends Fragment {
             }
         });*/
         return rootView;
+    }
+
+    public void onSend(ArrayList<image_Item> media_path) throws FileNotFoundException {
+//        int cur = viewPager.getCurrentItem();
+//        position = listOfPathImages.get(cur);
+
+        Intent share = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        share.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+        share.setType("image/*");
+
+        ArrayList<Uri> files = new ArrayList<Uri>();
+        for(image_Item path : media_path) {
+            Uri uri = FileProvider.getUriForFile(getContext(),"com.example.gallery_noob",new File(path.getPath()));
+            files.add(uri);
+        }
+
+//        String path = MediaStore.Images.Media.insertImage(getContentResolver(),position,"Temp",null);
+//        uri = Uri.parse(path);
+//        uri = FileProvider.getUriForFile(this,"com.example.gallery_noob",new File(position));
+//        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        share.putExtra(Intent.EXTRA_STREAM, uri);
+        share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+        startActivity(share);
     }
 
     public void onDel(String position) throws FileNotFoundException {
