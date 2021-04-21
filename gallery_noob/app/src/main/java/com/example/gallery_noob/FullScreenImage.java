@@ -607,7 +607,9 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
             listOfPathImages.remove(cur);
             adapter.notifyChangeInPosition(1);
             adapter.notifyDataSetChanged();
-
+            if(listOfPathImages.isEmpty()) {
+                onBackPressed();
+            }
             Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
         }
     }
