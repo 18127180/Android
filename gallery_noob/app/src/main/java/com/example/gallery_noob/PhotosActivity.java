@@ -82,6 +82,9 @@ public class PhotosActivity extends AppCompatActivity {
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
                 if(del.isEmpty()) return;
                 al_images.get(int_position).al_imagepath.removeAll(del);
+                if(al_images.get(int_position).al_imagepath.isEmpty()){
+                    al_images.remove(int_position);
+                }
                 adapter.notifyDataSetChanged();
             }
         }

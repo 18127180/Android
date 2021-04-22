@@ -1,12 +1,15 @@
 package com.example.gallery_noob;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.WallpaperManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -25,9 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,6 +102,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
     //---return elements
     ArrayList<String> delList;
     static ArrayList<String> favList;
+    private static ArrayList<Model_images> al_images = new ArrayList<>();
     //-----------------------------
     int cur_select;
     private int slideShowPosition;
@@ -196,6 +202,10 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                         Intent goTo = new Intent(getApplicationContext(), faceDetection.class);
                         goTo.putExtra("current_path",listOfPathImages.get(cur_select));
                         startActivity(goTo);
+                        break;
+                    case R.id.item4:
+                        showDialog();
+                        break;
                 }
                 return false;
             }
@@ -213,6 +223,8 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         imageMore=findViewById(R.id.more);
         Drawable background = ContextCompat.getDrawable(this, R.drawable
                 .popup_menu_background);
+
+        fn_imagespath();
 
         imageMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -781,6 +793,91 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         if (slideShow_MODE)
         {
             mSlideshowHandler.postDelayed(runSlideshow, 3000);
+        }
+    }
+
+    boolean boolean_folder;
+    public void fn_imagespath() {
+        al_images.clear();
+
+        int int_position = 0;
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+
+        String absolutePathOfImage = null;
+        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Log.e("DB","OK you can do it now");
+
+        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+
+        final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+        try{
+            cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(column_index_data);
+                Log.e("Column", absolutePathOfImage);
+                Log.e("Folder", cursor.getString(column_index_folder_name));
+
+                for (int i = 0; i < al_images.size(); i++) {
+                    if (al_images.get(i).getStr_folder().equals(cursor.getString(column_index_folder_name))) {
+                        boolean_folder = true;
+                        int_position = i;
+                        break;
+                    } else {
+                        boolean_folder = false;
+                    }
+                }
+
+                if (boolean_folder) {
+
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.addAll(al_images.get(int_position).getAl_imagepath());
+                    al_path.add(absolutePathOfImage);
+                    al_images.get(int_position).setAl_imagepath(al_path);
+
+                } else {
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.add(absolutePathOfImage);
+                    Model_images obj_model = new Model_images();
+                    obj_model.setStr_folder(cursor.getString(column_index_folder_name));
+                    obj_model.setAl_imagepath(al_path);
+
+                    al_images.add(obj_model);
+                }
+            }
+        }catch(Exception exc){
+            Log.e("Error",exc.toString());
+        }
+    }
+
+    private void showDialog(){
+        try {
+            Dialog dialog = new Dialog(this);
+            View view = getLayoutInflater().inflate(R.layout.dialog_main, null);
+            ListView lv = (ListView) view.findViewById(R.id.custom_list);
+            CustomListAdapterDialog clad = new CustomListAdapterDialog(FullScreenImage.this, al_images);
+            lv.setAdapter(clad);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(getApplicationContext(), al_images.get(position).getStr_folder(), Toast.LENGTH_SHORT).show();
+                    dialog.cancel();
+                }
+            });
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    dialog.cancel();
+                }
+            });
+            dialog.setContentView(view);
+            dialog.show();
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 

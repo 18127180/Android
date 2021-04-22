@@ -34,7 +34,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class ThirdFragment extends Fragment {
 
-    private ArrayList<Model_images> al_images = new ArrayList<>();
+    private static ArrayList<Model_images> al_images = new ArrayList<>();
     Adapter_PhotosFolder obj_adapter;
 
     // TODO: Rename parameter arguments, choose names that match
