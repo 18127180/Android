@@ -3,6 +3,7 @@ package com.example.gallery_noob;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
             Log.e("dc", "ok");
             bottomNavigationView.setVisibility(View.GONE);
         }*/
+    }
+
+    @Override
+    public Resources.Theme getTheme() {
+        return super.getTheme();
     }
 
     private void setLocate(String lang)
