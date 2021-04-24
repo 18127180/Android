@@ -80,10 +80,22 @@ public class PhotosActivity extends AppCompatActivity {
         if(resultCode == RESULT_OK) {
             if(requestCode == REQUEST_CODE_ALBUM){
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
-                if(del.isEmpty()) return;
-                al_images.get(int_position).al_imagepath.removeAll(del);
-                if(al_images.get(int_position).al_imagepath.isEmpty()){
-                    al_images.remove(int_position);
+                if(!del.isEmpty()) {
+                    al_images.get(int_position).al_imagepath.removeAll(del);
+                    if(al_images.get(int_position).al_imagepath.isEmpty()){
+                        al_images.remove(int_position);
+                    }
+                }
+
+                ArrayList<String> add = data.getExtras().getStringArrayList("addList");
+                if(add.isEmpty()) return;
+                for(String str: add){
+                    for(Model_images model: al_images){
+                        if(str.contains(model.str_folder)){
+                            model.al_imagepath.add(str);
+                            break;
+                        }
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }

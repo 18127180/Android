@@ -253,6 +253,15 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void addAll(List<String> items_to_add){
+        ArrayList<image_Item>temp = new ArrayList<>();
+        for(String tempString: items_to_add){
+            temp.add(new image_Item(tempString));
+        }
+        images.addAll(temp);
+        notifyDataSetChanged();
+    }
+
     @Override
     public long getItemId(int position) {
         return position;
