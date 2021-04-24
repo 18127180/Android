@@ -1,15 +1,18 @@
 package com.example.gallery_noob;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.WallpaperManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,9 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,13 +52,20 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ly.img.android.pesdk.PhotoEditorSettingsList;
 import ly.img.android.pesdk.assets.filter.basic.FilterPackBasic;
@@ -96,7 +108,9 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
     static int req_from = 1;
     //---return elements
     ArrayList<String> delList;
+    ArrayList<String> addList;
     static ArrayList<String> favList;
+    private static ArrayList<Model_images> al_images = new ArrayList<>();
     //-----------------------------
     int cur_select;
     private int slideShowPosition;
@@ -196,6 +210,10 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                         Intent goTo = new Intent(getApplicationContext(), faceDetection.class);
                         goTo.putExtra("current_path",listOfPathImages.get(cur_select));
                         startActivity(goTo);
+                        break;
+                    case R.id.item4:
+                        showDialog();
+                        break;
                 }
                 return false;
             }
@@ -213,6 +231,8 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         imageMore=findViewById(R.id.more);
         Drawable background = ContextCompat.getDrawable(this, R.drawable
                 .popup_menu_background);
+
+        fn_imagespath();
 
         imageMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,6 +356,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
             req_from = i.getExtras().getInt("req_from");
             slideShow_MODE=i.getExtras().getBoolean("slideShow_MODE");
             delList = new ArrayList<>();
+            addList = new ArrayList<>();
             frag_array=new ArrayList<>();
             for (int j=0;j<listOfPathImages.size();j++)
             {
@@ -675,6 +696,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
             intent.putStringArrayListExtra("al_images", listOfPathImages);
         }else if(req_from == 3){    //Neu tu trang album qua thi quay lai trang album
             intent.putStringArrayListExtra("delList",delList);
+            intent.putStringArrayListExtra("addList",addList);
         }
         setResult(RESULT_OK, intent);
         finish();
@@ -782,6 +804,148 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         {
             mSlideshowHandler.postDelayed(runSlideshow, 3000);
         }
+    }
+
+    boolean boolean_folder;
+    public void fn_imagespath() {
+        al_images.clear();
+
+        int int_position = 0;
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+
+        String absolutePathOfImage = null;
+        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//        Log.e("DB","OK you can do it now");
+
+        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+
+        final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+        try{
+            cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(column_index_data);
+//                Log.e("Column", absolutePathOfImage);
+//                Log.e("Folder", cursor.getString(column_index_folder_name));
+
+                for (int i = 0; i < al_images.size(); i++) {
+                    if (al_images.get(i).getStr_folder().equals(cursor.getString(column_index_folder_name))) {
+                        boolean_folder = true;
+                        int_position = i;
+                        break;
+                    } else {
+                        boolean_folder = false;
+                    }
+                }
+
+                if (boolean_folder) {
+
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.addAll(al_images.get(int_position).getAl_imagepath());
+                    al_path.add(absolutePathOfImage);
+                    al_images.get(int_position).setAl_imagepath(al_path);
+
+                } else {
+                    ArrayList<String> al_path = new ArrayList<>();
+                    al_path.add(absolutePathOfImage);
+                    Model_images obj_model = new Model_images();
+                    obj_model.setStr_folder(cursor.getString(column_index_folder_name));
+                    obj_model.setAl_imagepath(al_path);
+
+                    al_images.add(obj_model);
+                }
+            }
+        }catch(Exception exc){
+            Log.e("Error",exc.toString());
+        }
+    }
+
+    private void showDialog(){
+        try {
+            int cur = viewPager.getCurrentItem();
+            Dialog dialog = new Dialog(this);
+            View view = getLayoutInflater().inflate(R.layout.dialog_main, null);
+            ListView lv = (ListView) view.findViewById(R.id.custom_list);
+            CustomListAdapterDialog clad = new CustomListAdapterDialog(FullScreenImage.this, al_images);
+            lv.setAdapter(clad);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(getApplicationContext(), listOfPathImages.get(cur), Toast.LENGTH_SHORT).show();
+                    File f = new File(al_images.get(position).getAl_imagepath().get(0));
+                    try {
+                        copy(listOfPathImages.get(cur),f.getParent());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    dialog.cancel();
+                }
+            });
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    dialog.cancel();
+                }
+            });
+            dialog.setContentView(view);
+            dialog.show();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void copy(String src, String dst) throws IOException {
+        String dstFilePath = null;          //dst o day la duong dan thu muc
+        if(Build.VERSION.SDK_INT >= 26){
+            Path srcPath = Paths.get(src);
+            Path dstPath = Paths.get(dst);
+            Path dst_file_path = Files.copy(srcPath,dstPath.resolve(srcPath.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+            dstFilePath = dst_file_path.toString();
+        }
+        else{
+            //de cho cac API >= 19
+            try {
+                File srcFile = new File(src);
+                dst = dst+"/"+srcFile.getName();
+                dstFilePath = dst;
+                if(dst.equals(src))     return;
+                File dstFile = new File(dst);
+                try (InputStream in = new FileInputStream(srcFile)) {
+                    try (OutputStream out = new FileOutputStream(dstFile)) {
+                        // Transfer bytes from in to out
+                        byte[] buf = new byte[1024];
+                        int len;
+                        while ((len = in.read(buf)) > 0) {
+                            out.write(buf, 0, len);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.e("dst File path: ",dstFilePath);
+//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(dstFilePath);
+//        if(f.exists()){
+//            Uri contentUri = FileProvider.getUriForFile(FullScreenImage.this,"com.example.gallery_noob",f);
+//            Log.e("dst Uri path",contentUri.toString());
+//            mediaScanIntent.setData(contentUri);
+//            getApplicationContext().sendBroadcast(mediaScanIntent);
+//        }
+        MediaScannerConnection.scanFile(this,
+                new String[] { f.toString() }, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.e("ExternalStorage", "Scanned " + path + ":");
+                        Log.e("ExternalStorage", "-> uri=" + uri);
+                    }
+                });
+        addList.add(dstFilePath);
     }
 
     @Override

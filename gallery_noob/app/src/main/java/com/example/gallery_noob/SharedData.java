@@ -1,59 +1,19 @@
 package com.example.gallery_noob;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-public class SharedData extends Activity {
-    public SharedData(Context context) {
-        al_images = new ArrayList<>();
-        this.context =  context;
-    }
-    public SharedData(){
-        al_images = new ArrayList<>();
-    }
-
-    public static ArrayList<Model_images> getAl_images() {
-        return al_images;
-    }
-
+public class SharedData {
     public static ArrayList<Model_images> al_images = new ArrayList<>();
     static boolean boolean_folder;
-    static int count = 0;
-    static Context context;
-
-    public static void addModel(Model_images i){
-        SharedData.al_images.add(i);
-    }
-    public static void addCamera(String path){
-        for (int i = 0; i < al_images.size(); i++) {        //De in ra xem trong mang al_images co nhung thu muc gi, file gi ?.
-            if(al_images.get(i).getStr_folder().equals("Camera")){
-                al_images.get(i).al_imagepath.add(0,path);
-                break;
-            }
-        }
-    }
-
-    //Getter & Setter
-    public static void setAl_images(ArrayList<Model_images> al_images) {
-        SharedData.al_images = new ArrayList<>();
-        SharedData.al_images = al_images;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
 
     //Initiate Gallery
-    public static ArrayList<Model_images> fn_imagespath() {
+    public ArrayList<Model_images> fn_imagespath(Context context) {
         al_images.clear();
 
         int int_position = 0;

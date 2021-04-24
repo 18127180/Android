@@ -1,7 +1,6 @@
 package com.example.gallery_noob;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -476,14 +475,16 @@ public class FirstFragment extends Fragment {
                 galleryAddPic();
             }else if(requestCode == REQUEST_FROM_GALLERY){
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
-                if(del.isEmpty()) return;
-//                images.removeAll(del);
-//                for(String item_to_del: del){
-//                    imageAdapter.del_item(item_to_del);
-//                }
-//                imageAdapter.notifyDataSetChanged();
-                imageAdapter.removeAll(del);
-                images.removeAll(del);
+                if(!del.isEmpty()) {
+                    imageAdapter.removeAll(del);
+                    images.removeAll(del);
+                }
+
+                ArrayList<String> add = data.getExtras().getStringArrayList("addList");
+                if(!add.isEmpty()) {
+                    imageAdapter.addAll(add);
+                    images.addAll(add);
+                }
             }
         }
     }
