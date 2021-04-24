@@ -40,6 +40,11 @@ public class Model_images implements Parcelable {
         }
     };
 
+    public Model_images(String str_folder, ArrayList<String> al_imagepath) {
+        this.str_folder = str_folder;
+        this.al_imagepath = al_imagepath;
+    }
+
     public String getStr_folder() {
         return str_folder;
     }
@@ -65,5 +70,39 @@ public class Model_images implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(str_folder);
         dest.writeStringList(al_imagepath);
+    }
+
+    //dung de xet mk
+    public boolean checkIfUserCreateThis(ArrayList<Folder> folders){
+        for(Folder folder: folders){
+            if(folder.getFolderName() == this.str_folder)    return true;
+        }
+        return false;
+    }
+}
+
+class Folder{     //luu thong tin ve folder bi mat
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    public String getFolderPass() {
+        return folderPass;
+    }
+
+    public void setFolderPass(String folderPass) {
+        this.folderPass = folderPass;
+    }
+
+    String folderName;
+    String folderPass;
+
+    public Folder(String folderName, String folderPass) {
+        this.folderName = folderName;
+        this.folderPass = folderPass;
     }
 }

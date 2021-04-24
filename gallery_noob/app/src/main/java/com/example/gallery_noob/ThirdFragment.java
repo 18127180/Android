@@ -1,12 +1,14 @@
 package com.example.gallery_noob;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
@@ -17,13 +19,21 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -47,7 +57,11 @@ public class ThirdFragment extends Fragment {
     private String mParam2;
     GridView gv_folder;
     ImageButton add_btn;
+
+    private final static int REQUEST_FROM_IMAGE_PICKER = 1234;
     private String name = "";
+    File mydir = null;
+    static ArrayList<Folder>folders = null;
 
     public ThirdFragment() {
         // Required empty public constructor
@@ -86,6 +100,7 @@ public class ThirdFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_third, container, false);
         gv_folder=(GridView) rootView.findViewById(R.id.gv_folder);
+        folders = new ArrayList<>();
         fn_imagespath();
 
         add_btn=(ImageButton) rootView.findViewById(R.id.buttonAdd);
@@ -105,19 +120,34 @@ public class ThirdFragment extends Fragment {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        name = input.getText().toString();
-                        File imageRoot = new File(Environment.getExternalStoragePublicDirectory(    //tao album moi
-                                Environment.DIRECTORY_PICTURES), name);
-                        try{
-                            if(imageRoot.mkdirs()) {
-                                Model_images i = new Model_images(name);
-                                SharedData.al_images.add(i);
-                                gv_folder.setAdapter(obj_adapter);
-                            }
+                        name = input.getText().toString();  //ten thu muc
+//                        File imageRoot = new File(Environment.getExternalStoragePublicDirectory(    //tao album moi
+//                                Environment.DIRECTORY_PICTURES), name);
+//                        try{
+//                            if(imageRoot.mkdirs()) {
+//                                Model_images i = new Model_images(name);
+//                                SharedData.al_images.add(i);
+//                                gv_folder.setAdapter(obj_adapter);
+//                            }
+//                        }
+//                        catch(Exception exc){
+//                            Toast.makeText(getContext(),exc.toString(),Toast.LENGTH_LONG).show();
+//                        }
+                        mydir = getContext().getDir(name, Context.MODE_PRIVATE);//Creating an internal dir;
+                        if (!mydir.exists())
+                        {
+                            mydir.mkdirs();
                         }
-                        catch(Exception exc){
-                            Toast.makeText(getContext(),exc.toString(),Toast.LENGTH_LONG).show();
-                        }
+
+                        ImagePicker.ImagePickerWithFragment launch = ImagePicker.create(ThirdFragment.this);
+                        launch.includeVideo(true);
+                        launch.saveImage(true);
+                        launch.showCamera(true);
+                        launch.includeAnimation(true);
+                        launch.imageFullDirectory(mydir.getAbsolutePath());
+                        launch.folderMode(true);
+                        launch.toolbarFolderTitle("Album");
+                        launch.start(REQUEST_FROM_IMAGE_PICKER);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -132,16 +162,62 @@ public class ThirdFragment extends Fragment {
         return rootView;
     }
 
+    public static void saveFolderList(Context context){     //ham luu danh sach thu muc nguoi dung tao
+        SharedPreferences sharedPreferences = context.getSharedPreferences("app", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(folders);
+        edit.putString("folderList", json);
+        edit.commit();
+    }
+
+    public static ArrayList<Folder> loadFolderList(Context context) {      //ham lay danh sach favourite
+        SharedPreferences sharedPreferences = context.getSharedPreferences("app", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("folderList", "");
+        ArrayList<Folder> temp = gson.fromJson(json, new TypeToken<List<Folder>>(){}.getType());
+        return temp;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        if (requestCode == 1) {
-            if(resultCode == RESULT_OK){
-                Log.e("CB","SUCCESS");
-                //just need the callback from PhotosActivity
-                al_images.clear();
-                al_images.addAll(data.getExtras().getParcelableArrayList("al_images"));
-                obj_adapter.notifyDataSetChanged();
+        if(resultCode == RESULT_OK) {
+            switch(requestCode) {
+                case 1:{
+                    Log.e("CB","SUCCESS");
+                    //just need the callback from PhotosActivity
+                    al_images.clear();
+                    al_images.addAll(data.getExtras().getParcelableArrayList("al_images"));
+                    obj_adapter.notifyDataSetChanged();
+                    break;
+                }
+                case REQUEST_FROM_IMAGE_PICKER:{
+                    List<Image> temp = ImagePicker.getImages(data);
+                    Model_images tempModel = new Model_images(name);
+                    try {
+                        for(Image img: temp){
+//                            Log.e("FILE",img.getPath());
+                            tempModel.al_imagepath.add(img.getPath());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                Files.copy(new File(img.getPath()).toPath(),
+                                        new File(mydir,img.getName()).toPath(),
+                                        StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }finally {
+                        al_images.add(tempModel);
+                        obj_adapter.notifyDataSetChanged();
+
+                        Folder tempFolder = new Folder(name,null);
+                        if(folders == null) folders = new ArrayList<>();
+                        folders.add(tempFolder);
+                        saveFolderList(getContext());
+                    }
+                    break;
+                }
             }
         }
     }
@@ -202,6 +278,21 @@ public class ThirdFragment extends Fragment {
         }catch(Exception exc){
             Log.e("Error",exc.toString());
         }
+
+        //doc folder cua nguoi dung tao
+        folders = loadFolderList(getContext());
+        if(folders != null && folders.size() > 0){
+            for(Folder folder: folders){
+                Model_images tempModel = new Model_images(folder.getFolderName());
+                File dir = getContext().getDir(folder.getFolderName(), Context.MODE_PRIVATE);//Creating an internal dir;
+                File[] al_imagespath = dir.listFiles();
+                for(File f: al_imagespath){
+                    tempModel.al_imagepath.add(f.getAbsolutePath());
+                }
+                al_images.add(tempModel);
+            }
+        }
+
         obj_adapter = new Adapter_PhotosFolder(getContext(),al_images);
 
         //gv_folder.setAdapter(new ImageAdapter(getActivity()));

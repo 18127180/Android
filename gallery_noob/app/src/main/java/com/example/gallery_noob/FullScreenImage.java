@@ -862,6 +862,20 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         }catch(Exception exc){
             Log.e("Error",exc.toString());
         }
+
+        //doc folder cua nguoi dung tao
+        ArrayList<Folder> folders = ThirdFragment.loadFolderList(getApplicationContext());
+        if(folders != null && folders.size() > 0){
+            for(Folder folder: folders){
+                Model_images tempModel = new Model_images(folder.getFolderName());
+                File dir = getApplicationContext().getDir(folder.getFolderName(), Context.MODE_PRIVATE);//Creating an internal dir;
+                File[] al_imagespath = dir.listFiles();
+                for(File f: al_imagespath){
+                    tempModel.al_imagepath.add(f.getAbsolutePath());
+                }
+                al_images.add(tempModel);
+            }
+        }
     }
 
     private void showDialog(){
@@ -878,7 +892,9 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                     Toast.makeText(getApplicationContext(), listOfPathImages.get(cur), Toast.LENGTH_SHORT).show();
                     File f = new File(al_images.get(position).getAl_imagepath().get(0));
                     try {
-                        copy(listOfPathImages.get(cur),f.getParent());
+                        String s = copy(listOfPathImages.get(cur),f.getParent());
+                        al_images.get(position).al_imagepath.add(s);
+                        clad.notifyDataSetChanged();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -898,7 +914,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         }
     }
 
-    public void copy(String src, String dst) throws IOException {
+    public String copy(String src, String dst) throws IOException {
         String dstFilePath = null;          //dst o day la duong dan thu muc
         if(Build.VERSION.SDK_INT >= 26){
             Path srcPath = Paths.get(src);
@@ -912,7 +928,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                 File srcFile = new File(src);
                 dst = dst+"/"+srcFile.getName();
                 dstFilePath = dst;
-                if(dst.equals(src))     return;
+                if(dst.equals(src))     return null;
                 File dstFile = new File(dst);
                 try (InputStream in = new FileInputStream(srcFile)) {
                     try (OutputStream out = new FileOutputStream(dstFile)) {
@@ -946,6 +962,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                     }
                 });
         addList.add(dstFilePath);
+        return dstFilePath;
     }
 
     @Override
