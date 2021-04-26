@@ -36,4 +36,9 @@
     <string name="h_y">Hủy</string>
     <string name="themVaoAlbum">Thêm vào album</string>
     <string name="datMatKhau">Đặt mật khẩu</string>
+    <string name="hienthi">Hiển thị</string>
+    <string name="warning_thumucdaco">Thư muc cùng tên đã tồn tại</string>
+    <string name="nhapMatKhau">Nhập mật khẩu</string>
+    <string name="saiMatKhau">Sai mật khẩu</string>
+    <string name="goMatKhau">Gỡ mật khẩu</string>
 </resources>

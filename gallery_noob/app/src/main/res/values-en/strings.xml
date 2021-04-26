@@ -37,4 +37,9 @@
     <string name="h_y">Remove</string>
     <string name="themVaoAlbum">Add to Album</string>
     <string name="datMatKhau">Set Password</string>
+    <string name="hienthi">Show</string>
+    <string name="warning_thumucdaco">Folder\'s name has been taken</string>
+    <string name="nhapMatKhau">Input password</string>
+    <string name="saiMatKhau">Password incorrect</string>
+    <string name="goMatKhau">Remove password</string>
 </resources>

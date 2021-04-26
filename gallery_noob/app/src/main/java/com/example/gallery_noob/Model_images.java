@@ -75,7 +75,7 @@ public class Model_images implements Parcelable {
     //dung de xet mk
     public boolean checkIfUserCreateThis(ArrayList<Folder> folders){
         for(Folder folder: folders){
-            if(folder.getFolderName() == this.str_folder)    return true;
+            if(folder.getFolderName().equals(this.str_folder))    return true;
         }
         return false;
     }

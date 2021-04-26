@@ -16,9 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -121,18 +124,12 @@ public class ThirdFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         name = input.getText().toString();  //ten thu muc
-//                        File imageRoot = new File(Environment.getExternalStoragePublicDirectory(    //tao album moi
-//                                Environment.DIRECTORY_PICTURES), name);
-//                        try{
-//                            if(imageRoot.mkdirs()) {
-//                                Model_images i = new Model_images(name);
-//                                SharedData.al_images.add(i);
-//                                gv_folder.setAdapter(obj_adapter);
-//                            }
-//                        }
-//                        catch(Exception exc){
-//                            Toast.makeText(getContext(),exc.toString(),Toast.LENGTH_LONG).show();
-//                        }
+                        for(Model_images temp:al_images){
+                            if(name.equals(temp.str_folder)){
+                                Toast.makeText(getContext(),R.string.warning_thumucdaco,Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
                         mydir = getContext().getDir(name, Context.MODE_PRIVATE);//Creating an internal dir;
                         if (!mydir.exists())
                         {
@@ -162,7 +159,7 @@ public class ThirdFragment extends Fragment {
         return rootView;
     }
 
-    public static void saveFolderList(Context context){     //ham luu danh sach thu muc nguoi dung tao
+    public static void saveFolderList(Context context,ArrayList<Folder> folders){     //ham luu danh sach thu muc nguoi dung tao
         SharedPreferences sharedPreferences = context.getSharedPreferences("app", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedPreferences.edit();
         Gson gson = new Gson();
@@ -177,6 +174,13 @@ public class ThirdFragment extends Fragment {
         String json = sharedPreferences.getString("folderList", "");
         ArrayList<Folder> temp = gson.fromJson(json, new TypeToken<List<Folder>>(){}.getType());
         return temp;
+    }
+
+    @Override
+    public void onResume() {
+        folders = loadFolderList(getContext());
+        obj_adapter.notifyDataSetChanged();
+        super.onResume();
     }
 
     @Override
@@ -214,7 +218,7 @@ public class ThirdFragment extends Fragment {
                         Folder tempFolder = new Folder(name,null);
                         if(folders == null) folders = new ArrayList<>();
                         folders.add(tempFolder);
-                        saveFolderList(getContext());
+                        saveFolderList(getContext(),folders);
                     }
                     break;
                 }
@@ -300,12 +304,74 @@ public class ThirdFragment extends Fragment {
         gv_folder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(), PhotosActivity.class);
-                intent.putExtra("value", position);
-                intent.putParcelableArrayListExtra("al_images", al_images);
-                startActivityForResult(intent,1);
+                if(al_images.get(position).checkIfUserCreateThis(folders)){
+                    checkPassword(position);
+                }else {
+                    Intent intent = new Intent(getContext(), PhotosActivity.class);
+                    intent.putExtra("value", position);
+                    intent.putParcelableArrayListExtra("al_images", al_images);
+                    startActivityForResult(intent, 1);
+                }
             }
         });
         return al_images;
+    }
+
+    boolean correct = false;
+    private void checkPassword(int position) {
+        String folderPass = "";
+        String str = al_images.get(position).str_folder;
+        for(Folder folder: folders){
+            if(folder.getFolderName().equals(str)){
+                folderPass = folder.getFolderPass();
+                if(folderPass == null){     //pass ko co
+                    Intent intent = new Intent(getContext(), PhotosActivity.class);
+                    intent.putExtra("value", position);
+                    intent.putParcelableArrayListExtra("al_images", al_images);
+                    startActivityForResult(intent, 1);
+                    return;
+                }
+            }
+        }
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.password_type, null, false);
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+        builder.setView(dialogView);
+        androidx.appcompat.app.AlertDialog alertDialog = builder.create();
+
+        TextView title = dialogView.findViewById(R.id.textView2);
+        EditText password = dialogView.findViewById(R.id.password);
+        Button show = dialogView.findViewById(R.id.show);
+        Button remove = dialogView.findViewById(R.id.remove);
+        Button save = dialogView.findViewById(R.id.save);
+
+        title.setText(R.string.nhapMatKhau);
+
+        show.setVisibility(View.GONE);
+        remove.setVisibility(View.GONE);
+
+        String finalFolderPass = folderPass;
+        save.setText("OK");
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pass = password.getText().toString();
+                if(!pass.equals(finalFolderPass)){
+                    Toast.makeText(getContext(),R.string.saiMatKhau,Toast.LENGTH_SHORT).show();
+                    password.setText("");
+                }else {
+                    alertDialog.cancel();
+                    Intent intent = new Intent(getContext(), PhotosActivity.class);
+                    intent.putExtra("value", position);
+                    intent.putParcelableArrayListExtra("al_images", al_images);
+                    startActivityForResult(intent, 1);
+                }
+            }
+        });
+
+//        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+//        builder.setView(dialogView);
+//        androidx.appcompat.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
