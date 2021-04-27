@@ -249,8 +249,8 @@ public class ThirdFragment extends Fragment {
 
             while (cursor.moveToNext()) {
                 absolutePathOfImage = cursor.getString(column_index_data);
-                Log.e("Column", absolutePathOfImage);
-                Log.e("Folder", cursor.getString(column_index_folder_name));
+//                Log.e("Column", absolutePathOfImage);
+//                Log.e("Folder", cursor.getString(column_index_folder_name));
 
                 for (int i = 0; i < al_images.size(); i++) {
                     if (al_images.get(i).getStr_folder().equals(cursor.getString(column_index_folder_name))) {

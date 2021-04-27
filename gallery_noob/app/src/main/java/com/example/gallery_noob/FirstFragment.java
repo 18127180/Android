@@ -475,13 +475,13 @@ public class FirstFragment extends Fragment {
                 galleryAddPic();
             }else if(requestCode == REQUEST_FROM_GALLERY){
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
-                if(!del.isEmpty()) {
+                if(del != null && !del.isEmpty()) {
                     imageAdapter.removeAll(del);
                     images.removeAll(del);
                 }
 
                 ArrayList<String> add = data.getExtras().getStringArrayList("addList");
-                if(!add.isEmpty()) {
+                if(add != null && !add.isEmpty()) {
                     imageAdapter.addAll(add);
                     images.addAll(add);
                 }
