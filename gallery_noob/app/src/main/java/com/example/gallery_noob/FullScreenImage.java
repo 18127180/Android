@@ -691,6 +691,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         Intent intent = new Intent();
         if (req_from == 1) {  //Neu tu first fragment sang day, ve First fragment
             intent.putStringArrayListExtra("delList",delList);
+            intent.putStringArrayListExtra("addList",addList);
             intent.putStringArrayListExtra("al_images", listOfPathImages);
         }else if(req_from == 2){    //Neu tu trang yeu thich qua thi quay lai trang yeu thich
 //            Intent intent = new Intent();

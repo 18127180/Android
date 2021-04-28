@@ -3,6 +3,8 @@ package com.example.gallery_noob;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 
 /**
@@ -98,11 +100,23 @@ class Folder{     //luu thong tin ve folder bi mat
         this.folderPass = folderPass;
     }
 
+    public Folder(String folderName) {
+        this.folderName = folderName;
+    }
+
     String folderName;
     String folderPass;
 
     public Folder(String folderName, String folderPass) {
         this.folderName = folderName;
         this.folderPass = folderPass;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(this.getFolderName().equals(((Folder)obj).getFolderName())){
+            return true;
+        }
+        return false;
     }
 }

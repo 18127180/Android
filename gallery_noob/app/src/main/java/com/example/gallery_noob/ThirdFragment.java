@@ -178,9 +178,9 @@ public class ThirdFragment extends Fragment {
 
     @Override
     public void onResume() {
+        super.onResume();
         folders = loadFolderList(getContext());
         obj_adapter.notifyDataSetChanged();
-        super.onResume();
     }
 
     @Override
@@ -192,7 +192,7 @@ public class ThirdFragment extends Fragment {
                     Log.e("CB","SUCCESS");
                     //just need the callback from PhotosActivity
                     al_images.clear();
-                    al_images.addAll(data.getExtras().getParcelableArrayList("al_images"));
+                    al_images.addAll(data.getParcelableArrayListExtra("al_images"));
                     obj_adapter.notifyDataSetChanged();
                     break;
                 }
@@ -211,15 +211,19 @@ public class ThirdFragment extends Fragment {
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }finally {
-                        al_images.add(tempModel);
-                        obj_adapter.notifyDataSetChanged();
-
-                        Folder tempFolder = new Folder(name,null);
-                        if(folders == null) folders = new ArrayList<>();
-                        folders.add(tempFolder);
-                        saveFolderList(getContext(),folders);
                     }
+                    al_images.add(tempModel);
+                    obj_adapter.notifyDataSetChanged();
+
+                    Folder tempFolder = new Folder(name,null);
+                    if(folders == null) folders = new ArrayList<>();
+                    folders.add(tempFolder);
+                    saveFolderList(getContext(),folders);
+
+                    Intent intent = new Intent(getContext(), PhotosActivity.class);
+                    intent.putExtra("value", al_images.size()-1);
+                    intent.putParcelableArrayListExtra("al_images", al_images);
+                    startActivityForResult(intent, 1);
                     break;
                 }
             }
@@ -249,8 +253,8 @@ public class ThirdFragment extends Fragment {
 
             while (cursor.moveToNext()) {
                 absolutePathOfImage = cursor.getString(column_index_data);
-                Log.e("Column", absolutePathOfImage);
-                Log.e("Folder", cursor.getString(column_index_folder_name));
+//                Log.e("Column", absolutePathOfImage);
+//                Log.e("Folder", cursor.getString(column_index_folder_name));
 
                 for (int i = 0; i < al_images.size(); i++) {
                     if (al_images.get(i).getStr_folder().equals(cursor.getString(column_index_folder_name))) {
@@ -304,7 +308,7 @@ public class ThirdFragment extends Fragment {
         gv_folder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(al_images.get(position).checkIfUserCreateThis(folders)){
+                if(folders != null && al_images.get(position).checkIfUserCreateThis(folders)){
                     checkPassword(position);
                 }else {
                     Intent intent = new Intent(getContext(), PhotosActivity.class);

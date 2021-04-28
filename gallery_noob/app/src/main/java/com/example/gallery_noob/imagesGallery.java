@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import androidx.loader.content.CursorLoader;
 
@@ -50,7 +49,7 @@ public class imagesGallery {
         while(cursor.moveToNext())
         {
             absolutePath=cursor.getString(column_index_data);
-            Log.e("Path",absolutePath);
+            //Log.e("Path",absolutePath);
             lisOfAllImages.add(absolutePath);
         }
         return  lisOfAllImages;

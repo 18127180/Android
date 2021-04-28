@@ -43,4 +43,6 @@
     <string name="saiMatKhau">Password incorrect</string>
     <string name="goMatKhau">Remove password</string>
     <string name="doiDiaDiem">Empty location</string>
+    <string name="xoaThuMuc">Delete folder</string>
+    <string name="doiTenThanh">Rename to ...</string>
 </resources>
