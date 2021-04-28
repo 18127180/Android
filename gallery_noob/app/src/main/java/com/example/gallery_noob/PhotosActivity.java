@@ -68,7 +68,7 @@ public class PhotosActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         folders = ThirdFragment.loadFolderList(getApplicationContext());
-        if(al_images.get(int_position).checkIfUserCreateThis(folders)) {
+        if(folders != null && al_images.get(int_position).checkIfUserCreateThis(folders)) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.photos_activity_menu, menu);
         }

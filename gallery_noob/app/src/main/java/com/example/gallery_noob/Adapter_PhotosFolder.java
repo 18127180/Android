@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -34,16 +36,19 @@ public class Adapter_PhotosFolder extends ArrayAdapter<Model_images> {
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+//        if(position>=getViewTypeCount())    return getViewTypeCount()-1;
+//        return position;
+        return 0;
     }
 
     @Override
     public int getViewTypeCount() {
-        if (al_menu.size() > 0) {
-            return al_menu.size();
-        } else {
-            return 1;
-        }
+//        if (al_menu.size() > 0) {
+//            return al_menu.size();
+//        } else {
+//            return 1;
+//        }
+        return 1;
     }
 
     @Override
@@ -51,6 +56,21 @@ public class Adapter_PhotosFolder extends ArrayAdapter<Model_images> {
         return position;
     }
 
+    @Nullable
+    @Override
+    public Model_images getItem(int position) {
+        return al_menu.get(position);
+    }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return true;
+    }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
