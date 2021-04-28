@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/panel_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,6 +14,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/duonglt03" />
+        android:src="@drawable/welcome_background"/>
 
-</FrameLayout>
+    <CheckBox
+        android:id="@+id/check_video_1"
+        app:layout_constraintLeft_toLeftOf="@id/imgView"
+        app:layout_constraintTop_toTopOf="@+id/imgView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/duration_video_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#A4454347"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/imgView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

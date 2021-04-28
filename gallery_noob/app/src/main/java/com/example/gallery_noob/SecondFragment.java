@@ -109,28 +109,6 @@ public class SecondFragment extends Fragment {
         if(mData != null) {
             mAdapter = new SampleAdapter(getContext(), android.R.layout.simple_list_item_1, mData);
             mGridView.setAdapter(mAdapter);
-            //        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            //            @Override
-            //            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            //                Log.d(TAG, "onScrollStateChanged:" + scrollState);
-            //            }
-            //
-            //            @Override
-            //            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            //                Log.d(TAG, "onScroll firstVisibleItem:" + firstVisibleItem +
-            //                        " visibleItemCount:" + visibleItemCount +
-            //                        " totalItemCount:" + totalItemCount);
-            //                // our handling
-            //                if (!mHasRequestedMore) {
-            //                    int lastInScreen = firstVisibleItem + visibleItemCount;
-            //                    if (lastInScreen >= totalItemCount) {
-            //                        Log.d(TAG, "onScroll lastInScreen - so load more");
-            //                        mHasRequestedMore = true;
-            //                        onLoadMoreItems();
-            //                    }
-            //                }
-            //            }
-            //        });
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

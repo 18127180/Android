@@ -1,12 +1,15 @@
 package com.example.gallery_noob;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -51,6 +54,8 @@ public class SampleAdapter extends ArrayAdapter<String> {
             vh = new ViewHolder();
             vh.imgView = (DynamicHeightImageView) convertView
                     .findViewById(R.id.imgView);
+            vh.checkBox = (CheckBox) convertView.findViewById(R.id.check_video_1);
+            vh.duration = (TextView) convertView.findViewById(R.id.duration_video_1);
 
             convertView.setTag(vh);
         } else {
@@ -62,6 +67,12 @@ public class SampleAdapter extends ArrayAdapter<String> {
         vh.imgView.setHeightRatio(positionHeight);
 
         Glide.with(context).load(al_images.get(position)).into(vh.imgView);
+        vh.checkBox.setVisibility(View.GONE);
+        if(ImageAdapter.isImageFile(al_images.get(position))){
+            vh.duration.setVisibility(View.GONE);
+        }else{
+            vh.duration.setText(ImageAdapter.getVideoDuration(context, Uri.parse(al_images.get(position))));
+        }
         return convertView;
     }
 
@@ -71,8 +82,15 @@ public class SampleAdapter extends ArrayAdapter<String> {
         return super.getItem(position);
     }
 
+    @Override
+    public int getCount() {
+        return al_images.size();
+    }
+
     static class ViewHolder {
         DynamicHeightImageView imgView;
+        TextView duration;
+        CheckBox checkBox;
     }
 
     private double getPositionRatio(final int position) {
@@ -92,5 +110,15 @@ public class SampleAdapter extends ArrayAdapter<String> {
     private double getRandomHeightRatio() {
         return (mRandom.nextDouble() / 2.0) + 1.0; // height will be 1.0 - 1.5
         // the width
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return 0;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 1;
     }
 }
