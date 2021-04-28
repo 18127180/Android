@@ -12,8 +12,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -68,7 +66,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ly.img.android.pesdk.PhotoEditorSettingsList;
 import ly.img.android.pesdk.assets.filter.basic.FilterPackBasic;
@@ -352,7 +349,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         position=null;
 
         // Figure out what to do based on the intent type
-        if (i.getType().indexOf("image/") != -1 || i.getType().equals("video/")) {
+        if (data != null) {
             if (i.getType().indexOf("image/") != -1 || i.getType().equals("video/")){
                 File file = new File(getPath(data));
                 File parent = file.getParentFile();
