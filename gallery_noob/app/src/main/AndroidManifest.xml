@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.gallery_noob">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -69,7 +70,13 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity android:name=".FullScreenImage">
-
+            <intent-filter
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+                <data android:mimeType="video/*"/>
+            </intent-filter>
         </activity>
 
         <provider
