@@ -191,12 +191,8 @@ public class ThirdFragment extends Fragment {
                 case 1:{
                     Log.e("CB","SUCCESS");
                     //just need the callback from PhotosActivity
-                    ArrayList<Model_images>temp = data.getParcelableArrayListExtra("al_images");
                     al_images.clear();
-//                    al_images.addAll(temp);
-                    for(Model_images t:temp){
-                        al_images.add(t);
-                    }
+                    al_images.addAll(data.getParcelableArrayListExtra("al_images"));
                     obj_adapter.notifyDataSetChanged();
                     break;
                 }

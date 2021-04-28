@@ -4,4 +4,10 @@
     <item
         android:id="@+id/setPassword"
         android:title="@string/datMatKhau" />
+    <item
+        android:id="@+id/deleteFolder"
+        android:title="@string/xoaThuMuc" />
+    <item
+        android:id="@+id/renameTo"
+        android:title="@string/doiTenThanh" />
 </menu>
