@@ -121,6 +121,7 @@
         android:orientation="horizontal"
         android:weightSum="10">
         <ImageView
+            android:id="@+id/location_icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_location_on_24"
@@ -139,8 +140,8 @@
             android:layout_height="35dp"
             android:layout_weight="1"
             android:background="@drawable/background_change_location"
-            android:src="@drawable/ic_baseline_remove_24"
             android:layout_gravity="center"
+            android:visibility="gone"
             />
     </LinearLayout>
 
@@ -218,6 +219,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp">
         <Button
+            android:id="@+id/exit_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -228,8 +230,10 @@
             android:textColor="@color/black"
             style="?android:attr/borderlessButtonStyle"
             android:textSize="18dp"
+            android:visibility="gone"
             />
         <Button
+            android:id="@+id/save_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -240,6 +244,7 @@
             android:textColor="@color/black"
             style="?android:attr/borderlessButtonStyle"
             android:textSize="18dp"
+            android:visibility="gone"
             />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

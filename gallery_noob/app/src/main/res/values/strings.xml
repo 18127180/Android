@@ -41,6 +41,7 @@
     <string name="nhapMatKhau">Nhập mật khẩu</string>
     <string name="saiMatKhau">Sai mật khẩu</string>
     <string name="goMatKhau">Gỡ mật khẩu</string>
+    <string name="doiDiaDiem">Không có thông tin vị trí</string>
     <string name="xoaThuMuc">Xóa thư mục</string>
     <string name="doiTenThanh">Đổi tên thành ...</string>
 </resources>

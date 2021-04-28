@@ -8,15 +8,22 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -36,9 +43,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
+    Button save_btn_location, back_btn_location;
+    EditText addressField;
+    private Intent intent;
 
     private GoogleMap mMap;
     private GoogleApiClient googleApiClient;
@@ -46,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements
     private Location lastLocation;
     private Marker currentLocationUserMarker;
     private MarkerOptions markerOptions;
+    private double cur_lat,cur_long;
 
     private static final int Request_User_Location_Code=99;
 
@@ -63,6 +76,54 @@ public class MapsActivity extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        save_btn_location=findViewById(R.id.save_location_btn);
+        back_btn_location=findViewById(R.id.exit_location_btn);
+        addressField=findViewById(R.id.location_search);
+
+        save_btn_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent data=new Intent();
+                data.putExtra("req_lat",cur_lat);
+                data.putExtra("req_long",cur_long);
+                setResult(Activity.RESULT_OK, data);
+                finish();
+            }
+        });
+
+        back_btn_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        addressField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length()==0)
+                {
+                    save_btn_location.setEnabled(false);
+                    save_btn_location.setTextColor(Color.parseColor("#CAC7C7"));
+                }
+                else
+                {
+                    save_btn_location.setEnabled(true);
+                    save_btn_location.setTextColor(Color.parseColor("#000000"));
+                }
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
@@ -71,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements
         switch (v.getId())
         {
             case R.id.search_map_btn:
-                EditText addressField=findViewById(R.id.location_search);
+                Button save_btn=findViewById(R.id.save_location_btn);
                 String address=addressField.getText().toString();
                 List<Address> addressList = null;
                 if (!TextUtils.isEmpty(address))
@@ -79,13 +140,16 @@ public class MapsActivity extends FragmentActivity implements
                     Geocoder geocoder=new Geocoder(this);
                     try {
                         addressList=geocoder.getFromLocationName(address,6);
+                        String name_address=getAddress(cur_lat,cur_long);
                         if (addressList!=null)
                         {
                             for (int i=0;i<addressList.size();i++)
                             {
                                 Address userAddress=addressList.get(i);
-                                addressField.setText(userAddress.getAddressLine(0));
-                                LatLng latLng=new LatLng(userAddress.getLatitude(),userAddress.getLongitude());
+                                cur_lat=userAddress.getLatitude();
+                                cur_long=userAddress.getLongitude();
+                                addressField.setText(getAddress(cur_lat,cur_long));
+                                LatLng latLng=new LatLng(cur_lat,cur_long);
 
                                 currentLocationUserMarker.setPosition(latLng);
                                 currentLocationUserMarker.setTitle(address);
@@ -109,6 +173,12 @@ public class MapsActivity extends FragmentActivity implements
                 {
                     Toast.makeText(this,"Please write any location name!",Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.back_map_btn:
+                onBackPressed();
+                break;
+            case R.id.exit_location_btn:
+                onBackPressed();
                 break;
         }
     }
@@ -136,9 +206,8 @@ public class MapsActivity extends FragmentActivity implements
 
     public void current_location_image(String address){
 
-        EditText addressField=findViewById(R.id.location_search);
         List<Address> addressList = null;
-        MarkerOptions userMarketOptions= new MarkerOptions();
+//        MarkerOptions userMarketOptions= new MarkerOptions();
         if (!TextUtils.isEmpty(address))
         {
             Geocoder geocoder=new Geocoder(this);
@@ -150,7 +219,9 @@ public class MapsActivity extends FragmentActivity implements
                     {
                         Address userAddress=addressList.get(i);
                         addressField.setText(userAddress.getAddressLine(0));
-                        LatLng latLng=new LatLng(userAddress.getLatitude(),userAddress.getLongitude());
+                        cur_lat=userAddress.getLatitude();
+                        cur_long=userAddress.getLongitude();
+                        LatLng latLng=new LatLng(cur_lat,cur_long);
 
                         currentLocationUserMarker.setPosition(latLng);
                         currentLocationUserMarker.setTitle(address);
@@ -221,6 +292,22 @@ public class MapsActivity extends FragmentActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    public String getAddress(double lat, double lng) {
+        String name_adress=null;
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            name_adress = obj.getAddressLine(0);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return name_adress;
+    }
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
         lastLocation=location;
@@ -229,7 +316,10 @@ public class MapsActivity extends FragmentActivity implements
             currentLocationUserMarker.remove();
         }
 
-        LatLng latLng=new LatLng(location.getLatitude(), location.getLongitude());
+        cur_lat=location.getLatitude();
+        cur_long=location.getLongitude();
+
+        LatLng latLng=new LatLng(cur_lat, cur_long);
 
         markerOptions=new MarkerOptions();
         markerOptions.position(latLng);
@@ -241,7 +331,20 @@ public class MapsActivity extends FragmentActivity implements
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17.0f));
 
-        current_location_image("Hẻm 32 cao thắng");
+        intent=getIntent();
+        if (intent!=null)
+        {
+            double get_lat,get_long;
+            get_lat=intent.getDoubleExtra("lat_position",cur_lat);
+            get_long=intent.getDoubleExtra("long_position",cur_long);
+            if (get_lat!=0 && get_long!=0)
+            {
+                cur_lat=get_lat;
+                cur_long=get_long;
+            }
+        }
+
+        current_location_image(getAddress(cur_lat,cur_long));
 
         if (googleApiClient !=null)
         {

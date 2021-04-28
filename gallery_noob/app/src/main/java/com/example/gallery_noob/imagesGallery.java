@@ -21,7 +21,7 @@ public class imagesGallery {
         String[] projection = {
                 MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.DATA,
-                MediaStore.Files.FileColumns.DATE_ADDED,
+                MediaStore.Files.FileColumns.DATE_MODIFIED,
                 MediaStore.Files.FileColumns.MEDIA_TYPE,
                 MediaStore.Files.FileColumns.MIME_TYPE,
                 MediaStore.Files.FileColumns.TITLE
@@ -41,7 +41,7 @@ public class imagesGallery {
                 projection,
                 selection,
                 null, // Selection args (none).
-                MediaStore.Files.FileColumns.DATE_ADDED + " DESC" // Sort order.
+                MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC" // Sort order.
         );
         cursor = cursorLoader.loadInBackground();
         column_index_data=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
