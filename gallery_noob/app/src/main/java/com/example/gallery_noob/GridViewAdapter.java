@@ -1,12 +1,15 @@
 package com.example.gallery_noob;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -35,16 +38,12 @@ public class GridViewAdapter extends ArrayAdapter<Model_images> {
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        return 0;
     }
 
     @Override
     public int getViewTypeCount() {
-        if (al_menu.get(int_position).getAl_imagepath().size() > 0) {
-            return al_menu.get(int_position).getAl_imagepath().size();
-        } else {
-            return 1;
-        }
+        return 1;
     }
 
     @Override
@@ -58,8 +57,10 @@ public class GridViewAdapter extends ArrayAdapter<Model_images> {
         if (convertView == null) {
 
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.none, parent, false);
-            viewHolder.iv_image = (ImageView) convertView.findViewById(R.id.iv_image);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.gallery_item_video, parent, false);
+            viewHolder.iv_image = (ImageView) convertView.findViewById(R.id.image);
+            viewHolder.duration = (TextView) convertView.findViewById(R.id.duration_video);
+            viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.check_video);
 
             convertView.setTag(viewHolder);
         } else {
@@ -70,11 +71,19 @@ public class GridViewAdapter extends ArrayAdapter<Model_images> {
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)
 //                .skipMemoryCache(true)
                 .into(viewHolder.iv_image);
+        viewHolder.checkBox.setVisibility(View.GONE);
+        if(ImageAdapter.isImageFile(al_menu.get(int_position).getAl_imagepath().get(position))){
+            viewHolder.duration.setVisibility(View.GONE);
+        }else{
+            viewHolder.duration.setText(ImageAdapter.getVideoDuration(context, Uri.parse(al_menu.get(int_position).getAl_imagepath().get(position))));
+        }
 
         return convertView;
     }
 
     private static class ViewHolder {
         ImageView iv_image;
+        TextView duration;
+        CheckBox checkBox;
     }
 }

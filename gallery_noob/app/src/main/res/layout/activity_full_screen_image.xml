@@ -87,7 +87,7 @@
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingTop="10dp"
-            android:text="@string/th_m" />
+            android:text="@string/themTrongFullScreen" />
 
     </LinearLayout>
 

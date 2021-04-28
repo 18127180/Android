@@ -283,6 +283,13 @@ public class ThirdFragment extends Fragment {
                     al_images.add(obj_model);
                 }
             }
+            Model_images temp = new Model_images("Video");
+            ArrayList<String> tempArr = imagesGallery.listOfVideos(getContext());
+            if(tempArr != null && tempArr.size()>0){
+                temp.setAl_imagepath(tempArr);
+                al_images.add(temp);
+            }
+
         }catch(Exception exc){
             Log.e("Error",exc.toString());
         }

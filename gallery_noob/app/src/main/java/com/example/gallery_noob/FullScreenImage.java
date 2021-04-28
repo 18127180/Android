@@ -244,6 +244,8 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         viewPager= (ViewPager) findViewById(R.id.view_pager);
         function_bar= (LinearLayout)findViewById(R.id.func_bar);
         title_bar= (LinearLayout)findViewById(R.id.title_bar);
+        title_bar.setAlpha((float) 0.7);
+        function_bar.setAlpha((float) 0.75);
         function_bar.setVisibility(View.GONE);
         title_bar.setVisibility(View.GONE);
         visibility = false;
