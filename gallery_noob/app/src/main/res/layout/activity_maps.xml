@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/header_search_location">
         <ImageButton
             android:id="@+id/back_map_btn"
             android:layout_width="wrap_content"
@@ -21,6 +23,8 @@
             android:layout_alignParentTop="true"
             android:ems="10"
             android:hint="@string/Search_bar"
+            android:maxLines="1"
+            android:inputType="text"
             android:layout_toRightOf="@id/back_map_btn"
             android:layout_toLeftOf="@id/search_map_btn"/>
         <ImageButton
@@ -33,15 +37,61 @@
             android:src="@drawable/ic_baseline_search_24"
             style="@style/Widget.AppCompat.Button.Borderless"/>
     </RelativeLayout>
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="45dp"
-        android:layout_alignParentTop="true"
-        tools:context=".MapsActivity"
-        android:layout_alignParentLeft="true" />
+        android:layout_below="@+id/header_search_location"
+        android:orientation="vertical"
+        android:weightSum="15">
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="14"
+            android:layout_alignParentTop="true"
+            tools:context=".MapsActivity"
+            android:layout_alignParentLeft="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_below="@+id/map"
+            android:layout_marginBottom="20dp"
+            >
+            <Button
+                android:id="@+id/exit_location_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_background"
+                android:text="@string/tho_t"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                style="?android:attr/borderlessButtonStyle"
+                android:textSize="18dp"
+                />
+            <Button
+                android:id="@+id/save_location_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_background"
+                android:text="@string/l_u"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/white"
+                android:textColor="#CAC7C7"
+                style="?android:attr/borderlessButtonStyle"
+                android:enabled="false"
+                android:textSize="18dp"
+                />
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

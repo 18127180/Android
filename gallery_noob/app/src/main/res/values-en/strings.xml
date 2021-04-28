@@ -42,4 +42,5 @@
     <string name="nhapMatKhau">Input password</string>
     <string name="saiMatKhau">Password incorrect</string>
     <string name="goMatKhau">Remove password</string>
+    <string name="doiDiaDiem">Empty location</string>
 </resources>
