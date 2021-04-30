@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Slide;
 import androidx.transition.Transition;
@@ -46,6 +47,7 @@ import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,6 +70,10 @@ public class FirstFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
+    public static int index = -1;
+    public static int top = -1;
+    LinearLayoutManager mLayoutManager;
+
     static boolean visibility;
     static LinearLayout layout_select;
     private String mParam1;
@@ -85,7 +91,7 @@ public class FirstFragment extends Fragment {
     private static final int REQUEST_FROM_GALLERY=103;
 
     int REQUEST_CODE_CAMERA=123;
-    static int gridSize = 3;
+    static int gridSize = 4;
 
     public FirstFragment() {
         // Required empty public constructor
@@ -149,17 +155,21 @@ public class FirstFragment extends Fragment {
         if (id==R.id.action_setting_big)
         {
             //Toast.makeText(getActivity(),"Phóng to",Toast.LENGTH_SHORT).show();
-            if(gridSize<5) {
+            if(gridSize<6) {
                 gridSize++;
-                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
+                imageAdapter.setNum_grid(gridSize);
+                imageAdapter.notifyDataSetChanged();
+//                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
             }
         }
         if (id==R.id.action_setting_small)
         {
             //Toast.makeText(getActivity(),"Thu nhỏ",Toast.LENGTH_SHORT).show();
-            if(gridSize>3){
+            if(gridSize>4){
                 gridSize--;
-                recyclerView.setLayoutManager(new GridLayoutManager(getContext(),gridSize));
+                imageAdapter.setNum_grid(gridSize);
+                imageAdapter.notifyDataSetChanged();
+//                recyclerView.setLayoutManager(new GridLayoutManager(getContext(),gridSize));
             }
         }
         if (id==R.id.action_setting_camera)
@@ -262,6 +272,9 @@ public class FirstFragment extends Fragment {
         loadLocale();
         View rootView = inflater.inflate(R.layout.fragment_first, container, false);
         recyclerView=(RecyclerView)rootView.findViewById(R.id.recyclerview_gallery_images);
+        recyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
         //Permission
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
         {
@@ -270,7 +283,11 @@ public class FirstFragment extends Fragment {
         else
         {
             if(images==null){
-                loadImages();
+                try {
+                    loadImages();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -438,9 +455,10 @@ public class FirstFragment extends Fragment {
         visibility = !visibility;
     }
 
-    public void loadImages(){
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
+    public void loadImages() throws ParseException {
+//        recyclerView.setHasFixedSize(true);
+////        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), gridSize));
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         images=imagesGallery.listOfImages(getContext());
         imageAdapter=new ImageAdapter(getContext(),images,default_mode_adapter);
         recyclerView.setAdapter(imageAdapter);
@@ -451,7 +469,11 @@ public class FirstFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode==MY_READ_PERMISION_CODE){
             if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                loadImages();
+                try {
+                    loadImages();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (requestCode == CAMERA_PERMISION_CODE)
@@ -548,7 +570,29 @@ public class FirstFragment extends Fragment {
         imageAdapter.notifyDataSetChanged();
     }
 
-//    @Override
+    @Override
+    public void onPause() {
+        super.onPause();
+        index = mLayoutManager.findFirstVisibleItemPosition();
+        View v = recyclerView.getChildAt(0);
+        top = (v == null) ? 0 : (v.getTop() - recyclerView.getPaddingTop());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            loadImages();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if(index != -1)
+        {
+            mLayoutManager.scrollToPositionWithOffset( index, top);
+        }
+    }
+
+    //    @Override
 //    public void onResume() {
 //        super.onResume();
 //        if(currentPhotoPath!=null) {

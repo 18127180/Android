@@ -13,154 +13,145 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.exifinterface.media.ExifInterface;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private ArrayList<image_Item> images;
+    private List<String> images;
+    private ArrayList<List> grid;
+    private ArrayList<DateImageAdapter> list_adapter;
     protected PhotoListiner photoListiner;
     private boolean multiCheckMode=false;
+    private int num_grid=4;
+    ArrayList<String> dateArr;
 
-    public ImageAdapter(Context context, List<String> images, PhotoListiner photoListiner) {
-        this.context=context;
-//        this.images=images;
-        this.images=new ArrayList<>();
-        for (String image:images)
-        {
-            this.images.add(new image_Item(image));
-        }
-        this.photoListiner=photoListiner;
+    public void setNum_grid(int gridSize)
+    {
+        this.num_grid=gridSize;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        Log.e("Current path",images.get(position).getPath());
-        if (isImageFile(images.get(position).getPath()))
-            return 0;
-        return 1;
+    public String convertDate(Date date_image) throws ParseException {
+//        Date date=new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(date_image);
+        SimpleDateFormat spf= new SimpleDateFormat("dd/MM/yyyy");
+        String newDate = spf.format(date_image);
+        return newDate;
+    }
+
+    public ArrayList getListDate()
+    {
+        ArrayList<String> dateArr=new ArrayList<>();
+        for (String item:images)
+        {
+            File file=new File(item);
+            if(file.exists()) //Extra check, Just to validate the given path
+            {
+                try
+                {
+                    Date dateString = new Date(file.lastModified());
+                    String temp=convertDate(dateString);
+                    Log.e("PHOTO DATE", "Dated : "+ temp);
+                    if (!dateArr.contains(temp))
+                    {
+                        dateArr.add(temp);
+                    }
+                }
+                catch (ParseException e)
+                {
+
+                }
+            }
+        }
+        return dateArr;
+    }
+
+    public void classify_grid() throws ParseException {
+        dateArr=getListDate();
+        if (dateArr!=null)
+        {
+            grid=new ArrayList<>();
+            list_adapter=new ArrayList<>();
+            int number_grid=dateArr.size();
+            int index=0;
+            for (int i=0;i<number_grid;i++)
+            {
+                List<String> temp=new ArrayList<String>();
+                while (index<images.size())
+                {
+                    File file=new File(images.get(index));
+                    Date date = new Date(file.lastModified());
+                    String dateString=convertDate(date);
+                    if (dateArr.get(i).equals(dateString))
+                    {
+                        temp.add(images.get(index));
+                        index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                DateImageAdapter dateImageAdapter=new DateImageAdapter(context,temp,photoListiner);
+                grid.add(temp);
+                list_adapter.add(dateImageAdapter);
+            }
+        }
+    }
+
+    public ImageAdapter(Context context, List<String> images, PhotoListiner photoListiner) throws ParseException {
+        this.context=context;
+        this.images=images;
+        this.photoListiner=photoListiner;
+        classify_grid();
+        getListDate();
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        switch (viewType){
-            case 0:return new ViewHolder_image(
-                    LayoutInflater.from(context).inflate(R.layout.gallery_item,parent,false));
-        }
-        return new ViewHolder_video(
-                LayoutInflater.from(context).inflate(R.layout.gallery_item_video,parent,false)
+        return new ViewHolder_image_parent(
+                LayoutInflater.from(context).inflate(R.layout.item_date,parent,false)
         );
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        switch (holder.getItemViewType())
-        {
-            case 0:
-                ViewHolder_image viewHolder1 = (ViewHolder_image) holder;
-                String image=images.get(position).getPath();
-                Glide.with(context).load(image).into(viewHolder1.image);
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        photoListiner.onPhotoClick(images.get(position));
-                    }
-                });
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        photoListiner.onLongClick(images.get(position));
-                        return false;
-                    }
-                });
-                if (multiCheckMode)
-                {
-                    viewHolder1.checkBox.setVisibility(View.VISIBLE);
-                    viewHolder1.checkBox.setChecked(images.get(position).isChecked());
-                }else {
-                    viewHolder1.checkBox.setVisibility(View.GONE);
-                }
-                break;
-            case 1:
-                ViewHolder_video viewHolder2 = (ViewHolder_video) holder;
-                String thumnail=images.get(position).getPath();
-                Glide.with(context).load(thumnail).into(viewHolder2.thumbmail);
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        photoListiner.onPhotoClick(images.get(position));
-                    }
-                });
-                viewHolder2.duration.setText(getVideoDuration(context,Uri.parse(images.get(position).getPath())));
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        photoListiner.onLongClick(images.get(position));
-                        return false;
-                    }
-                });
-                if (multiCheckMode)
-                {
-                    viewHolder2.checkBox.setVisibility(View.VISIBLE);
-                    viewHolder2.checkBox.setChecked(images.get(position).isChecked());
-                }else {
-                    viewHolder2.checkBox.setVisibility(View.GONE);
-                }
-                break;
-        }
+        ViewHolder_image_parent viewHolderImage=(ViewHolder_image_parent) holder;
+        RecyclerView recyclerView=((ViewHolder_image_parent) holder).small_grid;
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(context, num_grid));
+        recyclerView.setAdapter(list_adapter.get(position));
+        ((ViewHolder_image_parent) holder).date_time.setText(dateArr.get(position));
     }
-
-//    @Override
-//    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        switch (holder.getItemViewType())
-//        {
-//            case 0:
-//                String image=images.get(position);
-//                Glide.with(context).load(image).into(holder.image);
-//                holder.itemView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        photoListiner.onPhotoClick(image);
-//                    }
-//                });
-//            case 1:
-//                ViewHolder_video viewHolder2 = (ViewHolder_video) holder;
-//        }
-//    }
 
     @Override
     public int getItemCount() {
-        return images.size();
+        return grid.size();
     }
 
-    public class ViewHolder_image extends RecyclerView.ViewHolder{
-        ImageView image;
-        CheckBox checkBox;
-        public ViewHolder_image(@NonNull View itemView)
+    public class ViewHolder_image_parent extends RecyclerView.ViewHolder{
+        TextView date_time;
+        RecyclerView small_grid;
+        public ViewHolder_image_parent(@NonNull View itemView)
         {
             super(itemView);
-            image=itemView.findViewById(R.id.image);
-            checkBox=itemView.findViewById(R.id.check_image);
-        }
-    }
-    public class ViewHolder_video extends RecyclerView.ViewHolder{
-        ImageView thumbmail;
-        TextView duration;
-        CheckBox checkBox;
-
-
-        public ViewHolder_video(@NonNull View itemView)
-        {
-            super(itemView);
-            thumbmail=itemView.findViewById(R.id.image);
-            duration=itemView.findViewById(R.id.duration_video);
-            checkBox=itemView.findViewById(R.id.check_video);
+            date_time=itemView.findViewById(R.id.date_classify);
+            small_grid=itemView.findViewById(R.id.recyclerview_gallery_images_date);
         }
     }
 
@@ -171,6 +162,10 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void setPhotoListener(PhotoListiner Listener){
         this.photoListiner=Listener;
+        for (DateImageAdapter item : list_adapter)
+        {
+            item.setPhotoListener(Listener);
+        }
     }
 
     public static boolean isImageFile(String path) {
@@ -187,8 +182,6 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(context, uri);
         String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        Log.e("link",uri.toString());
-        Log.e("duration",time);
         long duration = Long.parseLong(time)/1000;
         retriever.release();
         return formatDuration(duration);
@@ -208,58 +201,83 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void setMultiCheckMode(boolean multiCheckMode)
     {
         this.multiCheckMode=multiCheckMode;
+        for (DateImageAdapter item : list_adapter)
+        {
+            item.setMultiCheckMode(multiCheckMode);
+            item.notifyDataSetChanged();
+        }
         notifyDataSetChanged();
     }
 
     public void resetCheckMode()
     {
-        for (image_Item item:images)
+        for (DateImageAdapter item : list_adapter)
         {
-            item.setChecked(false);
+            item.resetCheckMode();
+            item.notifyDataSetChanged();
         }
         notifyDataSetChanged();
     }
 
     public ArrayList<image_Item> getCheckedNotes(){
-        ArrayList<image_Item> checkedNotes = new ArrayList<>();
-        for (image_Item n: this.images)
+        ArrayList<image_Item> checkedNotes=new ArrayList<>();
+        for (DateImageAdapter item : list_adapter)
         {
-            if (n.isChecked())
+            ArrayList<image_Item> temp=new ArrayList<>();
+            temp=item.getCheckedNotes();
+            for (image_Item check:temp)
             {
-                checkedNotes.add(n);
+                checkedNotes.add(check);
             }
         }
         return checkedNotes;
     }
 
-    public void del_item(String path)
+    public void delEmptyDateHeader()
     {
-        for (image_Item item: images)
+        ArrayList<Integer> indexArrOnDel=new ArrayList<>();
+        for (int i=0;i<grid.size();i++)
         {
-            if (item.getPath()==path)
+            if (list_adapter.get(i).getItemCount()==0)
             {
-                images.remove(item);
-                break;
+                indexArrOnDel.add(i);
             }
         }
+        Log.e("SizeDel",""+indexArrOnDel.size());
+        for (Integer index:indexArrOnDel)
+        {
+            int position=index;
+            dateArr.remove(position);
+            list_adapter.remove(position);
+        }
+        notifyDataSetChanged();
+    }
+    public void del_item(String path)
+    {
+        for (DateImageAdapter item : list_adapter)
+        {
+            item.del_item(path);
+            item.notifyDataSetChanged();
+        }
+        delEmptyDateHeader();
     }
 
     public void removeAll(List<String> items_to_delete){
-        ArrayList<image_Item>temp = new ArrayList<>();
-        for(String tempString: items_to_delete){
-            temp.add(new image_Item(tempString));
-        }
-        images.removeAll(temp);
-        notifyDataSetChanged();
+//        ArrayList<image_Item>temp = new ArrayList<>();
+//        for(String tempString: items_to_delete){
+//            temp.add(new image_Item(tempString));
+//        }
+//        images.removeAll(temp);
+//        notifyDataSetChanged();
     }
 
     public void addAll(List<String> items_to_add){
-        ArrayList<image_Item>temp = new ArrayList<>();
-        for(String tempString: items_to_add){
-            temp.add(new image_Item(tempString));
-        }
-        images.addAll(temp);
-        notifyDataSetChanged();
+//        ArrayList<image_Item>temp = new ArrayList<>();
+//        for(String tempString: items_to_add){
+//            temp.add(new image_Item(tempString));
+//        }
+//        images.addAll(temp);
+//        notifyDataSetChanged();
     }
 
     @Override

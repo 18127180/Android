@@ -9,8 +9,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_gallery_images"
         android:layout_width="match_parent"
-        android:layout_height="682dp"
-        android:layout_marginBottom="55dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp" />
 
     <Button
         android:id="@+id/button_remove"
