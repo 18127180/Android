@@ -36,7 +36,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Slide;
@@ -177,16 +176,14 @@ public class FirstFragment extends Fragment {
         }
         if (id==R.id.action_setting_camera)
         {
-//            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-//            {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            {
 //                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISION_CODE);
-//            }
-//            else
-//            {
-//                Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(intent, REQUEST_CODE_CAMERA);
-//            }
-            dispatchTakePictureIntent();
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISION_CODE);
+            }
+            else {
+                dispatchTakePictureIntent();
+            }
         }
         if (id==R.id.action_setting_slideshow)
         {
@@ -514,7 +511,7 @@ public class FirstFragment extends Fragment {
             }
             else
             {
-                Toast.makeText(getActivity(), "Camera permission denied", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Không được truy cập máy ảnh", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -524,7 +521,13 @@ public class FirstFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             if(requestCode == REQUEST_CODE_CAMERA){
-                galleryAddPic();
+                try {
+                    galleryAddPic();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }else if(requestCode == REQUEST_FROM_GALLERY){
                 ArrayList<String> del = data.getExtras().getStringArrayList("delList");
                 if(del != null && !del.isEmpty()) {
@@ -545,7 +548,7 @@ public class FirstFragment extends Fragment {
     //-------------------------Day code phan lay anh camera-------------------------
     //------------------------------------------------------------------------------
 
-    private String currentPhotoPath;
+    private String currentPhotoPath = null;
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -589,15 +592,26 @@ public class FirstFragment extends Fragment {
         }
     }
 
-    private void galleryAddPic() {
+    private void galleryAddPic() throws ParseException, FileNotFoundException {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
+//        MediaScannerConnection.scanFile(getContext(),
+//                new String[]{f.toString()},
+//                null, null);
+
 //        Uri contentUri = Uri.fromFile(f);
-        Uri contentUri = FileProvider.getUriForFile(getContext(),"com.example.gallery_noob",f);
-        mediaScanIntent.setData(contentUri);
-        getContext().sendBroadcast(mediaScanIntent);
-        images.add(0,currentPhotoPath);
-        imageAdapter.notifyDataSetChanged();
+//        Uri contentUri = FileProvider.getUriForFile(getContext(),"com.example.gallery_noob",f);
+//        mediaScanIntent.setData(contentUri);
+//        mediaScanIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        getContext().sendBroadcast(mediaScanIntent);
+
+        getContext().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(f)));
+
+        //        String path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(),currentPhotoPath,null,null);
+//        images.add(path);
+//        images.add(0,currentPhotoPath);
+//        imageAdapter.notifyDataSetChanged();
+        loadImages();
     }
 
     @Override
