@@ -303,6 +303,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(),"Cannot delete this picture",Toast.LENGTH_LONG).show();
                         }
+                        dialog_delete.dismiss();
                     }
                 });
                 cancel_btn_dialog.setOnClickListener(new View.OnClickListener() {
