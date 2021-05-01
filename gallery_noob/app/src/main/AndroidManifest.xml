@@ -68,8 +68,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTask"/>
         <activity android:name=".FullScreenImage">
             <intent-filter
                 tools:ignore="AppLinkUrlError">
