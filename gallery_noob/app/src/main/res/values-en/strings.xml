@@ -24,7 +24,7 @@
     <string name="t_o_m_c_y_u_th_ch">Create favorite folder</string>
     <string name="ph_ng_to">Zoom out</string>
     <string name="thu_nh">Zoom in</string>
-    <string name="ch_p_nh_quay_video">Capture/Video</string>
+    <string name="ch_p_nh_quay_video">Take picture</string>
     <string name="tr_nh_chi_u">SlideShow</string>
     <string name="chi_ti_t">Detail</string>
     <string name="hinhnen">Set wallpaper</string>
@@ -51,4 +51,5 @@
     <string name="warningSentence">Do you really want to delete? This process cannot be undone.</string>
     <string name="cancelDialog">Cancel</string>
     <string name="deleteDialog">Delete</string>
+    <string name="quayVideo">Record video</string>
 </resources>

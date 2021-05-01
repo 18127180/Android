@@ -25,6 +25,12 @@
                 app:showAsAction="ifRoom"
                 />
             <item
+                android:id="@+id/action_setting_video"
+                android:title="@string/quayVideo"
+                android:icon="@drawable/ic_baseline_videocam_24"
+                app:showAsAction="ifRoom"
+                />
+            <item
                 android:id="@+id/action_setting_slideshow"
                 android:title="@string/tr_nh_chi_u"
                 android:icon="@drawable/ic_baseline_slideshow_24"
@@ -33,7 +39,7 @@
             <item
                 android:id="@+id/set_languages"
                 android:title="@string/ng_n_ng"
-                android:icon="@drawable/ic_baseline_slideshow_24"
+                android:icon="@drawable/ic_baseline_language_24"
                 app:showAsAction="ifRoom"
                 />
         </menu>

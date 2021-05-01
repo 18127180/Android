@@ -93,6 +93,7 @@ public class FirstFragment extends Fragment {
     private static final int REQUEST_FROM_GALLERY=103;
 
     int REQUEST_CODE_CAMERA=123;
+    int REQUEST_CODE_VIDEO=456;
     static int gridSize = 4;
 
     public FirstFragment() {
@@ -183,6 +184,16 @@ public class FirstFragment extends Fragment {
             }
             else {
                 dispatchTakePictureIntent();
+            }
+        }else if(id==R.id.action_setting_video){
+            //quay video
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            {
+//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISION_CODE);
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISION_CODE);
+            }
+            else {
+                dispatchRecordVideoIntent();
             }
         }
         if (id==R.id.action_setting_slideshow)
@@ -550,10 +561,14 @@ public class FirstFragment extends Fragment {
 
     private String currentPhotoPath = null;
 
-    private File createImageFile() throws IOException {
+    private File createImageFile(String tail) throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPG_" + timeStamp + "_";
+        String imageFileName = null;
+        if(tail.equals(".mp4")){
+            imageFileName = "MP4_" + timeStamp + "_";
+        }
+        else imageFileName = "JPG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM+"/Camera/");
         if (!storageDir.exists()) {
             storageDir.mkdir();
@@ -561,7 +576,7 @@ public class FirstFragment extends Fragment {
         //        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
+                tail,         /* suffix */
                 storageDir      /* directory */
         );
         // Save a file: path for use with ACTION_VIEW intents
@@ -576,7 +591,7 @@ public class FirstFragment extends Fragment {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = createImageFile(".jpg");
             } catch (IOException ex) {
                 Log.e("Error",ex.toString());
             }
@@ -592,8 +607,31 @@ public class FirstFragment extends Fragment {
         }
     }
 
+    private void dispatchRecordVideoIntent(){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File videoFile = null;
+            try {
+                videoFile = createImageFile(".mp4");
+            } catch (IOException ex) {
+                Log.e("Error",ex.toString());
+            }
+            // Continue only if the File was successfully created
+            if (videoFile != null) {
+                Uri videoURI = FileProvider.getUriForFile(getActivity(),
+                        "com.example.gallery_noob",
+                        videoFile);
+                //Uri photoURI = Uri.fromFile(photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI);
+                startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA);
+            }
+        }
+    }
+
     private void galleryAddPic() throws ParseException, FileNotFoundException {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
 //        MediaScannerConnection.scanFile(getContext(),
 //                new String[]{f.toString()},
