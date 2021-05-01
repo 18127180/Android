@@ -119,6 +119,8 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
     static TextView fav;
     static boolean favStatus;
     boolean slideShow_MODE;
+    Dialog dialog_delete;
+    Button delete_btn_dialog,cancel_btn_dialog;
 
     Handler mSlideshowHandler = new Handler();
     private Runnable runSlideshow = new Runnable() {
@@ -274,16 +276,41 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
             }
         });
         //=============================================del==========================================
+        dialog_delete=new Dialog(this);
+        dialog_delete.setContentView(R.layout.dialog_del);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        {
+
+            dialog_delete.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(this,R.drawable.background_dialog));
+        }
+        dialog_delete.setCancelable(false);
+        delete_btn_dialog=dialog_delete.findViewById(R.id.delete_btn_dialog);
+        cancel_btn_dialog=dialog_delete.findViewById(R.id.cancel_btn_dialog);
+
         del = (TextView)findViewById(R.id.delete);
+
+
         del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    onDel();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),"Cannot delete this picture",Toast.LENGTH_LONG).show();
-                }
+                dialog_delete.show();
+                delete_btn_dialog.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            onDel();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),"Cannot delete this picture",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                cancel_btn_dialog.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog_delete.dismiss();
+                    }
+                });
             }
         });
 

@@ -45,4 +45,9 @@
     <string name="doiDiaDiem">Không có thông tin vị trí</string>
     <string name="xoaThuMuc">Xóa thư mục</string>
     <string name="doiTenThanh">Đổi tên thành ...</string>
+    <string name="ChonNN">Chọn ngôn ngữ...</string>
+    <string name="warningAgain">Bạn có chắc không ?</string>
+    <string name="warningSentence">Bạn có chắc thực hiện thao tác xóa? Quá trình này không thể khôi phục lại.</string>
+    <string name="cancelDialog">Hủy bỏ</string>
+    <string name="deleteDialog">Xóa</string>
 </resources>

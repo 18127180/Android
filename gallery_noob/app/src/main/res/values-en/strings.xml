@@ -46,4 +46,9 @@
     <string name="doiDiaDiem">Empty location</string>
     <string name="xoaThuMuc">Delete folder</string>
     <string name="doiTenThanh">Rename to ...</string>
+    <string name="ChonNN">Select language...</string>
+    <string name="warningAgain">Are you sure ?</string>
+    <string name="warningSentence">Do you really want to delete? This process cannot be undone.</string>
+    <string name="cancelDialog">Cancel</string>
+    <string name="deleteDialog">Delete</string>
 </resources>

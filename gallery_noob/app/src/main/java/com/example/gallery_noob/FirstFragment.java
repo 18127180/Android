@@ -2,6 +2,7 @@ package com.example.gallery_noob;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -78,13 +79,15 @@ public class FirstFragment extends Fragment {
     static LinearLayout layout_select;
     private String mParam1;
     private String mParam2;
-    private int select_lang=0;
+    public static int select_lang=0;
     RecyclerView recyclerView;
     ImageAdapter imageAdapter;
     List<String> images;
     Button btn_select;
     RoundKornerLinearLayout layout_date;
     private ImageButton del_multi_btn,share_btn;
+    Dialog dialog_delete;
+    Button delete_btn_dialog,cancel_btn_dialog;
 
     private static final int MY_READ_PERMISION_CODE=101;
     private static final int CAMERA_PERMISION_CODE=102;
@@ -206,12 +209,13 @@ public class FirstFragment extends Fragment {
     private void showChangeLanguageDialog(){
         final String[] listItems={"VietNam","English"};
         AlertDialog.Builder mBuilder= new AlertDialog.Builder(getContext());
-        mBuilder.setTitle("Chọn ngôn ngữ...");
+        mBuilder.setTitle(getString(R.string.ChonNN));
         mBuilder.setSingleChoiceItems(listItems, select_lang, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (i==0)
                 {
+                    select_lang=0;
                     setLocate("vi");
                     getActivity().recreate();
                 }
@@ -246,6 +250,7 @@ public class FirstFragment extends Fragment {
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE).edit();
         editor.putString("My_lang",lang);
         editor.putInt("My_lang_sl",select_lang);
+        Log.e("Locale: ",""+select_lang);
         editor.apply();
     }
 
@@ -263,6 +268,7 @@ public class FirstFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         //lay currentPhotoPath
         if(savedInstanceState != null & currentPhotoPath != null){
             currentPhotoPath = savedInstanceState.getString("current");
@@ -292,6 +298,18 @@ public class FirstFragment extends Fragment {
         }
 
         del_multi_btn=rootView.findViewById(R.id.del_multi_button);
+
+        dialog_delete=new Dialog(getContext());
+        dialog_delete.setContentView(R.layout.dialog_del);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        {
+
+            dialog_delete.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(),R.drawable.background_dialog));
+        }
+        dialog_delete.setCancelable(false);
+        delete_btn_dialog=dialog_delete.findViewById(R.id.delete_btn_dialog);
+        cancel_btn_dialog=dialog_delete.findViewById(R.id.cancel_btn_dialog);
+
         share_btn=rootView.findViewById(R.id.share_btn);
         btn_select=rootView.findViewById(R.id.button_select);
         Button btn_remove=rootView.findViewById(R.id.button_remove);
@@ -316,19 +334,31 @@ public class FirstFragment extends Fragment {
         del_multi_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("onclick del","true");
-                ArrayList<image_Item> checkedMedia=imageAdapter.getCheckedNotes();
-                for (image_Item item : checkedMedia)
-                {
-                    try {
-                        onDel(item.getPath());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                delete_btn_dialog.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ArrayList<image_Item> checkedMedia=imageAdapter.getCheckedNotes();
+                        for (image_Item item : checkedMedia)
+                        {
+                            try {
+                                onDel(item.getPath());
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        visibility=true;
+                        toggleBar();
+                        imageAdapter.notifyDataSetChanged();
+                        dialog_delete.dismiss();
                     }
-                }
-                visibility=true;
-                toggleBar();
-                imageAdapter.notifyDataSetChanged();
+                });
+                cancel_btn_dialog.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog_delete.dismiss();
+                    }
+                });
+                dialog_delete.show();
             }
         });
 
