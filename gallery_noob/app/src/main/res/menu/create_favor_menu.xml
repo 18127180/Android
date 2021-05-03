@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/more"
-        android:title=""
-        android:icon="@drawable/ic_baseline_more_vert_24"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_setting_create_favorite"
-                android:title="@string/t_o_m_c_y_u_th_ch"
-                android:icon="@drawable/ic_baseline_add_24"
-                app:showAsAction="ifRoom"
-                />
-        </menu>
-    </item>
+    <item
+        android:id="@+id/shareInFav"
+        android:icon="@drawable/ic_baseline_share_24"
+        android:visible="false"
+        app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/deleteInFav"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_restore_from_trash_24"
+        android:visible="false"
+        app:showAsAction="always|withText" />
+    <item
+        android:id="@+id/cancelInFav"
+        android:title="@string/h_y"
+        android:visible="false"
+        app:showAsAction="always|withText" />
 </menu>

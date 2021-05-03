@@ -24,16 +24,29 @@ public class SampleAdapter extends ArrayAdapter<String> {
 
     private final LayoutInflater mLayoutInflater;
     private final Random mRandom;
-    private ArrayList<String>al_images;
+    private static ArrayList<String>al_images;
     private Context context;
+    protected StaggeredListener staggeredListener;
+    public static boolean selected = false;
     private static final SparseArray<Double> sPositionHeightRatios = new SparseArray<Double>();
+    public ArrayList<CheckBox>vArr = new ArrayList<>();
+
+    public void onCancelMultipleSelect(){
+        if(vArr == null || vArr.isEmpty())  return;
+        for(CheckBox v: vArr){
+            v.setChecked(false);
+            v.setVisibility(View.INVISIBLE);
+        }
+        vArr.clear();
+    }
 
     public SampleAdapter(Context context, int textViewResourceId,
-                         ArrayList<String> objects) {
+                         ArrayList<String> objects, StaggeredListener staggeredListener) {
         super(context, textViewResourceId, objects);
         this.context = context;
         this.mLayoutInflater = LayoutInflater.from(context);
         this.mRandom = new Random();
+        this.staggeredListener = staggeredListener;
         al_images = objects;
     }
 
@@ -73,6 +86,38 @@ public class SampleAdapter extends ArrayAdapter<String> {
         }else{
             vh.duration.setText(ImageAdapter.getVideoDuration(context, Uri.parse(al_images.get(position))));
         }
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(selected){
+                    if(!vh.checkBox.isChecked()){
+                        vh.checkBox.setVisibility(View.VISIBLE);
+                        vh.checkBox.setChecked(true);
+                        vArr.add(vh.checkBox);
+                    }else{
+                        vh.checkBox.setChecked(false);
+                        vh.checkBox.setVisibility(View.INVISIBLE);
+                        vArr.remove(vh.checkBox);
+                    }
+                }
+                staggeredListener.onClick(al_images.get(position));
+            }
+        });
+
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(!selected) {
+                    staggeredListener.onLongClick(al_images.get(position));
+                    vh.checkBox.setVisibility(View.VISIBLE);
+                    vh.checkBox.setChecked(true);
+                    vArr.add(vh.checkBox);
+                }
+                return true;
+            }
+        });
+
         return convertView;
     }
 
@@ -120,5 +165,10 @@ public class SampleAdapter extends ArrayAdapter<String> {
     @Override
     public int getViewTypeCount() {
         return 1;
+    }
+
+    public interface StaggeredListener{
+        public void onClick(String path);
+        public void onLongClick(String path);
     }
 }

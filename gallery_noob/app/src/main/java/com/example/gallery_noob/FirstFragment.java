@@ -56,6 +56,7 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.gallery_noob.FullScreenImage.saveFavouriteList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -345,14 +346,19 @@ public class FirstFragment extends Fragment {
                 delete_btn_dialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ArrayList<image_Item> checkedMedia=imageAdapter.getCheckedNotes();
-                        for (image_Item item : checkedMedia)
-                        {
-                            try {
-                                onDel(item.getPath());
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
+//                        ArrayList<image_Item> checkedMedia=imageAdapter.getCheckedNotes();
+//                        for (image_Item item : checkedMedia)
+//                        {
+//                            try {
+//                                onDel(item.getPath());
+//                            } catch (FileNotFoundException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+                        try {
+                            onDel();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
                         }
                         visibility=true;
                         toggleBar();
@@ -426,22 +432,29 @@ public class FirstFragment extends Fragment {
         startActivity(share);
     }
 
-    public void onDel(String position) throws FileNotFoundException {
-        File f = new File(position);
-        if(f.exists()){
-//            if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
-//                favList.remove(position);
-//                saveFavouriteList();
-//            }
-            f.delete();
-            ContentResolver contentResolver = getContext().getContentResolver();
-            contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    MediaStore.Images.ImageColumns.DATA + "=?", new String[]{position});
+    public void onDel() throws FileNotFoundException {
+        ArrayList<image_Item> checkedMedia=imageAdapter.getCheckedNotes();
+
+        ArrayList<String> favList = FullScreenImage.loadFavouriteList(getContext());
+        for (image_Item item : checkedMedia){
+            String position = item.getPath();
+            File f = new File(position);
+            if(f.exists()){
+                if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
+                    favList.remove(position);
+                }
+
+                f.delete();
+                ContentResolver contentResolver = getContext().getContentResolver();
+                contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        MediaStore.Images.ImageColumns.DATA + "=?", new String[]{position});
+            }
+            if(position != null){
+                images.remove(position);
+                imageAdapter.del_item(position);
+            }
         }
-        if(position != null){
-            images.remove(position);
-            imageAdapter.del_item(position);
-        }
+        saveFavouriteList(getContext(),favList);
     }
 
     public void toggleBar(){

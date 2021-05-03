@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_setting_big"
+        android:icon="@drawable/ic_baseline_zoom_in_24"
+        android:title="@string/ph_ng_to"
+        app:showAsAction="ifRoom|collapseActionView" />
+    <item
+        android:id="@+id/action_setting_small"
+        android:icon="@drawable/ic_baseline_zoom_out_24"
+        android:title="@string/thu_nh"
+        app:showAsAction="ifRoom|collapseActionView" />
     <item android:id="@+id/more"
         android:title=""
         android:icon="@drawable/ic_baseline_more_vert_24"
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/action_setting_big"
-                android:title="@string/ph_ng_to"
-                android:icon="@drawable/ic_baseline_zoom_in_24"
-                app:showAsAction="ifRoom"
-                />
-            <item
-                android:id="@+id/action_setting_small"
-                android:title="@string/thu_nh"
-                android:icon="@drawable/ic_baseline_zoom_out_24"
-                app:showAsAction="ifRoom"
-                />
-            <item
                 android:id="@+id/action_setting_camera"
-                android:title="@string/ch_p_nh_quay_video"
                 android:icon="@drawable/ic_baseline_camera_alt_24"
-                app:showAsAction="ifRoom"
-                />
+                android:title="@string/ch_p_nh_quay_video"
+                app:showAsAction="ifRoom|collapseActionView" />
             <item
                 android:id="@+id/action_setting_video"
                 android:title="@string/quayVideo"

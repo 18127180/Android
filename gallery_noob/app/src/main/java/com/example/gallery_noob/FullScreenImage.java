@@ -318,7 +318,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         //-----------------------------------------Favourite processing---------------------------------------------------------
 
         favList = new ArrayList<>();
-        favList = loadFavouriteList();
+        favList = loadFavouriteList(getApplicationContext());
         favStatus = false;
 
         fav = (TextView)findViewById(R.id.favourite);
@@ -578,7 +578,7 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         if(f.exists()){
             if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
                 favList.remove(position);
-                saveFavouriteList();
+                saveFavouriteList(getApplicationContext(),favList);
             }
             f.delete();
             ContentResolver contentResolver = getContentResolver();
@@ -625,17 +625,17 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
             Log.e("ERROR","Chay ! null");
             if(favStatus && !favList.contains(path)){
                 favList.add(path);
-                saveFavouriteList();
+                saveFavouriteList(getApplicationContext(),favList);
             }else if(!favStatus && favList.contains(path)){
                 favList.remove(path);
-                saveFavouriteList();
+                saveFavouriteList(getApplicationContext(),favList);
             }
         }else{
             Log.e("ERROR","Chay null");
             if(favStatus) {
                 favList = new ArrayList<>();
                 favList.add(path);
-                saveFavouriteList();
+                saveFavouriteList(getApplicationContext(),favList);
             }
         }
         Toast.makeText(getApplicationContext(),String.valueOf(cur),Toast.LENGTH_LONG).show();
@@ -672,20 +672,20 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         finish();
     }
 
-    private ArrayList<String> loadFavouriteList() {      //ham lay danh sach favourite
+    public static ArrayList<String> loadFavouriteList(Context context) {      //ham lay danh sach favourite
         ArrayList<String> temp = new ArrayList<>();
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("app", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("app", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString("favourite", "");
         temp = gson.fromJson(json, new TypeToken<List<String>>(){}.getType());
         return temp;
     }
 
-    public void saveFavouriteList(){     //ham luu danh sach favourite
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("app", Context.MODE_PRIVATE);
+    public static void saveFavouriteList(Context context, ArrayList<String>favList){     //ham luu danh sach favourite
+        SharedPreferences sharedPreferences = context.getSharedPreferences("app", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(FullScreenImage.favList);
+        String json = gson.toJson(favList);
         edit.putString("favourite", json);
         edit.commit();
     }

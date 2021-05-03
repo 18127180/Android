@@ -1,26 +1,31 @@
 package com.example.gallery_noob;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +60,50 @@ public class SecondFragment extends Fragment {
     private SampleAdapter mAdapter;
 
     private ArrayList<String> mData;
-    public ArrayList<String> all_medias;
+//    public ArrayList<String> all_medias;
+    private ArrayList<String> multiSelected;
+
+    SampleAdapter.StaggeredListener staggeredListener=new SampleAdapter.StaggeredListener(){
+        @Override
+        public void onClick(String path) {
+            if(SampleAdapter.selected){
+                if(multiSelected.contains(path)){
+                    multiSelected.remove(path);
+                }
+                else    multiSelected.add(path);
+                Toast.makeText(getContext(),multiSelected.size()+" items selected",Toast.LENGTH_SHORT).show();
+            }else{
+                Intent intent = new Intent(getActivity(), FullScreenImage.class);
+                intent.putExtra("path", path);
+                intent.putStringArrayListExtra("listOfImages", mData);
+                intent.putExtra("req_from", 2);
+                startActivityForResult(intent, REQUEST_FROM_FAVOURITE);
+            }
+        }
+
+        @Override
+        public void onLongClick(String path) {
+            Toast.makeText(getContext(),"Multi select mode",Toast.LENGTH_SHORT).show();
+            SampleAdapter.selected = true;
+            onPrepareOptionsMenu(menu);
+            if(multiSelected == null)   multiSelected = new ArrayList<>();
+            multiSelected.clear();
+            multiSelected.add(path);
+        }
+    };
+
+    public void cancelMultipleSelect(){
+        SampleAdapter.selected = false;
+        if(multiSelected != null)   multiSelected.clear();
+        mAdapter.onCancelMultipleSelect();
+        onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        cancelMultipleSelect();
+    }
 
     public SecondFragment() {
         // Required empty public constructor
@@ -107,23 +155,33 @@ public class SecondFragment extends Fragment {
         }
 
         if(mData != null) {
-            mAdapter = new SampleAdapter(getContext(), android.R.layout.simple_list_item_1, mData);
+            mAdapter = new SampleAdapter(getContext(), android.R.layout.simple_list_item_1, mData, staggeredListener);
             mGridView.setAdapter(mAdapter);
-            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getActivity(), FullScreenImage.class);
-                    intent.putExtra("path", mData.get(position));
-                    intent.putStringArrayListExtra("listOfImages", mData);
-                    intent.putExtra("req_from", 2);
-                    startActivityForResult(intent, REQUEST_FROM_FAVOURITE);
-                }
-            });
+
+//            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    Intent intent = new Intent(getActivity(), FullScreenImage.class);
+//                    intent.putExtra("path", mData.get(position));
+//                    intent.putStringArrayListExtra("listOfImages", mData);
+//                    intent.putExtra("req_from", 2);
+//                    startActivityForResult(intent, REQUEST_FROM_FAVOURITE);
+//                }
+//            });
+
         }else{
             Toast.makeText(getActivity(),"No favourites found",Toast.LENGTH_SHORT).show();
         }
 
         return rootView;
+    }
+
+    public void onClick(int position){
+        Intent intent = new Intent(getActivity(), FullScreenImage.class);
+        intent.putExtra("path", mData.get(position));
+        intent.putStringArrayListExtra("listOfImages", mData);
+        intent.putExtra("req_from", 2);
+        startActivityForResult(intent, REQUEST_FROM_FAVOURITE);
     }
 
     private void onLoadMoreItems() {
@@ -147,19 +205,50 @@ public class SecondFragment extends Fragment {
         return temp;
     }
 
+    Menu menu;
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.create_favor_menu, menu);
+        this.menu = menu;
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id=item.getItemId();
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(SampleAdapter.selected){
+            menu.findItem(R.id.deleteInFav).setVisible(true);
+            menu.findItem(R.id.cancelInFav).setVisible(true);
+            menu.findItem(R.id.shareInFav).setVisible(true);
+        }else{
+            menu.findItem(R.id.deleteInFav).setVisible(false);
+            menu.findItem(R.id.cancelInFav).setVisible(false);
+            menu.findItem(R.id.shareInFav).setVisible(false);
+        }
+    }
 
-        if (id==R.id.action_setting_create_favorite)
-        {
-            Toast.makeText(getActivity(),"Thêm mục yêu thích",Toast.LENGTH_SHORT).show();
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.shareInFav:
+                try {
+                    onSend();
+                    cancelMultipleSelect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.deleteInFav:
+                try {
+                    onDel();
+                    cancelMultipleSelect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.cancelInFav:
+                cancelMultipleSelect();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -176,6 +265,48 @@ public class SecondFragment extends Fragment {
                 }
 
                 mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    public void onSend() throws Exception {
+        Intent share = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        share.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+        share.setType("image/*");
+
+        ArrayList<Uri> files = new ArrayList<Uri>();
+        for(String path: multiSelected) {
+            Uri uri = FileProvider.getUriForFile(getContext(),"com.example.gallery_noob",new File(path));
+            files.add(uri);
+        }
+
+//        String path = MediaStore.Images.Media.insertImage(getContentResolver(),position,"Temp",null);
+//        uri = Uri.parse(path);
+//        uri = FileProvider.getUriForFile(this,"com.example.gallery_noob",new File(position));
+//        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        share.putExtra(Intent.EXTRA_STREAM, uri);
+        share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+        startActivity(share);
+    }
+
+    public void onDel() throws IOException {
+        for(String position: multiSelected) {
+            File f = new File(position);
+            if (f.exists()) {
+//            if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
+//                favList.remove(position);
+//                saveFavouriteList();
+//            }
+                f.delete();
+                ContentResolver contentResolver = getContext().getContentResolver();
+                contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        MediaStore.Images.ImageColumns.DATA + "=?", new String[]{position});
+            }
+            if (position != null) {
+                mData.remove(position);
+                mAdapter.notifyDataSetChanged();
+
+                FullScreenImage.saveFavouriteList(getContext(),mData);
             }
         }
     }
