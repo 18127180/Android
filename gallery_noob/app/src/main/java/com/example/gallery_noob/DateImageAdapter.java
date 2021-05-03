@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +37,17 @@ public class DateImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.photoListiner=photoListiner;
     }
 
+    //======= phuc vu cho Nhan Rui ========
+    void addPath(String strPath){
+        images.add(new image_Item(strPath));
+        notifyDataSetChanged();
+    }
+
+    public String lastPath(){
+        return images.get(images.size()-1).path;
+    }
+
+    //=====================================
     @Override
     public int getItemViewType(int position) {
         if (isImageFile(images.get(position).getPath()))

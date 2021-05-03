@@ -16,7 +16,7 @@ public class imagesGallery {
         int column_index_data, column_index_folder_name;
         ArrayList<String> lisOfAllImages=new ArrayList<>();
         String absolutePath;
-        uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        uri= MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 //        String[] projection={MediaStore.MediaColumns.DATA,MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
         String[] projection = {
                 MediaStore.Files.FileColumns._ID,
@@ -61,7 +61,7 @@ public class imagesGallery {
         int column_index_data, column_index_folder_name;
         ArrayList<String> lisOfAllImages=new ArrayList<>();
         String absolutePath;
-        uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        uri= MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 //        String[] projection={MediaStore.MediaColumns.DATA,MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
         String[] projection = {
                 MediaStore.Files.FileColumns._ID,
@@ -90,7 +90,7 @@ public class imagesGallery {
 
         while(cursor.moveToNext())
         {
-            absolutePath=cursor.getString(column_index_data);
+            absolutePath = cursor.getString(column_index_data);
             //Log.e("Path",absolutePath);
             lisOfAllImages.add(absolutePath);
         }

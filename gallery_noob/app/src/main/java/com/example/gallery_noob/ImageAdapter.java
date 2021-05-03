@@ -8,28 +8,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
+import static com.example.gallery_noob.ThirdFragment.loadFolderList;
 
 public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
@@ -113,12 +107,63 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    public void classify_grid_v2() throws ParseException, IOException {
+        dateArr = new ArrayList<>();
+        grid = new ArrayList<>();
+        list_adapter = new ArrayList<>();
+        String lastDateTimestamp = convertDate(new Date(new File(images.get(0)).lastModified()));
+        int imagesSize = images.size();
+        int count;
+        String str = null;
+        for (int i = 0 ; i < imagesSize ; i += count)
+        {
+            count = 0;
+            dateArr.add(lastDateTimestamp);
+            List<String>tempStr = new ArrayList<>();
+            tempStr.add(images.get(i+count));
+            count++;
+            while(i+count<imagesSize && (str = convertDate(new Date(new File(images.get(i+count)).lastModified()))).equals(lastDateTimestamp)){
+                tempStr.add(images.get(i+count));
+                count++;
+            }
+            DateImageAdapter dateImageAdapter=new DateImageAdapter(context,tempStr,photoListiner);
+            grid.add(tempStr);
+            list_adapter.add(dateImageAdapter);
+
+            lastDateTimestamp = str;
+        }
+
+        //doc folder cua nguoi dung tao
+        ArrayList<Folder>folders = loadFolderList(context);
+        if(folders != null && folders.size() > 0){
+            for(Folder folder: folders){
+                if(folder.getFolderPass()==null){
+                    File dir = context.getDir(folder.getFolderName(), Context.MODE_PRIVATE);//Creating an internal dir;
+                    File[] al_imagespath = dir.listFiles();
+                    for(File f: al_imagespath){
+                        str = convertDate(new Date(f.lastModified()));
+                        if(dateArr.contains(str)){
+                            DateImageAdapter dateImageAdapter = list_adapter.get(dateArr.indexOf(str));
+                            images.add(images.indexOf(dateImageAdapter.lastPath())+1,f.getAbsolutePath());
+                            dateImageAdapter.addPath(f.getAbsolutePath());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public ImageAdapter(Context context, List<String> images, PhotoListiner photoListiner) throws ParseException {
         this.context=context;
         this.images=images;
         this.photoListiner=photoListiner;
-        classify_grid();
-        getListDate();
+        try {
+            classify_grid_v2();
+        }catch(IOException e){
+            Log.e("classify_grid_v2",e.toString());
+        }
+//        classify_grid();
+//        getListDate();
     }
 
     @NonNull
