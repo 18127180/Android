@@ -27,6 +27,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.example.gallery_noob.ThirdFragment.loadFolderList;
+import static com.example.gallery_noob.ThirdFragment.saveFolderList;
+
 /**
  * Created by deepshikha on 20/3/17.
  */
@@ -103,7 +106,7 @@ public class PhotosActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ThirdFragment.saveFolderList(getApplicationContext(),folders);
+        saveFolderList(getApplicationContext(),folders);
     }
 
     @Override
@@ -124,7 +127,13 @@ public class PhotosActivity extends AppCompatActivity {
                 if(!del.isEmpty()) {
                     al_images.get(int_position).al_imagepath.removeAll(del);
                     if(al_images.get(int_position).al_imagepath.isEmpty()){
-                        al_images.remove(int_position);
+                        if(al_images.get(int_position).checkIfUserCreateThis(folders)){
+                            deleteFolder();
+                        }else{
+                            al_images.remove(int_position);
+                            adapter.notifyDataSetChanged();
+                            onBackPressed();
+                        }
                     }
                 }
 
@@ -179,7 +188,7 @@ public class PhotosActivity extends AppCompatActivity {
                         folder.setFolderPass(null);
                     }
                 }
-                ThirdFragment.saveFolderList(getApplicationContext(),folders);
+                saveFolderList(getApplicationContext(),folders);
                 alertDialog.cancel();
             }
         });
@@ -194,7 +203,7 @@ public class PhotosActivity extends AppCompatActivity {
                         folder.setFolderPass(pass);
                     }
                 }
-                ThirdFragment.saveFolderList(getApplicationContext(),folders);
+                saveFolderList(getApplicationContext(),folders);
                 alertDialog.cancel();
             }
         });
@@ -203,6 +212,12 @@ public class PhotosActivity extends AppCompatActivity {
 //        builder.setView(dialogView);
 //        AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        folders = loadFolderList(getApplicationContext());
     }
 
     private void deleteFolder(){
@@ -215,6 +230,7 @@ public class PhotosActivity extends AppCompatActivity {
                     {
                         deleteRecursive(mydir);
                         folders.remove(folder);
+                        saveFolderList(getApplicationContext(),folders);
                         al_images.remove(int_position);
                         onBackPressed();
                         break;
