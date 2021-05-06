@@ -9,5 +9,5 @@
         android:title="@string/xoaThuMuc" />
     <item
         android:id="@+id/renameTo"
-        android:title="@string/doiTenThanh" />
+        android:title="@string/doiTenThanh" ></item>
 </menu>

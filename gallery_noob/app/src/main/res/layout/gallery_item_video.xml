@@ -12,6 +12,7 @@
         android:contentDescription="Gallery image"
         app:layout_constraintDimensionRatio="1"
         android:id="@+id/image"
+        android:focusable="false"
         tools:ignore="MissingConstraints"/>
 
     <CheckBox
@@ -20,6 +21,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@+id/image"
         app:layout_constraintLeft_toLeftOf="@id/image"
+        android:focusable="false"
         android:layout_marginLeft="10dp"/>
 
     <TextView
@@ -29,5 +31,6 @@
         android:background="#A4454347"
         app:layout_constraintBottom_toBottomOf="@+id/image"
         android:textColor="@color/white"
+        android:focusable="false"
         tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

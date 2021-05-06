@@ -1,10 +1,13 @@
 package com.example.gallery_noob;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -23,8 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.example.gallery_noob.ThirdFragment.loadFolderList;
@@ -41,6 +45,38 @@ public class PhotosActivity extends AppCompatActivity {
     ArrayList<Model_images> al_images = new ArrayList<>();
     ArrayList<Folder> folders = new ArrayList<>();
     private static int REQUEST_CODE_ALBUM = 12;
+    private ArrayList<String> favourites;
+    private ArrayList<String> multiSelected;
+    Menu menu;
+
+    GridViewAdapter.AlbumListener albumListener =new GridViewAdapter.AlbumListener(){
+        @Override
+        public void onClick(String path) {
+            if(GridViewAdapter.selected){
+                if(multiSelected.contains(path)){
+                    multiSelected.remove(path);
+                }
+                else    multiSelected.add(path);
+                Toast.makeText(getApplicationContext(),multiSelected.size()+" items selected",Toast.LENGTH_SHORT).show();
+            }else{
+                Intent intent= new Intent(PhotosActivity.this,FullScreenImage.class);
+                intent.putExtra("path", path);
+                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)al_images.get(int_position).getAl_imagepath());
+                intent.putExtra("req_from",3);
+                startActivityForResult(intent,REQUEST_CODE_ALBUM);
+            }
+        }
+
+        @Override
+        public void onLongClick(String path) {
+            Toast.makeText(getApplicationContext(),"Multi select mode",Toast.LENGTH_SHORT).show();
+            GridViewAdapter.selected = true;
+            onPrepareOptionsMenu(menu);
+            if(multiSelected == null)   multiSelected = new ArrayList<>();
+            multiSelected.clear();
+            multiSelected.add(path);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,24 +87,25 @@ public class PhotosActivity extends AppCompatActivity {
         Intent i = getIntent();
         int_position = i.getIntExtra("value", 0);
         al_images = i.getParcelableArrayListExtra("al_images");
+        favourites = FullScreenImage.loadFavouriteList(getApplicationContext());
         //ArrayList<Model_images>al_images = i.getParcelableArrayListExtra("al_images");
         getSupportActionBar().setTitle(al_images.get(int_position).str_folder);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        adapter = new GridViewAdapter(getApplicationContext(),al_images,int_position);
+        adapter = new GridViewAdapter(getApplicationContext(),al_images,int_position,albumListener);
         //Adapter_PhotosFolder adapter = new Adapter_PhotosFolder(this,MainActivity.al_images);
         gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent= new Intent(PhotosActivity.this,FullScreenImage.class);
-                intent.putExtra("path", al_images.get(int_position).getAl_imagepath().get(position));
-                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)al_images.get(int_position).getAl_imagepath());
-                intent.putExtra("req_from",3);
-                startActivityForResult(intent,REQUEST_CODE_ALBUM);
-            }
-        });
+//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Intent intent= new Intent(PhotosActivity.this,FullScreenImage.class);
+//                intent.putExtra("path", al_images.get(int_position).getAl_imagepath().get(position));
+//                intent.putStringArrayListExtra("listOfImages",(ArrayList<String>)al_images.get(int_position).getAl_imagepath());
+//                intent.putExtra("req_from",3);
+//                startActivityForResult(intent,REQUEST_CODE_ALBUM);
+//            }
+//        });
         gridView.setVerticalSpacing(5);
         gridView.setHorizontalSpacing(2);
     }
@@ -80,7 +117,25 @@ public class PhotosActivity extends AppCompatActivity {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.photos_activity_menu, menu);
         }
-        return super.onCreateOptionsMenu(menu);
+        this.menu = menu;
+        return super.onCreateOptionsMenu(this.menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(GridViewAdapter.selected){
+            menu.clear();
+            getMenuInflater().inflate(R.menu.create_favor_menu, menu);
+            menu.findItem(R.id.deleteInFav).setVisible(true);
+            menu.findItem(R.id.cancelInFav).setVisible(true);
+            menu.findItem(R.id.shareInFav).setVisible(true);
+        }else{
+            menu.clear();
+            if(folders != null && al_images.get(int_position).checkIfUserCreateThis(folders)) {
+                getMenuInflater().inflate(R.menu.photos_activity_menu, menu);
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -99,6 +154,25 @@ public class PhotosActivity extends AppCompatActivity {
             case R.id.renameTo:
                 setFolderName();
                 break;
+            case R.id.shareInFav:
+                try {
+                    onSend();
+                    cancelMultipleSelect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.deleteInFav:
+                try {
+                    onDel();
+                    cancelMultipleSelect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.cancelInFav:
+                cancelMultipleSelect();
+                break;
         }
         return (super.onOptionsItemSelected(item));
     }
@@ -107,6 +181,7 @@ public class PhotosActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         saveFolderList(getApplicationContext(),folders);
+        cancelMultipleSelect();
     }
 
     @Override
@@ -305,5 +380,48 @@ public class PhotosActivity extends AppCompatActivity {
 //        Log.i("Default path is", videoURI.toString());
 //        Log.i("From path is", from.toString());
 //        Log.i("To path is", to.toString());
+    }
+
+    public void onSend() throws Exception {
+        Intent share = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        share.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+        share.setType("image/*");
+
+        ArrayList<Uri> files = new ArrayList<Uri>();
+        for(String path: multiSelected) {
+            Uri uri = FileProvider.getUriForFile(getApplicationContext(),"com.example.gallery_noob",new File(path));
+            files.add(uri);
+        }
+        share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+        startActivity(share);
+    }
+
+    public void onDel() throws IOException {
+        for(String position: multiSelected) {
+            File f = new File(position);
+            if (f.exists()) {
+//            if (favList != null && favList.contains(position)) {       //Neu xoa co trong danh sach favourite thi xoa luon
+//                favList.remove(position);
+//                saveFavouriteList();
+//            }
+                f.delete();
+                ContentResolver contentResolver = getApplicationContext().getContentResolver();
+                contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        MediaStore.Images.ImageColumns.DATA + "=?", new String[]{position});
+            }
+            if (position != null) {
+                al_images.get(int_position).al_imagepath.remove(position);
+                adapter.notifyDataSetChanged();
+
+                FullScreenImage.saveFavouriteList(getApplicationContext(),favourites);
+            }
+        }
+    }
+
+    public void cancelMultipleSelect(){
+        GridViewAdapter.selected = false;
+        if(multiSelected != null)   multiSelected.clear();
+        adapter.onCancelMultipleSelect();
+        onPrepareOptionsMenu(menu);
     }
 }

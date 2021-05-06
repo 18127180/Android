@@ -10,4 +10,6 @@
     <color name="grey_date_layout">#F3F1F1</color>
     <color name="grey_all_btn">#F0706E6E</color>
     <color name="blue">#3882FF</color>
+    <color name="red">#FF4445</color>
+    <color name="red_500">#ff6347</color>
 </resources>

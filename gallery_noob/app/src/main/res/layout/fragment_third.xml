@@ -23,12 +23,12 @@
 
     <ImageButton
         android:id="@+id/buttonAdd"
-        android:layout_width="70dp"
-        android:layout_height="69dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="13dp"
-        android:layout_marginBottom="58dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="60dp"
         android:adjustViewBounds="true"
         android:background="@drawable/rounded_button"
         android:backgroundTint="@color/blue"
