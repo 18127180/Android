@@ -95,7 +95,10 @@ public class SecondFragment extends Fragment {
     public void cancelMultipleSelect(){
         SampleAdapter.selected = false;
         if(multiSelected != null)   multiSelected.clear();
-        mAdapter.onCancelMultipleSelect();
+        if (mAdapter!=null)
+        {
+            mAdapter.onCancelMultipleSelect();
+        }
         onPrepareOptionsMenu(menu);
     }
 

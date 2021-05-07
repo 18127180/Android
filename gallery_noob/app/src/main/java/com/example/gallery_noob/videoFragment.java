@@ -21,6 +21,19 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
     private View view;
     MediaController mediaController;
 
+    public videoFragment()
+    {
+
+    }
+
+    public static videoFragment newInstance(String url) {
+        Bundle args = new Bundle();
+        args.putString("url_video_fragment", url);
+        videoFragment f = new videoFragment();
+        f.setArguments(args);
+        return f;
+    }
+
     public videoFragment(String url){
         this.url=url;
     }
@@ -28,7 +41,11 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.e("tao view video","true");
         view=inflater.inflate(R.layout.full_screen_video, container,false);
+
+        this.url=getArguments().getString("url_video_fragment");
+
         videoView = (VideoView) view.findViewById(R.id.videoView);
         videoView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,22 +106,25 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
 
     @Override
     public void onResumeFragment() {
-        videoView.start();
-        if (mediaController == null) {
-            mediaController = new MediaController(view.getContext());
-            videoView.setMediaController(mediaController);
-            mediaController.setAnchorView(videoView);
-        }
-        if(FullScreenImage.favList != null){
-            if(FullScreenImage.favList.contains(url)){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    FullScreenImage.fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite_24,0,0);
-                    FullScreenImage.favStatus = true;
-                }
-            }else{
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    FullScreenImage.fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite,0,0);
-                    FullScreenImage.favStatus = false;
+        if (videoView!=null)
+        {
+            videoView.start();
+            if (mediaController == null) {
+                mediaController = new MediaController(view.getContext());
+                videoView.setMediaController(mediaController);
+                mediaController.setAnchorView(videoView);
+            }
+            if(FullScreenImage.favList != null){
+                if(FullScreenImage.favList.contains(url)){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        FullScreenImage.fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite_24,0,0);
+                        FullScreenImage.favStatus = true;
+                    }
+                }else{
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        FullScreenImage.fav.setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_baseline_favorite,0,0);
+                        FullScreenImage.favStatus = false;
+                    }
                 }
             }
         }

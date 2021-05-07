@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +25,29 @@ public class imageFragment extends Fragment implements FragmentLifecycle{
     private String url;
     private static final int FADE_IN_TIME = 1000;
 
+    public imageFragment(){
+
+    }
+
     public imageFragment(String url){
         this.url=url;
+    }
+
+    public static imageFragment newInstance(String url) {
+        Bundle args = new Bundle();
+        args.putString("url_image_fragment", url);
+        imageFragment f = new imageFragment();
+        f.setArguments(args);
+        return f;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.image_full_screen, container,false);
+
+        this.url=getArguments().getString("url_image_fragment");
+
         imageFrag=view.findViewById(R.id.imageFull);
         imageFrag.setOnClickListener(new View.OnClickListener() {
             @Override

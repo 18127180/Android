@@ -63,4 +63,12 @@ public class MyFragmentAdapter extends FragmentPagerAdapter {
         // shift the ID returned by getItemId outside the range of all previous fragments
         baseId += getCount() + n;
     }
+
+//    @NonNull
+//    @Override
+//    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+//        Fragment fragmentAdapter=(Fragment) super.instantiateItem(container, position);
+//        path.set(position, fragmentAdapter);
+//        return fragmentAdapter;
+//    }
 }

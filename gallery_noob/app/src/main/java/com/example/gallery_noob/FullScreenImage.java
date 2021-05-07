@@ -123,6 +123,11 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
     Button delete_btn_dialog,cancel_btn_dialog;
 
     Handler mSlideshowHandler = new Handler();
+
+    public FullScreenImage(){
+
+    }
+
     private Runnable runSlideshow = new Runnable() {
         public void run() {
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true);
@@ -419,12 +424,12 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                     System.out.println("Latitude: " + latLong[0]);
                     System.out.println("Longitude: " + latLong[1]);
                 }
-                Fragment item=new imageFragment(listOfPathImages.get(j));
+                Fragment item=imageFragment.newInstance(listOfPathImages.get(j));
                 frag_array.add(item);
             }
             if (isVideoFile(listOfPathImages.get(j)))
             {
-                Fragment item=new videoFragment(listOfPathImages.get(j));
+                Fragment item=videoFragment.newInstance(listOfPathImages.get(j));
                 frag_array.add(item);
             }
         }
