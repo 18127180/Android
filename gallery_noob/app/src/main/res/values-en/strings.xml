@@ -10,7 +10,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="Begin">Begin</string>
     <string name="chia_s">Share</string>
-    <string name="ch_nh_s_a">Fix</string>
+    <string name="ch_nh_s_a">Edit</string>
     <string name="y_u_th_ch">Favorites</string>
     <string name="x_a">Delete</string>
     <string name="th_m">Add</string>
@@ -52,4 +52,8 @@
     <string name="cancelDialog">Cancel</string>
     <string name="deleteDialog">Delete</string>
     <string name="quayVideo">Record video</string>
+    <string name="i_m_u_n_n">Set theme color</string>
+    <string name="ChonMau1">Default</string>
+    <string name="ChonMau2">Red/Orange</string>
+    <string name="ChonMau3">Pink/Green Blue</string>
 </resources>

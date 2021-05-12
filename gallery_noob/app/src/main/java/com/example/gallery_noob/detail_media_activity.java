@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -22,6 +23,9 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,6 +58,17 @@ public class detail_media_activity extends AppCompatActivity {
         Double value=Math.round(fileSizeInMB*100.0)/100.0;
         String calString = Double.toString(value);
         return calString+" MB";
+    }
+
+    public String convertDate(Date date_image) throws ParseException {
+//        Date date=new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(date_image);
+        String day= (String) DateFormat.format("dd", date_image);
+        String month  = (String) DateFormat.format("MM", date_image); // 06
+        String year=(String) DateFormat.format("yyyy", date_image);
+        String hours=(String) DateFormat.format("HH", date_image);
+        String minutes=(String) DateFormat.format("mm", date_image);
+        String newDate = day+"/"+month+"/"+year+", "+hours+":"+minutes;
+        return newDate;
     }
 
     public String convert_fraction(double num)
@@ -112,10 +127,14 @@ public class detail_media_activity extends AppCompatActivity {
         try {
             ExifInterface exifInterface = new ExifInterface(path);
             //set Datetime
-            date_modified.setText(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
 
             //set Name media
             File file = new File(path);
+            Date dateString = new Date(file.lastModified());
+            String temp=convertDate(dateString);
+            date_modified.setText(temp);
+
+
             String name;
             name=file.getName();
             name_media.setText(name);
@@ -127,7 +146,10 @@ public class detail_media_activity extends AppCompatActivity {
             String size_image;
             size_image=exifInterface.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)+"x"+
                     exifInterface.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
-            window_media.setText(size_image);
+            if (!size_image.equals("0x0"))
+            {
+                window_media.setText(size_image);
+            }
 
             //set size MB media
             size_media.setText(calculateFileSize(path));
@@ -211,7 +233,7 @@ public class detail_media_activity extends AppCompatActivity {
             {
                 mode2_camera_media.setText("Flash được dùng");
             }
-        }catch (IOException e) {
+        }catch (IOException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -282,6 +304,14 @@ public class detail_media_activity extends AppCompatActivity {
         } catch (IOException e) {}
     }
 
+    public static void saveFile (String path, double latitude, double longitude) throws IOException{
+        try {
+            ExifInterface ef = new ExifInterface(path);
+            ef.setLatLong(latitude,longitude);
+            ef.saveAttributes();
+        } catch (IOException e) {}
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -311,7 +341,12 @@ public class detail_media_activity extends AppCompatActivity {
         location_icon=findViewById(R.id.location_icon);
         set_location_btn=findViewById(R.id.set_location_btn);
 
+
         String path=getIntent().getStringExtra("current_path");
+        if(!isImageFile(path))
+        {
+            fix_btn.setVisibility(View.GONE);
+        }
         if (path!=null)
         {
             readExif(path);
@@ -333,7 +368,7 @@ public class detail_media_activity extends AppCompatActivity {
                     Lat=newLat;
                     Long=newLong;
                     try {
-                        writeFile(path,Lat,Long);
+                        saveFile(path,Lat,Long);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

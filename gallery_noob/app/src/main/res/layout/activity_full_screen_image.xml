@@ -95,9 +95,9 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_gravity="center"
         android:animateLayoutChanges="true"
         android:background="#FFFFFF"
+        android:weightSum="10"
         android:orientation="horizontal">
 
         <ImageButton
@@ -107,39 +107,16 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@null"
-            android:paddingLeft="-50dp"
             android:src="@drawable/ic_baseline_arrow_back_ios_24" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_weight="9"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:gravity="center|bottom"
-                android:text="2 tháng 3" />
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="16:11" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/button13"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:text="@string/s_a"
-            android:textColor="@color/blue" />
     </LinearLayout>
 
 </RelativeLayout>

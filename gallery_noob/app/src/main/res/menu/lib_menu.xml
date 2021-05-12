@@ -39,6 +39,12 @@
                 android:icon="@drawable/ic_baseline_language_24"
                 app:showAsAction="ifRoom"
                 />
+            <item
+                android:id="@+id/set_color"
+                android:title="@string/i_m_u_n_n"
+                android:icon="@drawable/ic_baseline_color_lens_24"
+                app:showAsAction="ifRoom"
+                />
         </menu>
     </item>
 </menu>

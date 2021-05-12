@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -34,6 +35,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -121,8 +123,37 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
     boolean slideShow_MODE;
     Dialog dialog_delete;
     Button delete_btn_dialog,cancel_btn_dialog;
+    private static RelativeLayout full_scr;
 
     Handler mSlideshowHandler = new Handler();
+
+    private void setColor(int lang)
+    {
+        if (lang!=-1)
+        {
+            SharedPreferences.Editor editor = getSharedPreferences("SetColor", Context.MODE_PRIVATE).edit();
+            editor.putInt("My_color_sl",lang);
+            editor.apply();
+            if (lang==0)
+            {
+                setTheme(R.style.ThemeChoice);
+            }
+            if (lang==1)
+            {
+                setTheme(R.style.ThemeChoice1);
+            }
+            if (lang==2)
+            {
+                setTheme(R.style.ThemeChoice2);
+            }
+        }
+    }
+
+    public void loadColor(){
+        SharedPreferences preferences=getSharedPreferences("SetColor", MODE_PRIVATE);
+        int language=preferences.getInt("My_color_sl",-1);
+        setColor(language);
+    }
 
     public FullScreenImage(){
 
@@ -231,10 +262,12 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        loadColor();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
 
+        full_scr=findViewById(R.id.full_scr_layout);
+        full_scr.setBackgroundColor(Color.parseColor("#FF000000"));
         imageMore=findViewById(R.id.more);
         Drawable background = ContextCompat.getDrawable(this, R.drawable
                 .popup_menu_background);
@@ -700,14 +733,15 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
         transition.setDuration(200);
         transition.addTarget(function_bar);
         TransitionManager.beginDelayedTransition((ViewGroup) function_bar.getParent(),transition);
-
         if(visibility){
             function_bar.setVisibility(View.GONE);
             title_bar.setVisibility(View.GONE);
+            full_scr.setBackgroundColor(Color.parseColor("#FF000000"));
             Log.e("ERROR","turn invisible");
         }else{
             function_bar.setVisibility(View.VISIBLE);
             title_bar.setVisibility(View.VISIBLE);
+            full_scr.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
             Log.e("ERROR","turn visible");
         }
         visibility = !visibility;

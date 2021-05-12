@@ -51,4 +51,8 @@
     <string name="cancelDialog">Hủy bỏ</string>
     <string name="deleteDialog">Xóa</string>
     <string name="quayVideo">Quay video</string>
+    <string name="i_m_u_n_n">Đổi màu nền</string>
+    <string name="ChonMau1">Mặc định</string>
+    <string name="ChonMau2">Màu đỏ/cam</string>
+    <string name="ChonMau3">Màu Hồng/Xanh</string>
 </resources>

@@ -80,14 +80,15 @@ public class FirstFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     public static int select_lang=0;
+    public static int select_color=0;
     RecyclerView recyclerView;
     ImageAdapter imageAdapter;
     List<String> images;
     Button btn_select;
-    RoundKornerLinearLayout layout_date;
     private ImageButton del_multi_btn,share_btn;
     Dialog dialog_delete;
     Button delete_btn_dialog,cancel_btn_dialog;
+    AlertDialog mDialog;
 
     private static final int MY_READ_PERMISION_CODE=101;
     private static final int CAMERA_PERMISION_CODE=102;
@@ -211,8 +212,46 @@ public class FirstFragment extends Fragment {
         {
             showChangeLanguageDialog();
         }
+        if (id==R.id.set_color)
+        {
+            showChangeColorDialog();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showChangeColorDialog(){
+        final String[] listItems={getString(R.string.ChonMau1),getString(R.string.ChonMau2),getString(R.string.ChonMau3)};
+        AlertDialog.Builder mBuilder= new AlertDialog.Builder(getContext());
+        mBuilder.setTitle(getString(R.string.i_m_u_n_n));
+        mBuilder.setSingleChoiceItems(listItems, select_color, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (i==0)
+                {
+                    select_color=0;
+                    setColor(getString(R.string.ChonMau1));
+                    mDialog.dismiss();
+                    getActivity().recreate();
+                }
+                if (i==1)
+                {
+                    select_color=1;
+                    setColor(getString(R.string.ChonMau2));
+                    mDialog.dismiss();
+                    getActivity().recreate();
+                }
+                if (i==2)
+                {
+                    select_color=2;
+                    setColor(getString(R.string.ChonMau3));
+                    mDialog.dismiss();
+                    getActivity().recreate();
+                }
+            }
+        });
+        mDialog=mBuilder.create();
+        mDialog.show();
     }
 
     private void showChangeLanguageDialog(){
@@ -226,18 +265,44 @@ public class FirstFragment extends Fragment {
                 {
                     select_lang=0;
                     setLocate("vi");
+                    mDialog.dismiss();
                     getActivity().recreate();
                 }
                 if (i==1)
                 {
                     select_lang=1;
                     setLocate("en");
+                    mDialog.dismiss();
                     getActivity().recreate();
                 }
             }
         });
-        AlertDialog mDialog=mBuilder.create();
+        mDialog=mBuilder.create();
         mDialog.show();
+    }
+
+    private void setColor(String lang)
+    {
+//        getActivity().getBaseContext().getResources().updateConfiguration(config,getActivity().getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("SetColor", Context.MODE_PRIVATE).edit();
+        editor.putString("My_color",lang);
+        editor.putInt("My_color_sl",select_color);
+        editor.apply();
+//        String mau1=getString(R.string.ChonMau1);
+//        String mau2=getString(R.string.ChonMau2);
+//        String mau3=getString(R.string.ChonMau3);
+//        if (mau1.equals(lang))
+//        {
+//            getActivity().setTheme(R.style.ThemeChoice);
+//        }
+//        if (mau2.equals(lang))
+//        {
+//            getActivity().setTheme(R.style.ThemeChoice1);
+//        }
+//        if (mau3.equals(lang))
+//        {
+//            getActivity().setTheme(R.style.ThemeChoice2);
+//        }
     }
 
     private void setLocate(String lang)
@@ -274,6 +339,17 @@ public class FirstFragment extends Fragment {
         setLocate(language);
     }
 
+    public void loadColor(){
+        SharedPreferences preferences=getActivity().getSharedPreferences("SetColor", MODE_PRIVATE);
+        String language=preferences.getString("My_color","");
+        int i=preferences.getInt("My_color_sl",-1);
+        if (i!=-1)
+        {
+            select_color=i;
+        }
+        setColor(language);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -284,6 +360,7 @@ public class FirstFragment extends Fragment {
         }
 
         // Inflate the layout for this fragment
+        loadColor();
         loadLocale();
         View rootView = inflater.inflate(R.layout.fragment_first, container, false);
         recyclerView=(RecyclerView)rootView.findViewById(R.id.recyclerview_gallery_images);
@@ -322,7 +399,6 @@ public class FirstFragment extends Fragment {
         share_btn=rootView.findViewById(R.id.share_btn);
         btn_select=rootView.findViewById(R.id.button_select);
         Button btn_remove=rootView.findViewById(R.id.button_remove);
-        layout_date=(RoundKornerLinearLayout) rootView.findViewById(R.id.ign_layout);
         layout_select=(LinearLayout) rootView.findViewById(R.id.layout_select);
         layout_select.setVisibility(View.GONE);
         visibility=false;
@@ -380,7 +456,6 @@ public class FirstFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 btn_select.setVisibility(View.GONE);
-                layout_date.setVisibility(View.GONE);
                 toggleBar();
                 //Intent intent=new Intent(getActivity(),MainActivity.class);
                 //intent.putExtra("key","allow_select");
@@ -469,7 +544,6 @@ public class FirstFragment extends Fragment {
             imageAdapter.setPhotoListener(default_mode_adapter);
             imageAdapter.resetCheckMode();
             btn_select.setVisibility(View.VISIBLE);
-            layout_date.setVisibility(View.VISIBLE);
         }else{
             OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
                 @Override
@@ -480,7 +554,6 @@ public class FirstFragment extends Fragment {
 
                     layout_select.setVisibility(View.GONE);
                     btn_select.setVisibility(View.VISIBLE);
-                    layout_date.setVisibility(View.VISIBLE);
                     this.setEnabled(false);
                 }
             };
@@ -488,7 +561,6 @@ public class FirstFragment extends Fragment {
 
             layout_select.setVisibility(View.VISIBLE);
             btn_select.setVisibility(View.GONE);
-            layout_date.setVisibility(View.GONE);
             imageAdapter.setMultiCheckMode(true);
             imageAdapter.setPhotoListener(new ImageAdapter.PhotoListiner() {
                 @Override

@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -78,8 +79,37 @@ public class PhotosActivity extends AppCompatActivity {
         }
     };
 
+    private void setColor(int lang)
+    {
+        if (lang!=-1)
+        {
+            SharedPreferences.Editor editor = getSharedPreferences("SetColor", Context.MODE_PRIVATE).edit();
+            editor.putInt("My_color_sl",lang);
+            editor.apply();
+            if (lang==0)
+            {
+                setTheme(R.style.ThemeChoice);
+            }
+            if (lang==1)
+            {
+                setTheme(R.style.ThemeChoice1);
+            }
+            if (lang==2)
+            {
+                setTheme(R.style.ThemeChoice2);
+            }
+        }
+    }
+
+    public void loadColor(){
+        SharedPreferences preferences=getSharedPreferences("SetColor", MODE_PRIVATE);
+        int language=preferences.getInt("My_color_sl",-1);
+        setColor(language);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loadColor();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
         gridView = (GridView)findViewById(R.id.grid_view);

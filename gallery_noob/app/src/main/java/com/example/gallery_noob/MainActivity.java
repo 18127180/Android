@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -22,10 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loadColor();
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.activity_main);
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavController navController = Navigation.findNavController(this,  R.id.fragment3);
         Set<Integer> topLevelDestinations = new HashSet<>();
@@ -49,7 +50,36 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public Resources.Theme getTheme() {
+
         return super.getTheme();
+    }
+
+    private void setColor(int lang)
+    {
+        if (lang!=-1)
+        {
+            SharedPreferences.Editor editor = getSharedPreferences("SetColor", Context.MODE_PRIVATE).edit();
+            editor.putInt("My_color_sl",lang);
+            editor.apply();
+            if (lang==0)
+            {
+                setTheme(R.style.ThemeChoice);
+            }
+            if (lang==1)
+            {
+                setTheme(R.style.ThemeChoice1);
+            }
+            if (lang==2)
+            {
+                setTheme(R.style.ThemeChoice2);
+            }
+        }
+    }
+
+    public void loadColor(){
+        SharedPreferences preferences=getSharedPreferences("SetColor", MODE_PRIVATE);
+        int language=preferences.getInt("My_color_sl",-1);
+        setColor(language);
     }
 
     private void setLocate(String lang)
