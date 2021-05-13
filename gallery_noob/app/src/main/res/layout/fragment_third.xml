@@ -31,7 +31,6 @@
         android:layout_marginBottom="60dp"
         android:adjustViewBounds="true"
         android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/blue"
         android:padding="7dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_baseline_add_24"
