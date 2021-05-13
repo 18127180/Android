@@ -12,4 +12,16 @@
     <color name="blue">#3882FF</color>
     <color name="red">#FF4445</color>
     <color name="red_500">#ff6347</color>
+
+<!--    phan danh rieng cho button cua Nhan-->
+    <color name="actionable_items">#12c2e9</color>
+    <color name="color_1">#12c2e9</color>
+    <color name="color_2">#c471ed</color>
+    <color name="color_3">#f64f59</color>
+    <color name="color_4">#00d2ff</color>
+    <color name="color_5">#ff00b5</color>
+    <color name="color_6">#ff5f6d</color>
+    <color name="color_7">#ffc371</color>
+    <color name="color_8">#f2709c</color>
+    <color name="color_9">#ff9472</color>
 </resources>
