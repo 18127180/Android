@@ -1,6 +1,7 @@
 package com.example.gallery_noob;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,9 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -162,7 +161,7 @@ public class PhotosActivity extends AppCompatActivity {
             menu.findItem(R.id.shareInFav).setVisible(true);
         }else{
             menu.clear();
-            if(folders != null && al_images.get(int_position).checkIfUserCreateThis(folders)) {
+            if(folders != null && int_position<=al_images.size() && al_images.get(int_position).checkIfUserCreateThis(folders)) {
                 getMenuInflater().inflate(R.menu.photos_activity_menu, menu);
             }
         }
@@ -261,7 +260,7 @@ public class PhotosActivity extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void setPassword(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.AlertDialogCustom));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         ViewGroup viewGroup = findViewById(android.R.id.content);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.password_type, viewGroup, false);
@@ -279,11 +278,14 @@ public class PhotosActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (password.getInputType() == 129) {
                     password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD); // reveal password in plainText
+                    show.setText(R.string.hide);
                 } else if (password.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
                     password.setInputType(129); // change back to password field
+                    show.setText(R.string.show);
                 }
             }
         });
+        show.setBackground(getResources().getDrawable(R.drawable.rounded_corner));
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,6 +300,7 @@ public class PhotosActivity extends AppCompatActivity {
                 alertDialog.cancel();
             }
         });
+        remove.setBackground(getResources().getDrawable(R.drawable.rounded_corner_gomatkhau));
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -313,6 +316,7 @@ public class PhotosActivity extends AppCompatActivity {
                 alertDialog.cancel();
             }
         });
+        save.setBackground(getResources().getDrawable(R.drawable.rounded_corner_luu));
 
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setView(dialogView);
@@ -326,6 +330,7 @@ public class PhotosActivity extends AppCompatActivity {
         folders = loadFolderList(getApplicationContext());
     }
 
+    boolean folder_deleted = false;
     private void deleteFolder(){
         if(folders != null && al_images.get(int_position).checkIfUserCreateThis(folders)) {
             for(Folder folder: folders){
@@ -338,6 +343,7 @@ public class PhotosActivity extends AppCompatActivity {
                         folders.remove(folder);
                         saveFolderList(getApplicationContext(),folders);
                         al_images.remove(int_position);
+                        int_position--;
                         onBackPressed();
                         break;
                     }

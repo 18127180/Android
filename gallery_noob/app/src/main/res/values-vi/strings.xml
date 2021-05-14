@@ -55,4 +55,6 @@
     <string name="ChonMau1">Mặc định</string>
     <string name="ChonMau2">Màu đỏ/cam</string>
     <string name="ChonMau3">Màu Hồng/Xanh</string>
+    <string name="show">Hiển thị</string>
+    <string name="hide">Ẩn</string>
 </resources>

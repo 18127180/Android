@@ -56,4 +56,6 @@
     <string name="ChonMau1">Default</string>
     <string name="ChonMau2">Red/Orange</string>
     <string name="ChonMau3">Pink/Green Blue</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
 </resources>
