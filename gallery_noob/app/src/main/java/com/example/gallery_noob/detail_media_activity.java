@@ -372,6 +372,8 @@ public class detail_media_activity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    save_btn.setVisibility(View.GONE);
+                    exit_btn.setVisibility(View.GONE);
                 }
             }
         });

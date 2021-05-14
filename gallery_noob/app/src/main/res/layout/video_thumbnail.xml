@@ -2,30 +2,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/videoThumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteX="-68dp"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <ImageView
         android:id="@+id/playVideo"
         android:layout_width="124dp"
         android:layout_height="159dp"
-        android:layout_marginEnd="152dp"
-        android:layout_marginRight="152dp"
-        app:layout_constraintBottom_toBottomOf="@+id/videoThumb"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/videoThumb"
-        app:layout_constraintTop_toTopOf="@+id/videoThumb"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_play_circle_filled_24"
         tools:ignore="VectorDrawableCompat" />
 </androidx.constraintlayout.widget.ConstraintLayout>
