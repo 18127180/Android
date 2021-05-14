@@ -564,29 +564,16 @@ public class FullScreenImage extends AppCompatActivity implements PermissionRequ
                                 view.setAlpha(0f);
                             }
                             break; case 2: Log.e("slide",""+cur_select);
-                            int pageWidth1 = view.getWidth();
-                            if (position < -1) { // [-Infinity,-1)
-                                // This page is way off-screen to the left.
-                                view.setAlpha(0f);
-                            } else if (position <= 0) { // [-1,0]
-                                // Use the default slide transition when moving to the left page
-                                view.setAlpha(1f);
-                                view.setTranslationX(0f);
-                                view.setScaleX(1f);
-                                view.setScaleY(1f);
-                            } else if (position <= 1) { // (0,1]
-                                // Fade the page out.
-                                view.setAlpha(1 - position);
-                                // Counteract the default slide transition
-                                view.setTranslationX(pageWidth1 * -position);
-                                // Scale the page down (between MIN_SCALE and 1)
-                                float scaleFactor = MIN_SCALE1
-                                        + (1 - MIN_SCALE1) * (1 - Math.abs(position));
-                                view.setScaleX(scaleFactor);
-                                view.setScaleY(scaleFactor);
-                            } else { // (1,+Infinity]
-                                // This page is way off-screen to the right.
-                                view.setAlpha(0f);
+                            if(position <= -1.0F || position >= 1.0F) {
+                                view.setTranslationX(view.getWidth() * position);
+                                view.setAlpha(0.0F);
+                            } else if( position == 0.0F ) {
+                                view.setTranslationX(view.getWidth() * position);
+                                view.setAlpha(1.0F);
+                            } else {
+                                // position is between -1.0F & 0.0F OR 0.0F & 1.0F
+                                view.setTranslationX(view.getWidth() * -position);
+                                view.setAlpha(1.0F - Math.abs(position));
                             }
                             break;
                     }

@@ -1,11 +1,14 @@
 package com.example.gallery_noob;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +23,9 @@ public class Fullscreen_video extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen_video);
         getSupportActionBar().hide();
+
+        FrameLayout full_layout=findViewById(R.id.full_video_ac);
+        full_layout.setBackgroundColor(Color.parseColor("#FF000000"));
 
         Intent i = getIntent();
         url = i.getStringExtra("url");
