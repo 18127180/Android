@@ -41,8 +41,6 @@
         <!-- Customize your theme here. -->
         <item name="android:windowAnimationStyle">@style/animation</item>
 
-        <item name="actionMenuTextColor">@color/red</item>
-        <item name="android:actionMenuTextColor">@color/red</item>
     </style>
 
     <style name="ThemeChoice" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -82,8 +80,6 @@
         <!-- Customize your theme here. -->
         <item name="android:windowAnimationStyle">@style/animation</item>
 
-        <item name="actionMenuTextColor">@color/red</item>
-        <item name="android:actionMenuTextColor">@color/red</item>
     </style>
 
     <style name="animation">
