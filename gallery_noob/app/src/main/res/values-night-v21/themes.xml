@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
+<!--        <item name="android:colorPrimary">#00397F</item>-->
+<!--        <item name="android:colorAccent">#0AAEEF</item>-->
+    </style>
+</resources>

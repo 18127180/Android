@@ -1,13 +1,13 @@
 package com.example.gallery_noob;
 
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -15,11 +15,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+
 public class videoFragment extends Fragment implements FragmentLifecycle {
     private VideoView videoView;
     private String url;
     private View view;
     MediaController mediaController;
+    private ImageView imageView;
+    private ImageView playVideo;
 
     public videoFragment()
     {
@@ -41,33 +45,55 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.e("tao view video","true");
-        view=inflater.inflate(R.layout.full_screen_video, container,false);
+//        Log.e("tao view video","true");
+//        view=inflater.inflate(R.layout.full_screen_video, container,false);
+//
+//        this.url=getArguments().getString("url_video_fragment");
 
-        this.url=getArguments().getString("url_video_fragment");
+//        videoView = (VideoView) view.findViewById(R.id.videoView);
+//        videoView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FullScreenImage.toggleBar();
+//            }
+//        });
+//        videoView.setVideoURI(Uri.parse(url));
+//        videoView.requestFocus();
+//        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                mp.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+//                    @Override
+//                    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+//                        if (mediaController == null) {
+//                            mediaController = new MediaController(view.getContext());
+//                            videoView.setMediaController(mediaController);
+//                            mediaController.setAnchorView(videoView);
+//                        }
+//                    }
+//                });
+//            }
+//        });
+        view = inflater.inflate(R.layout.video_thumbnail, container, false);
+        this.url = getArguments().getString("url_video_fragment");
+        imageView = (ImageView)view.findViewById(R.id.videoThumb);
+        playVideo = (ImageView)view.findViewById(R.id.playVideo);
 
-        videoView = (VideoView) view.findViewById(R.id.videoView);
-        videoView.setOnClickListener(new View.OnClickListener() {
+        Glide.with(getContext()).load(url).into(imageView);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FullScreenImage.toggleBar();
             }
         });
-        videoView.setVideoURI(Uri.parse(url));
-        videoView.requestFocus();
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+        playVideo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
-                    @Override
-                    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                        if (mediaController == null) {
-                            mediaController = new MediaController(view.getContext());
-                            videoView.setMediaController(mediaController);
-                            mediaController.setAnchorView(videoView);
-                        }
-                    }
-                });
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(),Fullscreen_video.class);
+                i.putExtra("url",url);
+                startActivityForResult(i,12345);
             }
         });
         return view;
@@ -91,10 +117,10 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
         {
             if (!isVisibleToUser)
             {
-                videoView.pause();
-                videoView.seekTo(0);
-                mediaController=null;
-                videoView.setMediaController(mediaController);
+//                videoView.pause();
+//                videoView.seekTo(0);
+//                mediaController=null;
+//                videoView.setMediaController(mediaController);
             }
         }
     }
@@ -108,12 +134,12 @@ public class videoFragment extends Fragment implements FragmentLifecycle {
     public void onResumeFragment() {
         if (videoView!=null)
         {
-            videoView.start();
-            if (mediaController == null) {
-                mediaController = new MediaController(view.getContext());
-                videoView.setMediaController(mediaController);
-                mediaController.setAnchorView(videoView);
-            }
+//            videoView.start();
+//            if (mediaController == null) {
+//                mediaController = new MediaController(view.getContext());
+//                videoView.setMediaController(mediaController);
+//                mediaController.setAnchorView(videoView);
+//            }
             if(FullScreenImage.favList != null){
                 if(FullScreenImage.favList.contains(url)){
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

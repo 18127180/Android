@@ -23,7 +23,6 @@
     <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES" />
 
     <application
-        tools:replace="android:allowBackup"
         android:allowBackup="false"
         android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher_demo"
@@ -32,10 +31,12 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_demo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Gallery_noob">
+        android:theme="@style/Theme.Gallery_noob"
+        tools:replace="android:allowBackup">
+        <activity android:name=".Fullscreen_video"></activity>
         <activity
-            android:noHistory="true"
-            android:name=".Welcome">
+            android:name=".Welcome"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -63,20 +64,21 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".detail_media_activity" />
-        <activity
-            android:name=".PhotosActivity"/>
+        <activity android:name=".PhotosActivity" />
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"/>
-        <activity android:name=".FullScreenImage"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".FullScreenImage"
             android:configChanges="orientation|screenSize|keyboardHidden">
-            <intent-filter
-                tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="image/*"/>
-                <data android:mimeType="video/*"/>
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
 

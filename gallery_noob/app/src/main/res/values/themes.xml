@@ -17,6 +17,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowAnimationStyle">@style/animation</item>
     </style>
+
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:popupBackground">@drawable/popup_menu_background</item>
     </style>
